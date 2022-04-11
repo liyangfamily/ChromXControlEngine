@@ -1,8 +1,8 @@
-# For LBusiness Module Load Dependencies
+# For ChromXControl Module Load Dependencies
 include($$replace(_PRO_FILE_PWD_, ([^/]+$), \\1/\\1_dependencies.pri))
 TARGET = $$PRO_LIB_NAME
 
-# For LBusiness Module Load Common Function, Path and Dependencies Resolver
+# For ChromXControl Module Load Common Function, Path and Dependencies Resolver
 include(../CCECommon.pri)
 
 win32 {

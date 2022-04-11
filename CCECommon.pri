@@ -33,7 +33,7 @@ isEmpty(PRO_BUILD_TREE) {
     PRO_BUILD_TREE ~= s,$$re_escape($$sub_dir)$,,
 }
 
-# For LBusinessLib Build Path
+# For ChromXControlEngine Build Path
 osx{
    isEmpty(PRO_APP_BUNDLE){
       exists($$PRO_BUILD_TREE/Contents/MacOS/$$PRO_TARGET): PRO_APP_BUNDLE = $$PRO_BUILD_TREE
@@ -49,7 +49,7 @@ osx{
 }else{
     # target output path if not set manually
     isEmpty(PRO_OUTPUT_PATH): PRO_OUTPUT_PATH = $$PRO_BUILD_TREE
-	
+
     isEmpty(PRO_LIBRARY_PATH): PRO_LIBRARY_PATH = $$PRO_OUTPUT_PATH/lib
     isEmpty(PRO_BIN_PATH): PRO_BIN_PATH     = $$PRO_OUTPUT_PATH/bin
 
