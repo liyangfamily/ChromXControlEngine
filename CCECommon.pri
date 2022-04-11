@@ -1,5 +1,5 @@
-!isEmpty(CCE_COMMONFUNCTION_INCLUDED):error("CCECommon.pri already included")
-CCE_COMMONFUNCTION_INCLUDED = 1
+!isEmpty(CCE_COMMON_INCLUDED):error("CCECommon.pri already included")
+CCE_COMMON_INCLUDED = 1
 
 # For Parent Project Config
 # Parent Project Need Creat This Config In "3rdparty/ChromXControlEngine"
@@ -61,7 +61,7 @@ exists($$PRO_LIBRARY_PATH): LIBS *= -L$$PRO_LIBRARY_PATH  # ChromXControlEngine 
 
 # ChromXControlEngine library path
 isEmpty(CCE_MODULE_DIRS){
-   CCE_MODULE_DIRS += $$PWD/src
+    CCE_MODULE_DIRS += $$PWD/src
 }
 
 # recursively resolve ChromXControlEngine library deps
