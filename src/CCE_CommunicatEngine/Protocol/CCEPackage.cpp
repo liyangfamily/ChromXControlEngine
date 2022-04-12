@@ -20,6 +20,8 @@ This class is the base class of all protocol packets and is generally not use.
 */
 
 #include "CCE_CommunicatEngine/CCEPackage.h"
+#include <CCE_Core/CCEUIHelper>
+#include <memory>
 
 static quint16 g_serialNum = 0;
 
@@ -48,11 +50,6 @@ CCEPackage & CCEPackage::operator=(const CCEPackage & package)
     }
     m_data = package.m_data;
 
-    m_targetDeviceType = package.m_targetDeviceType;
-    m_sourceDeviceType = package.m_sourceDeviceType;
-    m_uuidType = package.m_uuidType;
-    m_uuid = package.m_uuid;
-    m_sendCardIndex = package.m_sendCardIndex;
     return *this;
 }
 
@@ -61,44 +58,18 @@ QByteArray CCEPackage::getDataToSend() const
     return m_data;
 }
 
-bool CCEPackage::initByDetectInfo(const SDetectItemInfo* info)
+bool CCEPackage::isValid()
 {
-    if (!info)
+    if (m_data.size() < sizeof(SIntegratedCtrlHeader) + sizeof(SIntegratedFrameLimit))
     {
         return false;
     }
-    this->m_uuidType = info->uuidType;
-    this->m_uuid = info->uuid;
-    this->m_sendCardIndex = info->senderCardIndex;
-    return true;
+    QByteArray arrCpy(m_data.data() + sizeof(SIntegratedFrameLimit), m_data.size() - sizeof(SIntegratedFrameLimit) - sizeof(quint16));
+    quint16 tempCheckSum = computCheckSum(arrCpy);
+    return (tempCheckSum==getCheckSum());
 }
 
-void CCEPackage::SetCmdTargetDevice(quint16 n)
-{
-    m_targetDeviceType = n;
-}
-
-void CCEPackage::SetCmdSourceDevice(quint16 n)
-{
-    m_sourceDeviceType = n;
-}
-
-void CCEPackage::SetCmdUuidType(quint8 n)
-{
-    m_uuidType = n;
-}
-
-void CCEPackage::SetCmdUuid(QUuid n)
-{
-    m_uuid = n;
-}
-
-void CCEPackage::SetCmdSenderIndex(quint8 n)
-{
-    m_sendCardIndex = n;
-}
-
-quint8 CCEPackage::getProtocolNum() const
+quint8 CCEPackage::getFrameLength() const
 {
     QByteArray headerData = getData(m_data, EDataBlock::EDB_Header);
     if (headerData.isEmpty())
@@ -106,10 +77,10 @@ quint8 CCEPackage::getProtocolNum() const
         return 0;
     }
     const SIntegratedCtrlHeader *pHeader = (const SIntegratedCtrlHeader*)headerData.constData();
-    return pHeader->protocolHeader.protocolNum;
+    return pHeader->protocolHeader.frameLength;
 }
 
-quint8 CCEPackage::getProtocolVersion() const
+quint8 CCEPackage::getFrameType() const
 {
     QByteArray headerData = getData(m_data, EDataBlock::EDB_Header);
     if (headerData.isEmpty())
@@ -117,10 +88,10 @@ quint8 CCEPackage::getProtocolVersion() const
         return 0;
     }
     const SIntegratedCtrlHeader *pHeader = (const SIntegratedCtrlHeader*)headerData.constData();
-    return pHeader->protocolHeader.protocolVersion;
+    return pHeader->protocolHeader.frameType;
 }
 
-quint16 CCEPackage::getCmdNum() const
+quint8 CCEPackage::getUnitAddr() const
 {
     QByteArray headerData = getData(m_data, EDataBlock::EDB_Header);
     if (headerData.isEmpty())
@@ -128,7 +99,18 @@ quint16 CCEPackage::getCmdNum() const
         return 0;
     }
     const SIntegratedCtrlHeader *pHeader = (const SIntegratedCtrlHeader*)headerData.constData();
-    return pHeader->cmd;
+    return pHeader->unitAddr;
+}
+
+quint16 CCEPackage::getCtrlAddr() const
+{
+    QByteArray headerData = getData(m_data, EDataBlock::EDB_Header);
+    if (headerData.isEmpty())
+    {
+        return 0;
+    }
+    const SIntegratedCtrlHeader *pHeader = (const SIntegratedCtrlHeader*)headerData.constData();
+    return CCEUIHelper::bigLittleSwap16(pHeader->ctrlAddr);
 }
 
 QByteArray CCEPackage::getContent() const
@@ -141,102 +123,35 @@ QByteArray CCEPackage::getContent() const
     return data;
 }
 
-quint16 CCEPackage::getSerialNum() const
-{
-    QByteArray headerData = getData(m_data, EDataBlock::EDB_Header);
-    if (headerData.isEmpty())
-    {
-        return 0;
-    }
-    const SIntegratedCtrlHeader *pHeader = (const SIntegratedCtrlHeader*)headerData.constData();
-    return pHeader->serialNumber;
-}
-
-quint8 CCEPackage::getCheckSum() const
+quint16 CCEPackage::getCheckSum() const
 {
     QByteArray data = getData(m_data, EDataBlock::EDB_CheckSum);
     if (data.isEmpty())
     {
         return 0;
     }
-    return data.front();
+    quint16 checkSum = 0;
+    memcpy(&checkSum,data.data(),sizeof(checkSum));
+    return CCEUIHelper::bigLittleSwap16(checkSum);
 }
 
-quint16 CCEPackage::getTargetDevice() const
+quint16 CCEPackage::computCheckSum(const QByteArray & data)
 {
-    QByteArray headerData = getData(m_data, EDataBlock::EDB_Header);
-    if (headerData.isEmpty())
-    {
-        return 0;
-    }
-    const SIntegratedCtrlHeader *pHeader = (const SIntegratedCtrlHeader*)headerData.constData();
-    return pHeader->targetDeviceType;
+    CCEUIHelper::getCRCCode(data);
 }
 
-quint16 CCEPackage::getSourceDevice() const
-{
-    QByteArray headerData = getData(m_data, EDataBlock::EDB_Header);
-    if (headerData.isEmpty())
-    {
-        return 0;
-    }
-    const SIntegratedCtrlHeader *pHeader = (const SIntegratedCtrlHeader*)headerData.constData();
-    return pHeader->sourceDeviceType;
-}
 
-quint8 CCEPackage::getUuidType() const
-{
-    QByteArray headerData = getData(m_data, EDataBlock::EDB_Header);
-    if (headerData.isEmpty())
-    {
-        return 0;
-    }
-    const SIntegratedCtrlHeader *pHeader = (const SIntegratedCtrlHeader*)headerData.constData();
-    return pHeader->uuidType;
-}
-
-QUuid CCEPackage::getUuid() const
-{
-    QByteArray headerData = getData(m_data, EDataBlock::EDB_Header);
-    if (headerData.isEmpty())
-    {
-        return 0;
-    }
-    const SIntegratedCtrlHeader *pHeader = (const SIntegratedCtrlHeader*)headerData.constData();
-    return pHeader->uuid;
-}
-
-quint8 CCEPackage::getSenderCardIndex() const
-{
-    QByteArray headerData = getData(m_data, EDataBlock::EDB_Header);
-    if (headerData.isEmpty()) {
-        return 0;
-    }
-    const SIntegratedCtrlHeader *pHeader = (const SIntegratedCtrlHeader*)headerData.constData();
-    return pHeader->sendCardIndex;
-}
-
-quint16 CCEPackage::getReplayDataLength() const
-{
-    QByteArray headerData = getData(m_data, EDataBlock::EDB_Header);
-    if (headerData.isEmpty()) {
-        return 0;
-    }
-    const SIntegratedCtrlHeader *pHeader = (const SIntegratedCtrlHeader*)headerData.constData();
-    return pHeader->dataLength;
-}
-
-quint8 CCEPackage::genCheckSum()
+quint16 CCEPackage::genCheckSum()
 {
     quint8 tempCheckSum = 0;
     try
     {
-        if (m_data.size() < 9)
+        if (m_data.size() < sizeof(SIntegratedCtrlHeader) + 2)
         {
             return tempCheckSum;
         }
-        QByteArray arrCpy(m_data.data() + 8, m_data.size() - 8);
-        tempCheckSum = getCheckSum(arrCpy);
+        QByteArray arrCpy(m_data.data() + 2, m_data.size() - 2);
+        tempCheckSum = computCheckSum(arrCpy);
     }
     catch (std::exception e) {
         qDebug() << "CCEPackageInteCtrl::" << "getCheckSum Error : %s "<< e.what();
@@ -244,72 +159,55 @@ quint8 CCEPackage::genCheckSum()
     return tempCheckSum;
 }
 
-quint8 CCEPackage::getCheckSum(const QByteArray & data)
-{
-    //计算和
-    if (data.isEmpty() || data.isNull())
-    {
-        return 0;
-    }
 
-    unsigned char sum = 0;
-    for (int i = 0; i < data.size(); i++)
-    {
-        sum += data.at(i);
-    }
-    return sum;
-}
-
-CCEPackage & CCEPackage::build(quint16 serialNum)
+CCEPackage & CCEPackage::build()
 {
-    Q_UNUSED(serialNum)
     m_data.clear();
 
     SIntegratedCtrlHeader sendHeader;
-    sendHeader.protocolHeader.protocolNum = CmdProtocolNum();
-    sendHeader.protocolHeader.protocolVersion = CmdProtocolVersion();
-    sendHeader.targetDeviceType = CmdTargetDevice();
-    sendHeader.sourceDeviceType = CmdSourceDevice();
-    sendHeader.cmd = CmdNum();
-    sendHeader.serialNumber = g_serialNum++;
-    sendHeader.uuidType = CmdUuidType();
-    sendHeader.uuid = CmdUuid();
-    sendHeader.sendCardIndex = CmdSenderIndex();
+    sendHeader.protocolHeader.frameType = CmdFrameType();
+    sendHeader.unitAddr = CmdUnitAddr();
+    sendHeader.ctrlAddr = CCEUIHelper::bigLittleSwap16(CmdCtrlAddr());
     sendHeader.dataLength = CmdContent().size();
+
     m_data.append((char*)(&sendHeader), sizeof(SIntegratedCtrlHeader));
     if (sendHeader.dataLength > 0)
     {
         //拷贝数据内容
         m_data.append(CmdContent());
     }
+
+    //此时计算组包长度，填入到帧长度，再计算校验和
+    sendHeader.protocolHeader.frameLength = CmdFrameLength();
+
     //计算和
-    quint8 tempCheckSum = genCheckSum();
+    quint16 tempCheckSum = CCEUIHelper::bigLittleSwap16(genCheckSum());
     m_data.append(tempCheckSum);
     return *this;
 }
 
-
-quint8 CCEPackage::CmdProtocolNum() const
+quint8 CCEPackage::CmdFrameLength() const
 {
-    qDebug() << "CCEPackage::you need to implement ProtocolNum(const QByteArray & data) into Subclass.";
-    return quint8();
+    return m_data.size();
+    //qDebug() << "CCEPackage::you need to implement CmdFrameLength() into Subclass.";
+    //return quint8();
 }
 
-quint8 CCEPackage::CmdProtocolVersion() const
+CCEPackage::EFrameType CCEPackage::CmdFrameType() const
 {
-    qDebug() << "CCEPackage::you need to implement ProtocolVersion() into Subclass.";
-    return quint8();
+    qDebug() << "CCEPackage::you need to implement FrameType() into Subclass.";
+    return EFrameType::EFT_NULL;
 }
 
-quint16 CCEPackage::CmdNum() const
+CCEPackage::EUnitAddr CCEPackage::CmdUnitAddr() const
 {
-    qDebug() << "CCEPackage::you need to implement CmdNum() into Subclass.";
-    return quint16();
+    qDebug() << "CCEPackage::you need to implement CmdUnitAddr() into Subclass.";
+    return EUnitAddr::EUA_NULL;
 }
 
-quint16 CCEPackage::CmdRetNum() const
+quint16 CCEPackage::CmdCtrlAddr() const
 {
-    qDebug() << "CCEPackage::you need to implement CmdRetNum() into Subclass.";
+    qDebug() << "CCEPackage::you need to implement CmdCtrlAddr() into Subclass.";
     return quint16();
 }
 
@@ -317,31 +215,6 @@ QByteArray CCEPackage::CmdContent() const
 {
     qDebug() << "CCEPackage::you need to implement CmdContent() into Subclass.";
     return QByteArray();
-}
-
-quint16 CCEPackage::CmdTargetDevice() const
-{
-    return m_targetDeviceType;
-}
-
-quint16 CCEPackage::CmdSourceDevice() const
-{
-    return m_sourceDeviceType;
-}
-
-quint8 CCEPackage::CmdUuidType() const
-{
-    return m_uuidType;
-}
-
-QUuid CCEPackage::CmdUuid() const
-{
-    return m_uuid;
-}
-
-quint8 CCEPackage::CmdSenderIndex() const
-{
-    return m_sendCardIndex;
 }
 
 void CCEPackage::onReceive(const CCEPackage & package)
@@ -352,8 +225,9 @@ void CCEPackage::onReceive(const CCEPackage & package)
 QByteArray CCEPackage::getData(const QByteArray & data, quint8 index)
 {
     QByteArray tempData;
+    int checkSumLength = 2;
     quint64 datalen = data.size();
-    if (datalen < sizeof(SIntegratedCtrlHeader))
+    if (datalen < sizeof(SIntegratedCtrlHeader) + 2)
     {
         return tempData;
     }
@@ -368,22 +242,22 @@ QByteArray CCEPackage::getData(const QByteArray & data, quint8 index)
     case CCEPackage::EDB_Content:
     {
         //校验包长度
-        if (datalen <= (sizeof(SIntegratedCtrlHeader) + 1))
+        if (datalen <= (sizeof(SIntegratedCtrlHeader) + checkSumLength))
         {
             return tempData;
         }
-        int byteLeft = datalen - sizeof(SIntegratedCtrlHeader) - 1;
+        int byteLeft = datalen - sizeof(SIntegratedCtrlHeader) - checkSumLength;
         tempData.append(data.data() + sizeof(SIntegratedCtrlHeader), byteLeft);
     }
     break;
     case CCEPackage::EDB_CheckSum:
     {
         //校验包长度
-        if (datalen <= (sizeof(SIntegratedCtrlHeader) + 1))
+        if (datalen < (sizeof(SIntegratedCtrlHeader) + checkSumLength))
         {
             return tempData;
         }
-        tempData.append(data.back());
+        tempData.append(data.cend()-checkSumLength,checkSumLength);
     }
     break;
     default:

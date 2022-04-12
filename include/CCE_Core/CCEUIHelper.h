@@ -79,6 +79,14 @@ public:
     //字节数组转16进制字符串
     static QString byteArrayToHexStr(const QByteArray &data);
 
+    static quint16 bigLittleSwap16(quint16 v);
+
+    //CRC校验
+    static quint16 getRevCrc_16(quint8 *data, int len, quint16 init, const quint16 *table);
+    static quint16 getCrc_16(quint8 *data, int len, quint16 init, const quint16 *table);
+    static quint16 getModbus16(quint8 *data, int len);
+    static quint16 getCRCCode(const QByteArray &data);
+
 #define ISUNSIGNED(x) (decltype(x)(x)>=0&&decltype(x)(~(x))>=0)
 #define ISSINGNED(x)   (decltype(x)(x)>=0?(decltype(x)(~(x))<0?true:false):true)
     template<class T>

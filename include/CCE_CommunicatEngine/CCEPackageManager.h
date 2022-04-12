@@ -12,39 +12,39 @@
 class CCE_COMMUNICATENGINE_EXPORT CCEPackageManager
 {
 public:
-	typedef QMap<quint16, std::function<quint16(const QByteArray&)>> CmdMap;
-	typedef QMap<quint8, CmdMap> ProtocolMap;
-	CCEPackageManager();
-	virtual ~CCEPackageManager();
+    typedef QMap<quint16, std::function<quint16(const QByteArray&)>> CmdMap;
+    typedef QMap<quint8, CmdMap> UnitMap;
+    CCEPackageManager();
+    virtual ~CCEPackageManager();
 
-	template <class T>
-	bool registerPackage(const T &package, std::function<quint16(const QByteArray&)>cb)
-	{
-		quint8 protocolNum = package.CmdProtocolNum();
-		quint16 cmdNum = package.CmdRetNum();
-		ProtocolMap::iterator iProtocolMap = m_maps.find(protocolNum);
-		if (iProtocolMap != m_maps.end()) {
-			CmdMap::iterator iCmdNumber = iProtocolMap.value().find(cmdNum);
-			if (iCmdNumber != iProtocolMap.value().end()) {
-				qDebug() << "CCEPackageManager" << 
-					QString("registerPackage failed cmd name : %1   cmd number : %2 is existed").arg(protocolNum).arg(QString::number(cmdNum, 16));
-				return false;
-			}
-		}
+    template <class T>
+    bool registerPackage(const T &package, std::function<quint16(const QByteArray&)>cb)
+    {
+        quint8 unitAddr = package.CmdUnitAddr();
+        quint16 cmdNum = package.CmdcmdNum();
+        UnitMap::iterator iUnitMap = m_maps.find(unitAddr);
+        if (iUnitMap != m_maps.end()) {
+            CmdMap::iterator icmdNumber = iUnitMap.value().find(cmdNum);
+            if (icmdNumber != iUnitMap.value().end()) {
+                qDebug() << "CCEPackageManager" <<
+                    QString("registerPackage failed cmd name : %1   cmd number : %2 is existed").arg(unitAddr).arg(QString::number(cmdNum, 16));
+                return false;
+            }
+        }
 
-		/*T *p_t = new T();
-		qDebug() << "CCEPackageManager" << QString("registerPackage cmd name : %1   cmd number : %2.").arg(protocolNum).arg(QString::number(cmdNum, 16));
-		p_t->setPackageCallBack(cb);*/
+        /*T *p_t = new T();
+        qDebug() << "CCEPackageManager" << QString("registerPackage cmd name : %1   cmd number : %2.").arg(unitAddr).arg(QString::number(cmdNum, 16));
+        p_t->setPackageCallBack(cb);*/
 
-		m_maps[protocolNum][cmdNum] = cb;
-		return true;
-	}
+        m_maps[unitAddr][cmdNum] = cb;
+        return true;
+    }
 
-	void unregisterPackage(CCEPackage package);
-	void unregisterAll();
+    void unregisterPackage(CCEPackage package);
+    void unregisterAll();
 
-	quint16 handle(const CCEPackage &package);
+    quint16 handle(const CCEPackage &package);
 private:
-	ProtocolMap m_maps;
+    UnitMap m_maps;
 };
 #endif

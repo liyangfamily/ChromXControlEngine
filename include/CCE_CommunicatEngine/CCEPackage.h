@@ -23,25 +23,25 @@ public:\
     Class(const QByteArray& data) :inheritsClass(data) {}\
     virtual ~Class() {};\
 
-#define CCE_DECLARE_COMMANDSEND(d,pack) \
-    CCEEnginePackage enginePack;\
-    enginePack.initByDetectInfo(d->m_parentItemDetectInfo);\
-    enginePack.setData(pack.getDataToSend());\
-    if (sync) {\
-        CCEEnginePackage recEnginePack;\
-        CCEClusterProxy::syncSend(enginePack, recEnginePack, msec);\
-        return d->m_packageMgr.handle(CCEPackage(recEnginePack.data()));\
-    }\
-    else {\
-        return CCEClusterProxy::asyncSend(enginePack) ? LAPI::EResult::ER_INTECTRL_Success : LAPI::EResult::ER_INTECTRL_Fail_NoReason;\
-    }\
+//#define CCE_DECLARE_COMMANDSEND(d,pack) \
+//    CCEEnginePackage enginePack;\
+//    enginePack.initByDetectInfo(d->m_parentItemDetectInfo);\
+//    enginePack.setData(pack.getDataToSend());\
+//    if (sync) {\
+//        CCEEnginePackage recEnginePack;\
+//        CCEClusterProxy::syncSend(enginePack, recEnginePack, msec);\
+//        return d->m_packageMgr.handle(CCEPackage(recEnginePack.data()));\
+//    }\
+//    else {\
+//        return CCEClusterProxy::asyncSend(enginePack) ? LAPI::EResult::ER_INTECTRL_Success : LAPI::EResult::ER_INTECTRL_Fail_NoReason;\
+//    }\
 
 #define DO_GETOPERATIONRESULT() \
-    quint16 value = 0;\
+    quint8 value = 0;\
     QByteArray buffer = getContent(); \
-    if (buffer.size() < 2) { \
+    if (buffer.size() < 1) { \
         return value; }\
-    memcpy(&value, buffer, sizeof(quint16)); \
+    memcpy(&value, buffer, sizeof(quint8)); \
     return value; \
 
 //此类提供给不同协议的Package类在onReceive中调用
@@ -50,51 +50,33 @@ class CCE_COMMUNICATENGINE_EXPORT CCEPackage
     friend class CCEPackageManager;
     friend class CCEPackageDispatcher;
 public:
-    enum EPackageClass
-    {
-        EPC_IntegratedCtrl = 0x01, //集控协议
-        EPC_FileTransfer = 0x03, //文件传输协议
-        EPC_NULL = 0xFF,
-    };
-    enum EPackageVersion
-    {
-        EPV_1_0 = 1,
-        EPV_2_0 = 2,
-        EPV_3_0 = 3,
-        EPV_NULL = 0xFF,
-    };
-    enum EDeviceType
-    {
-        EDT_NULL=0x0000,
-        EDT_Android = 0xD001,
-        EDT_Monitor_In_Sender = 0xD002,
-        EDT_MCU_In_Sender = 0xD003,
-        EDT_ReceiveCard = 0xD004,
-        EDT_FPGA = 0xD005,
-        EDT_NT68400 = 0xD006,
-        EDT_MS9570 = 0xD007,
-        EDT_External = 0xD100,
-        EDT_CtrlSW = 0xD200,
-        EDT_Broadcast = 0xFFFF,
-    };
-    enum EUUIDType
-    {
-        EUT_SenderUUID = 0xC1,
-        EUT_SenderGroupUUID = 0xC2,
-        EUT_BroadcastUUID = 0xFF,
+    /******************************************协议中数据定义************************************************/
+    enum EFrameType{
+        EFT_NULL = 0,           //空
+        EFT_WriteFrame = 0x81,  //写数据帧
+        EFT_ReadFrame = 0x82,   //读数据帧
+        EFT_ReportFrame = 0x83, //报告帧
+        EFT_ChartFrame = 0x84,  //图谱数据帧
     };
 
-    enum EOperationResult
-    {
-        EOR_NULL=0x0000, //空
-        EOR_Success = 0x0001, //成功
-        EOR_Fail_NoReason = 0x0002, //失败-无具体原因
-        EOR_Fail_NoCOM = 0x0003, //失败-找不到对应串口
-        EOR_Fail_NoRet = 0x0004, //失败-无返回
-        EOR_Success_UpgradeImmediately = 0x0011, //成功-立即升级
-        EOR_Fail_Busy = 0x8001, //失败-忙碌
-        EOR_Fail_Exclusive = 0x8002, //失败-被占用
-        EOR_Fail_NoCMD=0xF001, //失败-命令码不支持
+    enum EUnitAddr{
+        EUA_NULL = 0,               //空
+        EUA_MainCtrl = 0x10,        //主控单元板
+        EUA_PressureSensor = 0x11,  //压力传感器单元
+        EUA_SingleCtrl = 0x12,      //单控控制单元
+        EUA_SingleStatus = 0x13,    //单控状态单元
+        EUA_TestParamSet = 0x14,    //测试参数设置单元
+        EUA_TestData = 0x15,        //测试数据单元
+        EUA_StatusWarn = 0x16,      //状态警告单元
+    };
+
+    enum EFrameError{
+        EFE_Success = 0x00,     //命令帧接受正确
+        EFE_CRCErr = 0x01,      //校验码错误
+        EFE_FrameTypeErr = 0x02,//帧类型错误
+        EFE_UnitAddrErr = 0x03, //单元地址错误
+        EFE_CtrlAddrErr = 0x04, //控制地址错误
+        EFE_DataLenErr = 0x05,  //数据长度错误
     };
 
     enum EDataBlock
@@ -113,66 +95,46 @@ public:
     //获取用于发送的数据
     QByteArray getDataToSend() const;
 
-    bool initByDetectInfo(const SDetectItemInfo*);
-    /*********************构建时用**************************/
-    void SetCmdTargetDevice(quint16 n);
-    void SetCmdSourceDevice(quint16 n);
-    void SetCmdUuidType(quint8 n);
-    void SetCmdUuid(QUuid n);
-    void SetCmdSenderIndex(quint8 n);
-
     /*********************解析数据时获取**************************/
-    //获取协议号
-    quint8 getProtocolNum() const;
+    //判断是否有效
+    bool isValid();
+    //获取帧长度
+    quint8 getFrameLength() const;
     //获取协议版本
-    quint8 getProtocolVersion() const;
-    //获取命令号
-    quint16 getCmdNum() const;
+    quint8 getFrameType() const;
+
+    //获取单元地址
+    quint8 getUnitAddr() const;
+    //获取操作地址
+    quint16 getCtrlAddr() const;
+
     //获取命令内容
     QByteArray getContent() const;
-    //获取流水号
-    quint16 getSerialNum() const;
+
     //获取校验和
-    quint8 getCheckSum() const;
-    //获取目标设备
-    quint16 getTargetDevice() const;
-    //获取源设备
-    quint16 getSourceDevice() const;
-    //获取Uuid类型
-    quint8 getUuidType() const;
-    //获取Uuid
-    QUuid getUuid() const;
-    //获取发送卡序号
-    quint8 getSenderCardIndex() const;
-    //获取附加数据长度
-    quint16 getReplayDataLength() const;
+    quint16 getCheckSum() const;
 
     /*********************工具函数**************************/
-    //重新计算校验和
-    quint8 genCheckSum();
+
     //计算校验和
-    static quint8 getCheckSum(const QByteArray& data);
+    static quint16 computCheckSum(const QByteArray& data);
 
     /*********************构建时用**************************/
+    //创建校验和
+    quint16 genCheckSum();
     //创建一个包
-    CCEPackage& build(quint16 serialNum);
+    CCEPackage& build();
 
 protected:
     /*********************构建时用**************************/
-    virtual quint8 CmdProtocolNum() const; //在不同协议的基类中实现
-    virtual quint8 CmdProtocolVersion() const; //在不同协议的基类中实现
-    quint16 CmdTargetDevice() const;
-    quint16 CmdSourceDevice() const;
-    virtual quint16 CmdNum() const; //在具体协议的具体类中实现
-    virtual quint16 CmdRetNum() const; //在具体协议的具体类中实现
-    quint8 CmdUuidType() const;
-    QUuid CmdUuid() const;
-    quint8 CmdSenderIndex() const;
-    virtual QByteArray CmdContent() const; //在具体协议的具体类中实现
-
+    quint8 CmdFrameLength() const;
+    virtual EFrameType CmdFrameType() const;      //在具体协议的具体类中实现
+    virtual EUnitAddr CmdUnitAddr() const;        //在不同单元协议的基类中实现
+    virtual quint16 CmdCtrlAddr() const;    //在具体协议的具体类中实现
+    virtual QByteArray CmdContent() const;  //在具体协议的具体类中实现
 
     /*********************解析时用**************************/
-    //调用注册的回调函数
+    //调用注册的回调处理函数
     void onReceive(const CCEPackage& package);
 
     //需要先注册回调函数,然后在onReceive函数中调用
@@ -186,11 +148,7 @@ private:
     static QByteArray getData(const QByteArray& data, quint8 index);
 protected:
     /*********************构建时用**************************/
-    quint16 m_targetDeviceType = 0;
-    quint16 m_sourceDeviceType = 0;
-    quint8 m_uuidType = 0;;
-    QUuid m_uuid;
-    quint8 m_sendCardIndex = 0;
+    //EUnitAddr m_unitAddr = EUA_NULL;
     /*********************解析时用**************************/
 private:
     //void * m_callBack = nullptr;

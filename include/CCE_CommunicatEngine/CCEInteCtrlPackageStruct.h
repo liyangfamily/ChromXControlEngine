@@ -9,24 +9,24 @@
 #pragma pack(push,1)
 typedef struct tagIntegratedFrameLimit
 {
-	//帧定界符
-	quint8 head[7];	//0X55（7个）
-	quint8 headCmd;	//0xC0
+    //帧定界符
+    quint8 head1;	//0X55（7个）
+    quint8 head2;	//0xC0
 
-	bool operator==(tagIntegratedFrameLimit &other)
-	{
-		if (memcmp(this->head, other.head, 7) == 0&&this->headCmd==other.headCmd)
-			return true;
-		else
-			return false;
-	}
+    bool operator==(tagIntegratedFrameLimit &other)
+    {
+        if (this->head1==other.head1 == 0&&this->head2==other.head2)
+            return true;
+        else
+            return false;
+    }
 
-	tagIntegratedFrameLimit& build()
-	{
-		memset(this->head, 0x55, 7);
-		this->headCmd = 0xC0;
-		return *this; 
-	}
+    tagIntegratedFrameLimit& build()
+    {
+        this->head1 = 0x69;
+        this->head2 = 0xAA;
+        return *this;
+    }
 
 }SIntegratedFrameLimit;
 
@@ -35,8 +35,8 @@ typedef struct tagIntegratedCtrlProtocolHeader
 {
     SIntegratedFrameLimit frameLimit;
 
-    quint8 protocolNum; //0x01 LED一体机集成控制协议
-    quint8 protocolVersion; //0x01 协议版本
+    quint8 frameLength;		//帧长度
+    quint8 frameType;       //帧类型
 
     tagIntegratedCtrlProtocolHeader()
     {
@@ -51,24 +51,16 @@ typedef struct tagIntegratedCtrlHeader
 {
     SIntegratedCtrlProtocolHeader protocolHeader;
 
-	quint16 targetDeviceType; //0xD001 目标设备类型-安卓设备
-	quint16 sourceDeviceType; //0xD100 源设备类型-外部设备
+    quint8 unitAddr;        //单元地址
+    quint16 ctrlAddr;        //写首地址
+    quint8 dataLength;      //写字节长度
 
-	quint16 cmd; //命令码
 
-	quint16 serialNumber; //流水号
-	quint8  uuidType; //uuid类型
-	QUuid uuid; //+16Uuid
-	quint8 sendCardIndex; //发送卡序号
-
-	quint16 dataLength;		//附加数据长度
-
-	tagIntegratedCtrlHeader()
-	{
-		int i = sizeof(tagIntegratedCtrlHeader);
-		memset(this, 0x00, i);
+    tagIntegratedCtrlHeader()
+    {
+        memset(this, 0x00, sizeof(tagIntegratedCtrlHeader));
         protocolHeader.frameLimit.build();
-	}
+    }
 
 }SIntegratedCtrlHeader;
 
