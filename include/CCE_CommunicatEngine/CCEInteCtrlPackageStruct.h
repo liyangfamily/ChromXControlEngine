@@ -10,8 +10,8 @@
 typedef struct tagIntegratedFrameLimit
 {
     //帧定界符
-    quint8 head1;	//0X55（7个）
-    quint8 head2;	//0xC0
+    quint8 head1;	//0x69
+    quint8 head2;	//0xAA
 
     bool operator==(tagIntegratedFrameLimit &other)
     {
@@ -30,7 +30,7 @@ typedef struct tagIntegratedFrameLimit
 
 }SIntegratedFrameLimit;
 
-//LED一体机集成控制协议请求头3.0
+//控制协议头
 typedef struct tagIntegratedCtrlProtocolHeader
 {
     SIntegratedFrameLimit frameLimit;
@@ -46,7 +46,7 @@ typedef struct tagIntegratedCtrlProtocolHeader
 
 }SIntegratedCtrlProtocolHeader;
 
-//LED一体机集成控制协议请求头3.0
+//控制头
 typedef struct tagIntegratedCtrlHeader
 {
     SIntegratedCtrlProtocolHeader protocolHeader;

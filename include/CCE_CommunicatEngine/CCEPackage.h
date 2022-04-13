@@ -7,6 +7,7 @@
 #include <CCE_CommunicatEngine/CCECommunicatEngineGlobal>
 #include "CCE_CommunicatEngine/CCEInteCtrlPackageStruct.h"
 #include "CCE_CommunicatEngine/CCECommunicatEngineDef.h"
+#include <CCE_Core/CCEUIHelper>
 
 #include <QByteArray>
 #include <QDebug>
@@ -37,7 +38,7 @@ public:\
 //    }\
 
 #define DO_GETOPERATIONRESULT() \
-    quint8 value = 0;\
+    quint8 value = 0xFF;\
     QByteArray buffer = getContent(); \
     if (buffer.size() < 1) { \
         return value; }\

@@ -20,7 +20,6 @@ This class is the base class of all protocol packets and is generally not use.
 */
 
 #include "CCE_CommunicatEngine/CCEPackage.h"
-#include <CCE_Core/CCEUIHelper>
 #include <memory>
 
 static quint16 g_serialNum = 0;
@@ -158,18 +157,18 @@ CCEPackage & CCEPackage::build()
     sendHeader.protocolHeader.frameType = CmdFrameType();
     sendHeader.unitAddr = CmdUnitAddr();
     sendHeader.ctrlAddr = CCEUIHelper::bigLittleSwap16(CmdCtrlAddr());
-    sendHeader.dataLength = CmdContent().size();
 
     QByteArray content = CmdContent();
+    sendHeader.dataLength = content.size();
 
     //此时计算帧长度
-    sendHeader.protocolHeader.frameLength = content.size() + sizeof(SIntegratedCtrlHeader) + 2 -3;
+    sendHeader.protocolHeader.frameLength = sendHeader.dataLength + sizeof(SIntegratedCtrlHeader) + 2 -3;
 
     m_data.append((char*)(&sendHeader), sizeof(SIntegratedCtrlHeader));
     if (sendHeader.dataLength > 0)
     {
         //拷贝数据内容
-        m_data.append(CmdContent());
+        m_data.append(content);
     }
 
     //计算和
