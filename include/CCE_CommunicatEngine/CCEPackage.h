@@ -114,11 +114,6 @@ public:
     //获取校验和
     quint16 getCheckSum() const;
 
-    /*********************工具函数**************************/
-
-    //计算校验和
-    static quint16 computCheckSum(const QByteArray& data);
-
     /*********************构建时用**************************/
     //创建校验和
     quint16 genCheckSum();
@@ -127,7 +122,6 @@ public:
 
 protected:
     /*********************构建时用**************************/
-    quint8 CmdFrameLength() const;
     virtual EFrameType CmdFrameType() const;      //在具体协议的具体类中实现
     virtual EUnitAddr CmdUnitAddr() const;        //在不同单元协议的基类中实现
     virtual quint16 CmdCtrlAddr() const;    //在具体协议的具体类中实现

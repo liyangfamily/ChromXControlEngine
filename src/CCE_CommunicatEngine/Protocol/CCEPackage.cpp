@@ -65,7 +65,7 @@ bool CCEPackage::isValid()
         return false;
     }
     QByteArray arrCpy(m_data.data() + sizeof(SIntegratedFrameLimit), m_data.size() - sizeof(SIntegratedFrameLimit) - sizeof(quint16));
-    quint16 tempCheckSum = computCheckSum(arrCpy);
+    quint16 tempCheckSum =  CCEUIHelper::byteToUShort(CCEUIHelper::getCRCCode(arrCpy));
     return (tempCheckSum==getCheckSum());
 }
 
@@ -135,27 +135,17 @@ quint16 CCEPackage::getCheckSum() const
     return CCEUIHelper::bigLittleSwap16(checkSum);
 }
 
-quint16 CCEPackage::computCheckSum(const QByteArray & data)
-{
-    CCEUIHelper::getCRCCode(data);
-}
-
-
 quint16 CCEPackage::genCheckSum()
 {
-    quint8 tempCheckSum = 0;
-    try
+    quint16 tempCheckSum = 0;
+
+    if (m_data.size() < sizeof(SIntegratedCtrlHeader))
     {
-        if (m_data.size() < sizeof(SIntegratedCtrlHeader) + 2)
-        {
-            return tempCheckSum;
-        }
-        QByteArray arrCpy(m_data.data() + 2, m_data.size() - 2);
-        tempCheckSum = computCheckSum(arrCpy);
+        return tempCheckSum;
     }
-    catch (std::exception e) {
-        qDebug() << "CCEPackageInteCtrl::" << "getCheckSum Error : %s "<< e.what();
-    }
+    QByteArray arrCpy(m_data.data() + 2, m_data.size() - 2);
+    tempCheckSum = CCEUIHelper::byteToUShort(CCEUIHelper::getCRCCode(arrCpy));
+
     return tempCheckSum;
 }
 
@@ -170,6 +160,11 @@ CCEPackage & CCEPackage::build()
     sendHeader.ctrlAddr = CCEUIHelper::bigLittleSwap16(CmdCtrlAddr());
     sendHeader.dataLength = CmdContent().size();
 
+    QByteArray content = CmdContent();
+
+    //此时计算帧长度
+    sendHeader.protocolHeader.frameLength = content.size() + sizeof(SIntegratedCtrlHeader) + 2 -3;
+
     m_data.append((char*)(&sendHeader), sizeof(SIntegratedCtrlHeader));
     if (sendHeader.dataLength > 0)
     {
@@ -177,20 +172,10 @@ CCEPackage & CCEPackage::build()
         m_data.append(CmdContent());
     }
 
-    //此时计算组包长度，填入到帧长度，再计算校验和
-    sendHeader.protocolHeader.frameLength = CmdFrameLength();
-
     //计算和
     quint16 tempCheckSum = CCEUIHelper::bigLittleSwap16(genCheckSum());
-    m_data.append(tempCheckSum);
+    m_data.append((char*)&tempCheckSum,sizeof(quint16));
     return *this;
-}
-
-quint8 CCEPackage::CmdFrameLength() const
-{
-    return m_data.size();
-    //qDebug() << "CCEPackage::you need to implement CmdFrameLength() into Subclass.";
-    //return quint8();
 }
 
 CCEPackage::EFrameType CCEPackage::CmdFrameType() const

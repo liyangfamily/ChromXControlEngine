@@ -80,12 +80,35 @@ public:
     static QString byteArrayToHexStr(const QByteArray &data);
 
     static quint16 bigLittleSwap16(quint16 v);
+    static quint32 bigLittleSwap32(quint32 v);
+
+    //int转字节数组
+    static QByteArray intToByte(int i); //HiLow
+    static QByteArray intToByteRec(int i); //LowHi
+
+    //字节数组转int
+    static int byteToInt(const QByteArray &data);
+    static int byteToIntRec(const QByteArray &data);
+    static quint32 byteToUInt(const QByteArray &data);
+    static quint32 byteToUIntRec(const QByteArray &data);
+
+    //ushort转字节数组
+    static QByteArray ushortToByte(ushort i);
+    static QByteArray ushortToByteRec(ushort i);
+
+    //字节数组转ushort
+    static int byteToUShort(const QByteArray &data);
+    static int byteToUShortRec(const QByteArray &data);
+
+    //异或加密算法
+    static QString getXorEncryptDecrypt(const QString &str, char key);
+
+    //异或校验
+    static uchar getOrCode(const QByteArray &data);
+
 
     //CRC校验
-    static quint16 getRevCrc_16(quint8 *data, int len, quint16 init, const quint16 *table);
-    static quint16 getCrc_16(quint8 *data, int len, quint16 init, const quint16 *table);
-    static quint16 getModbus16(quint8 *data, int len);
-    static quint16 getCRCCode(const QByteArray &data);
+    static QByteArray getCRCCode(const QByteArray &data);
 
 #define ISUNSIGNED(x) (decltype(x)(x)>=0&&decltype(x)(~(x))>=0)
 #define ISSINGNED(x)   (decltype(x)(x)>=0?(decltype(x)(~(x))<0?true:false):true)

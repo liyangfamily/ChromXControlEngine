@@ -74,4 +74,26 @@ protected:
 private:
     quint8 m_version = 0;
 };
+
+class CCE_COMMUNICATENGINE_EXPORT CCEMainCtrlPackage_WriteControlPump : public CCEAbstractMainCtrlPackage
+{
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCEMainCtrlPackage_WriteControlPump, CCEAbstractMainCtrlPackage)
+public:
+    CCEMainCtrlPackage_WriteControlPump(quint8 status):m_status(status){}
+    quint8 getOperationResult() const{
+        DO_GETOPERATIONRESULT();
+    }
+protected:
+    EFrameType CmdFrameType () const override {
+        return EFrameType::EFT_WriteFrame;
+    }
+    quint16 CmdCtrlAddr() const override{
+        return quint16(0x0001);
+    }
+    QByteArray CmdContent() const override{
+     return QByteArray((char *)&m_status, 1);
+    }
+private:
+    quint8 m_status = 0;
+};
 #endif // CCEMAINCTRLPACKAGE_H
