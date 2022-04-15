@@ -9,6 +9,7 @@
 #include "CCE_CommunicatEngine/CCECommunicatEngineDef.h"
 #include <CCE_Core/CCEUIHelper>
 
+#include <CCE_Core/CCEAPIDef>
 #include <QByteArray>
 #include <QDebug>
 #include <QString>
@@ -24,18 +25,18 @@ public:\
     Class(const QByteArray& data) :inheritsClass(data) {}\
     virtual ~Class() {};\
 
-//#define CCE_DECLARE_COMMANDSEND(d,pack) \
-//    CCEEnginePackage enginePack;\
-//    enginePack.initByDetectInfo(d->m_parentItemDetectInfo);\
-//    enginePack.setData(pack.getDataToSend());\
-//    if (sync) {\
-//        CCEEnginePackage recEnginePack;\
-//        CCEClusterProxy::syncSend(enginePack, recEnginePack, msec);\
-//        return d->m_packageMgr.handle(CCEPackage(recEnginePack.data()));\
-//    }\
-//    else {\
-//        return CCEClusterProxy::asyncSend(enginePack) ? LAPI::EResult::ER_INTECTRL_Success : LAPI::EResult::ER_INTECTRL_Fail_NoReason;\
-//    }\
+#define CCE_DECLARE_COMMANDSEND(d,pack) \
+    CCEEnginePackage enginePack;\
+    enginePack.initByDetectInfo(d->socket);\
+    enginePack.setData(pack.getDataToSend());\
+    if (sync) {\
+        CCEEnginePackage recEnginePack;\
+        CCEClusterProxy::syncSend(enginePack, recEnginePack, msec);\
+        return d->m_packageMgr.handle(CCEPackage(recEnginePack.data()));\
+    }\
+    else {\
+        return CCEClusterProxy::asyncSend(enginePack) ? CCEAPI::EResult::ER_Success : CCEAPI::EResult::ER_Fail;\
+    }\
 
 #define DO_GETOPERATIONRESULT() \
     quint8 value = 0xFF;\

@@ -5,7 +5,7 @@
 #define CHROMX_H_CCEPACKAGEMANAGER
 #pragma once
 
-#include <CCE_CommunicatEngine/CCEPackage>
+#include <CCE_CommunicatEngine/CCEMainCtrlPackage>
 
 #include <QMap>
 
@@ -21,7 +21,7 @@ public:
     bool registerPackage(const T &package, std::function<quint16(const QByteArray&)>cb)
     {
         quint8 unitAddr = package.CmdUnitAddr();
-        quint16 cmdNum = package.CmdcmdNum();
+        quint16 cmdNum = package.CmdCtrlAddr();
         UnitMap::iterator iUnitMap = m_maps.find(unitAddr);
         if (iUnitMap != m_maps.end()) {
             CmdMap::iterator icmdNumber = iUnitMap.value().find(cmdNum);
@@ -40,7 +40,19 @@ public:
         return true;
     }
 
-    void unregisterPackage(CCEPackage package);
+    template <class T>
+    void unregisterPackage(const T &package){
+        quint8 unitAddr = package.CmdUnitAddr();
+        quint16 cmdNum = package.CmdCtrlAddr();
+        UnitMap::iterator iUnitMap = m_maps.find(unitAddr);
+        if (iUnitMap != m_maps.end()) {
+            CmdMap::iterator iCmdNumber = iUnitMap.value().find(cmdNum);
+            if (iCmdNumber != iUnitMap.value().end()) {
+                //delete iCmdNumber.value();
+                iUnitMap.value().erase(iCmdNumber);
+            }
+        }
+    }
     void unregisterAll();
 
     quint16 handle(const CCEPackage &package);

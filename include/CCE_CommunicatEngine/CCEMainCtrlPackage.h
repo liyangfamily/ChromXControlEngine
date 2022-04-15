@@ -1,4 +1,4 @@
-#ifndef CCEMAINCTRLPACKAGE_H
+﻿#ifndef CCEMAINCTRLPACKAGE_H
 #define CCEMAINCTRLPACKAGE_H
 
 #include <CCE_CommunicatEngine/CCEPackage>
@@ -10,7 +10,7 @@ class CCE_COMMUNICATENGINE_EXPORT CCEAbstractMainCtrlPackage : public CCEPackage
 public:
     enum ECommand
     {
-        //发送卡相关
+        //设备相关
         EC_Read_HardwareVersion = 0x0001,   //主控板硬件版本号
         EC_Write_HardwareVersion = EC_Read_HardwareVersion,
 

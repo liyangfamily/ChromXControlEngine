@@ -134,7 +134,7 @@ QString CCEUIHelper::appRunTimeDataLocation()
     return path;
 }
 
-static bool bEnableCommunicatLog = false;
+static bool bEnableCommunicatLog = true;
 void CCEUIHelper::setEnableCommunicatLog(bool enable)
 {
     bEnableCommunicatLog = enable;

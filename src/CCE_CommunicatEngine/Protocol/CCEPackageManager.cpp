@@ -31,20 +31,6 @@ CCEPackageManager::~CCEPackageManager()
     unregisterAll();
 }
 
-void CCEPackageManager::unregisterPackage(CCEPackage package)
-{
-    quint8 unitAddr = package.CmdUnitAddr();
-    quint16 cmdNum = package.CmdCtrlAddr();
-    UnitMap::iterator iUnitMap = m_maps.find(unitAddr);
-    if (iUnitMap != m_maps.end()) {
-        CmdMap::iterator iCmdNumber = iUnitMap.value().find(cmdNum);
-        if (iCmdNumber != iUnitMap.value().end()) {
-            //delete iCmdNumber.value();
-            iUnitMap.value().erase(iCmdNumber);
-        }
-    }
-}
-
 void CCEPackageManager::unregisterAll()
 {
     UnitMap::iterator iMaps = m_maps.begin();

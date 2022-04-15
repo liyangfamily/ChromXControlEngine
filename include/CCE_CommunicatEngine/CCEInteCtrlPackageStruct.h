@@ -15,7 +15,7 @@ typedef struct tagIntegratedFrameLimit
 
     bool operator==(tagIntegratedFrameLimit &other)
     {
-        if (this->head1==other.head1 == 0&&this->head2==other.head2)
+        if (this->head1==other.head1 &&this->head2==other.head2)
             return true;
         else
             return false;
