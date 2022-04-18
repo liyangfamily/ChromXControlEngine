@@ -18,7 +18,7 @@ private:
 public slots:
     /******************************Engine信号响应槽函数********************************/
     //建立连接
-    void slot_EstablishUDPConnection(CCE_NetEngine_TransThread* threadid, const QString& addr, quint16 port) override;
+    void slot_EstablishUDPConnection(CCE_NetEngine_TransThread* threadid, const QString& addr, quint16 port,quint64 extraData) override;
     //发送数据
     void slot_SendData(QObject* objSocket, CCEEnginePackage) override;
 

@@ -27,7 +27,9 @@ public:\
 
 #define CCE_DECLARE_COMMANDSEND(d,pack) \
     CCEEnginePackage enginePack;\
-    enginePack.initByDetectInfo(d->socket);\
+    if(!enginePack.initByDetectInfo(d->m_deviceDetectInfo)){\
+        return CCEAPI::EResult::ER_Fail;\
+    }\
     enginePack.setData(pack.getDataToSend());\
     if (sync) {\
         CCEEnginePackage recEnginePack;\

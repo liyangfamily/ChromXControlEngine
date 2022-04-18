@@ -101,19 +101,21 @@ void CCE_NetEngine_TransThread::closeSocket(QObject * objSocket)
 }
 
 //基类不实现，各个子类负责钱建立自己的连接，该槽函数给UDP连接使用
-void CCE_NetEngine_TransThread::slot_EstablishUDPConnection(CCE_NetEngine_TransThread* threadid, const QString& addr, quint16 port)
+void CCE_NetEngine_TransThread::slot_EstablishUDPConnection(CCE_NetEngine_TransThread* threadid, const QString& addr, quint16 port,quint64 extraData)
 {
     Q_UNUSED(threadid)
     Q_UNUSED(addr)
     Q_UNUSED(port)
+    Q_UNUSED(extraData)
     return;
 }
 
 //基类不实现，各个子类负责钱建立自己的连接，该槽函数给COM连接使用
-void CCE_NetEngine_TransThread::slot_EstablishCOMConnection(CCE_NetEngine_TransThread * threadid, QString comName)
+void CCE_NetEngine_TransThread::slot_EstablishCOMConnection(CCE_NetEngine_TransThread * threadid, QString comName,quint64 extraData)
 {
     Q_UNUSED(threadid)
     Q_UNUSED(comName)
+    Q_UNUSED(extraData)
     return;
 }
 

@@ -72,8 +72,8 @@ signals:
     //向外部发送发送数据信号
     void sig_Data_Sended(QObject* objSocket, qint64);
     //向外部发送连接建立的信号，信号内容会被替换为结构体
-    void sig_NewUDPConnectionEstablish(QObject* objSocket, const QString& addr, quint16 port);
-    void sig_NewCOMConnectionEstablish(QObject* objSocket, QString comName);
+    void sig_NewUDPConnectionEstablish(QObject* objSocket, const QString& addr, quint16 port,quint64 extraData);
+    void sig_NewCOMConnectionEstablish(QObject* objSocket, QString comName,quint64 extraData);
     //向外部发送Cluster发送的数据
     void sig_SendedDataSteam(QObject *psource, CCEEnginePackage dataSteam);
     //向外部发送Task解析到的数据帧
@@ -90,8 +90,8 @@ protected slots:
     //收到NetEngine发送的数据发送信号
     void slot_Data_Sended(QObject *   /*clientHandle*/, qint64 /*bytes sent*/);
     //收到NetEngine发送的新连接建立信号
-    void slot_NewUDPConnectionEstablish(QObject* /*clientHandle*/, const QString& addr, quint16 port);
-    void slot_NewCOMConnectionEstablish(QObject* /*clientHandle*/, QString comName);
+    void slot_NewUDPConnectionEstablish(QObject* /*clientHandle*/, const QString& addr, quint16 port,quint64 extraData);
+    void slot_NewCOMConnectionEstablish(QObject* /*clientHandle*/, QString comName,quint64 extraData);
 
 public slots:
     //剔除僵尸客户端
@@ -106,8 +106,8 @@ protected slots :
     //断开某个连接
     void slot_Disconnect(QObject * objSocket);
     //与目标建立连接
-    bool slot_ConnectToUDP(const QString & address, quint16 nPort);
-    bool slot_ConnectToCOM(QString comName);
+    bool slot_ConnectToUDP(const QString & address, quint16 nPort,quint64 extraData);
+    bool slot_ConnectToCOM(QString comName,quint64 extraData);
     //发送探卡信息,不要再次操作中调用同步锁，独占锁，会造成m_hash_mutex死锁
     void slot_SendHelloPackage();
 };

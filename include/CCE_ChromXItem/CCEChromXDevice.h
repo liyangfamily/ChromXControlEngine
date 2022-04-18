@@ -7,7 +7,6 @@
 #define gChromXDevice CCEChromXDevice::getInstance()
 #define gChromXDetectServer CCEChromXDevice::getInstance().detectServer()
 #define gChromXMainCtrl CCEChromXDevice::getInstance().mainCtrlDevice()
-#define gChromXSingleCtrl CCEChromXDevice::getInstance().detectServer()
 
 class CCEDetectServer;
 class CCEMainCtrlDevice;
@@ -22,7 +21,7 @@ public:
     CCEDetectServer& detectServer();
     CCEMainCtrlDevice& mainCtrlDevice();
 private:
-    bool initSubModule();
+    bool registerModule();
     bool releaseSubModule();
 private:
     CCEChromXDevice();

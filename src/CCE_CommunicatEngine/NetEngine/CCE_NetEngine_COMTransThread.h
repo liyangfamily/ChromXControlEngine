@@ -18,7 +18,7 @@ private:
 public slots:
     /******************************Engine信号响应槽函数********************************/
     //建立连接
-    void slot_EstablishCOMConnection(CCE_NetEngine_TransThread* threadid, QString comName) override;
+    void slot_EstablishCOMConnection(CCE_NetEngine_TransThread* threadid, QString comName,quint64 extraData) override;
     //发送数据
     void slot_SendData(QObject* objSocket, CCEEnginePackage) override;
 

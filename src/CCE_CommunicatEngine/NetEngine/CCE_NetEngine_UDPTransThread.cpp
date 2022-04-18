@@ -36,8 +36,9 @@ void CCE_NetEngine_UDPTransThread::closeSocket(QObject * objSocket)
     }
 }
 
-void CCE_NetEngine_UDPTransThread::slot_EstablishUDPConnection(CCE_NetEngine_TransThread* threadid, const QString& addr, quint16 port)
+void CCE_NetEngine_UDPTransThread::slot_EstablishUDPConnection(CCE_NetEngine_TransThread* threadid, const QString& addr, quint16 port,quint64 extraData)
 {
+    Q_UNUSED(extraData)
     if (threadid != this)
         return;
     QUdpSocket* socket_client = nullptr;
@@ -60,7 +61,7 @@ void CCE_NetEngine_UDPTransThread::slot_EstablishUDPConnection(CCE_NetEngine_Tra
             m_mutex_protect.lock();
             m_clientList.insert(socket_client);
             m_mutex_protect.unlock();
-            emit sig_NewUDPConnectionEstablish(socket_client, addr, port);
+            emit sig_NewUDPConnectionEstablish(socket_client, addr, port,extraData);
         }
         else
         {

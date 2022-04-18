@@ -40,10 +40,10 @@ CCECluster::CCECluster(QObject *parent)
     connect(m_pNetEngine, &CCE_NetEngine::sig_Data_Sended, this, &CCECluster::slot_Data_Sended, Qt::QueuedConnection);
     connect(m_pNetEngine, &CCE_NetEngine::sig_SocketAbort, this, &CCECluster::slot_SocketAbort, Qt::QueuedConnection);
 
-    connect(m_pNetEngine, QOverload<QObject*, const QString&, quint16>::of(&CCE_NetEngine::sig_NewUDPConnectionEstablish),
-        this, QOverload<QObject*, const QString&, quint16>::of(&CCECluster::slot_NewUDPConnectionEstablish), Qt::QueuedConnection);
-    connect(m_pNetEngine, QOverload<QObject*, QString>::of(&CCE_NetEngine::sig_NewCOMConnectionEstablish),
-        this, QOverload<QObject*, QString>::of(&CCECluster::slot_NewCOMConnectionEstablish), Qt::QueuedConnection);
+    connect(m_pNetEngine, QOverload<QObject*, const QString&, quint16,quint64>::of(&CCE_NetEngine::sig_NewUDPConnectionEstablish),
+        this, QOverload<QObject*, const QString&, quint16,quint64>::of(&CCECluster::slot_NewUDPConnectionEstablish), Qt::QueuedConnection);
+    connect(m_pNetEngine, QOverload<QObject*, QString,quint64>::of(&CCE_NetEngine::sig_NewCOMConnectionEstablish),
+        this, QOverload<QObject*, QString,quint64>::of(&CCECluster::slot_NewCOMConnectionEstablish), Qt::QueuedConnection);
 
     m_nHeartBeatingTime = 20;
 }
@@ -137,10 +137,10 @@ void CCECluster::slot_SocketAbort(QObject * clientHandle)
     if (pClientTask)
     {
         disconnect(pClientTask, &CCE_TaskEngine_TaskBase::sig_SendData, m_pNetEngine, &CCE_NetEngine::sig_SendData);
-        disconnect(pClientTask, QOverload<const QString&, quint16>::of(&CCE_TaskEngine_TaskBase::sig_ConnectToUDP),
-            m_pNetEngine, QOverload<const QString&, quint16>::of(&CCE_NetEngine::slot_ConnectToUDP));
-        disconnect(pClientTask, QOverload<QString>::of(&CCE_TaskEngine_TaskBase::sig_ConnectToCOM),
-            m_pNetEngine, QOverload<QString>::of(&CCE_NetEngine::slot_ConnectToCOM));
+        disconnect(pClientTask, QOverload<const QString&, quint16,quint64>::of(&CCE_TaskEngine_TaskBase::sig_ConnectToUDP),
+            m_pNetEngine, QOverload<const QString&, quint16,quint64>::of(&CCE_NetEngine::slot_ConnectToUDP));
+        disconnect(pClientTask, QOverload<QString,quint64>::of(&CCE_TaskEngine_TaskBase::sig_ConnectToCOM),
+            m_pNetEngine, QOverload<QString,quint64>::of(&CCE_NetEngine::slot_ConnectToCOM));
         disconnect(pClientTask, &CCE_TaskEngine_TaskBase::sig_Disconnect, m_pNetEngine, &CCE_NetEngine::sig_Disconnect);
         disconnect(pClientTask, &CCE_TaskEngine_TaskBase::sig_Message, this, &CCECluster::sig_Message);
         disconnect(pClientTask, &CCE_TaskEngine_TaskBase::sig_ParsingInteCtrlDataFrame, this, &CCECluster::sig_ParsingInteCtrlDataFrame);
@@ -185,10 +185,10 @@ void CCECluster::slot_Data_Received(QObject * clientHandle, CCEEnginePackage dat
         CCE_TaskEngine_TaskBase * pnode = new CCE_TaskEngine_IntegratedCtrlTask(this, clientHandle, this);
         //using queued connection of send and revieve;
         connect(pnode, &CCE_TaskEngine_TaskBase::sig_SendData, m_pNetEngine, &CCE_NetEngine::sig_SendData, Qt::QueuedConnection);
-        connect(pnode, QOverload<const QString&, quint16>::of(&CCE_TaskEngine_TaskBase::sig_ConnectToUDP),
-            m_pNetEngine, QOverload<const QString&, quint16>::of(&CCE_NetEngine::slot_ConnectToUDP), Qt::QueuedConnection);
-        connect(pnode, QOverload<QString>::of(&CCE_TaskEngine_TaskBase::sig_ConnectToCOM),
-            m_pNetEngine, QOverload<QString>::of(&CCE_NetEngine::slot_ConnectToCOM), Qt::QueuedConnection);
+        connect(pnode, QOverload<const QString&, quint16,quint64>::of(&CCE_TaskEngine_TaskBase::sig_ConnectToUDP),
+            m_pNetEngine, QOverload<const QString&, quint16,quint64>::of(&CCE_NetEngine::slot_ConnectToUDP), Qt::QueuedConnection);
+        connect(pnode, QOverload<QString,quint64>::of(&CCE_TaskEngine_TaskBase::sig_ConnectToCOM),
+            m_pNetEngine, QOverload<QString,quint64>::of(&CCE_NetEngine::slot_ConnectToCOM), Qt::QueuedConnection);
         connect(pnode, &CCE_TaskEngine_TaskBase::sig_Disconnect, m_pNetEngine, &CCE_NetEngine::sig_Disconnect, Qt::QueuedConnection);
         connect(pnode, &CCE_TaskEngine_TaskBase::sig_Message, this, &CCECluster::sig_Message, Qt::QueuedConnection);
         connect(pnode, &CCE_TaskEngine_TaskBase::sig_ParsingInteCtrlDataFrame, this, &CCECluster::sig_ParsingInteCtrlDataFrame, Qt::QueuedConnection);
@@ -212,7 +212,7 @@ void CCECluster::slot_Data_Sended(QObject * clientHandle, qint64 bytesSend)
     emit sig_Data_Sended(clientHandle, bytesSend);
 }
 
-void CCECluster::slot_NewUDPConnectionEstablish(QObject* clientHandle, const QString& addr, quint16 port)
+void CCECluster::slot_NewUDPConnectionEstablish(QObject* clientHandle, const QString& addr, quint16 port,quint64 extraData)
 {
     bool nHashContains = false;
     CCE_TaskEngine_TaskBase * pClientTask = 0;
@@ -226,8 +226,8 @@ void CCECluster::slot_NewUDPConnectionEstablish(QObject* clientHandle, const QSt
         pnode->setHostName(hostName);
         qDebug() << "New Connection. IP:" << addr << " Port:" << port;
         connect(pnode, &CCE_TaskEngine_TaskBase::sig_SendData, m_pNetEngine, &CCE_NetEngine::sig_SendData, Qt::QueuedConnection);
-        connect(pnode, QOverload<const QString&, quint16>::of(&CCE_TaskEngine_TaskBase::sig_ConnectToUDP),
-            m_pNetEngine, QOverload<const QString&, quint16>::of(&CCE_NetEngine::slot_ConnectToUDP), Qt::QueuedConnection);
+        connect(pnode, QOverload<const QString&, quint16,quint64>::of(&CCE_TaskEngine_TaskBase::sig_ConnectToUDP),
+            m_pNetEngine, QOverload<const QString&, quint16,quint64>::of(&CCE_NetEngine::slot_ConnectToUDP), Qt::QueuedConnection);
         /*connect(pnode, QOverload<QString>::of(&CCE_TaskEngine_TaskBase::sig_ConnectToCOM),
             m_pNetEngine, QOverload<QString>::of(&CCE_NetEngine::slot_ConnectToCOM), Qt::QueuedConnection);*/
         connect(pnode, &CCE_TaskEngine_TaskBase::sig_Disconnect, m_pNetEngine, &CCE_NetEngine::sig_Disconnect, Qt::QueuedConnection);
@@ -244,10 +244,10 @@ void CCECluster::slot_NewUDPConnectionEstablish(QObject* clientHandle, const QSt
     }
     m_hash_mutex.unlock();
     Q_ASSERT(nHashContains != 0 && pClientTask != 0);
-    emit sig_NewUDPConnectionEstablish(clientHandle, addr, port);
+    emit sig_NewUDPConnectionEstablish(clientHandle, addr, port,extraData);
 }
 
-void CCECluster::slot_NewCOMConnectionEstablish(QObject* clientHandle, QString comName)
+void CCECluster::slot_NewCOMConnectionEstablish(QObject* clientHandle, QString comName,quint64 extraData)
 {
     bool nHashContains = false;
     CCE_TaskEngine_TaskBase * pClientTask = 0;
@@ -263,8 +263,8 @@ void CCECluster::slot_NewCOMConnectionEstablish(QObject* clientHandle, QString c
         connect(pnode, &CCE_TaskEngine_TaskBase::sig_SendData, m_pNetEngine, &CCE_NetEngine::sig_SendData, Qt::QueuedConnection);
         /*connect(pnode, QOverload<const QHostAddress&, quint16>::of(&CCE_TaskEngine_TaskBase::sig_ConnectToUDP),
             m_pNetEngine, QOverload<const QHostAddress&, quint16>::of(&CCE_NetEngine::slot_ConnectToUDP), Qt::QueuedConnection);*/
-        connect(pnode, QOverload<QString>::of(&CCE_TaskEngine_TaskBase::sig_ConnectToCOM),
-            m_pNetEngine, QOverload<QString>::of(&CCE_NetEngine::slot_ConnectToCOM), Qt::QueuedConnection);
+        connect(pnode, QOverload<QString,quint64>::of(&CCE_TaskEngine_TaskBase::sig_ConnectToCOM),
+            m_pNetEngine, QOverload<QString,quint64>::of(&CCE_NetEngine::slot_ConnectToCOM), Qt::QueuedConnection);
         connect(pnode, &CCE_TaskEngine_TaskBase::sig_Disconnect, m_pNetEngine, &CCE_NetEngine::sig_Disconnect, Qt::QueuedConnection);
         connect(pnode, &CCE_TaskEngine_TaskBase::sig_Message, this, &CCECluster::sig_Message, Qt::QueuedConnection);
         connect(pnode, &CCE_TaskEngine_TaskBase::sig_ParsingInteCtrlDataFrame, this, &CCECluster::sig_ParsingInteCtrlDataFrame, Qt::QueuedConnection);
@@ -279,7 +279,7 @@ void CCECluster::slot_NewCOMConnectionEstablish(QObject* clientHandle, QString c
     }
     m_hash_mutex.unlock();
     Q_ASSERT(nHashContains != 0 && pClientTask != 0);
-    emit sig_NewCOMConnectionEstablish(clientHandle, comName);
+    emit sig_NewCOMConnectionEstablish(clientHandle, comName,extraData);
 }
 
 bool CCECluster::slot_SendData(QObject * objSocket, CCEEnginePackage pack)
@@ -322,7 +322,7 @@ void CCECluster::slot_Disconnect(QObject * objSocket)
     m_hash_mutex.unlock();
 }
 
-bool CCECluster::slot_ConnectToUDP(const QString & address, quint16 nPort)
+bool CCECluster::slot_ConnectToUDP(const QString & address, quint16 nPort,quint64 extraData)
 {
     QString hostName = CCEEnginePackage::genHostName(address, nPort);
     if (m_hash_Name2node.contains(hostName))
@@ -330,10 +330,10 @@ bool CCECluster::slot_ConnectToUDP(const QString & address, quint16 nPort)
         qDebug() << hostName << ", connection already existing.";
         return false;
     }
-    return netEngine()->slot_ConnectToUDP(address, nPort);
+    return netEngine()->slot_ConnectToUDP(address, nPort,extraData);
 }
 
-bool CCECluster::slot_ConnectToCOM(QString comName)
+bool CCECluster::slot_ConnectToCOM(QString comName,quint64 extraData)
 {
     QString hostName = CCEEnginePackage::genHostName(comName);
     if (m_hash_Name2node.contains(hostName))
@@ -341,7 +341,7 @@ bool CCECluster::slot_ConnectToCOM(QString comName)
         qDebug() << hostName << ", connection already existing.";
         return false;
     }
-    return netEngine()->slot_ConnectToCOM(comName);
+    return netEngine()->slot_ConnectToCOM(comName,extraData);
 }
 
 void CCECluster::slot_SendHelloPackage()

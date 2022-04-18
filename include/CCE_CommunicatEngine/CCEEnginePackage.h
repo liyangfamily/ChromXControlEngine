@@ -69,7 +69,7 @@ public:
     static QString genHostName(QString comName);
 
     //从探卡信息中获取目标socket等信息
-    bool initByDetectInfo(QObject* socket);
+    bool initByDetectInfo(const SDetectItemInfo* info);
     /*QVariant exData(int role) const;
     void setExData(int role, const QVariant &value);*/
 

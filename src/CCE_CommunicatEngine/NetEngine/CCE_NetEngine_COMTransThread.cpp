@@ -35,7 +35,7 @@ void CCE_NetEngine_COMTransThread::closeSocket(QObject * objSocket)
     }
 }
 
-void CCE_NetEngine_COMTransThread::slot_EstablishCOMConnection(CCE_NetEngine_TransThread* threadid, QString comName)
+void CCE_NetEngine_COMTransThread::slot_EstablishCOMConnection(CCE_NetEngine_TransThread* threadid, QString comName,quint64 extraData)
 {
     if (threadid != this)
         return;
@@ -46,7 +46,8 @@ void CCE_NetEngine_COMTransThread::slot_EstablishCOMConnection(CCE_NetEngine_Tra
     {
         serial_client->setBaudRate(QSerialPort::Baud115200);//设置波特率和读写方向
         serial_client->setDataBits(QSerialPort::Data8);		//数据位为8位
-        serial_client->setFlowControl(QSerialPort::HardwareControl);//硬件流控制
+        serial_client->setFlowControl((EDeviceType)extraData==EDeviceType::EDT_MainCOMDevice
+                                      ?QSerialPort::HardwareControl:QSerialPort::NoFlowControl);//流控制
         serial_client->setParity(QSerialPort::NoParity);	//无校验位
         serial_client->setStopBits(QSerialPort::OneStop); //一位停止位
         if (serial_client->isOpen())
@@ -70,7 +71,7 @@ void CCE_NetEngine_COMTransThread::slot_EstablishCOMConnection(CCE_NetEngine_Tra
         m_mutex_protect.lock();
         m_clientList.insert(serial_client);
         m_mutex_protect.unlock();
-        emit sig_NewCOMConnectionEstablish(serial_client, comName);
+        emit sig_NewCOMConnectionEstablish(serial_client, comName,extraData);
     }
     else
         Q_ASSERT(false);

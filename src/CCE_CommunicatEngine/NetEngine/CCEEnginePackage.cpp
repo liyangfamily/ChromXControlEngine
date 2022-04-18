@@ -152,10 +152,20 @@ QString CCEEnginePackage::genHostName(QString comName)
 {
     return comName;
 }
-
-bool CCEEnginePackage::initByDetectInfo(QObject* socket)
+#include <QDebug>
+bool CCEEnginePackage::initByDetectInfo(const SDetectItemInfo* info)
 {
-    this->setSocketObj(socket);
+    if(!info){
+        qDebug()<<"EnginePackage Init fail...DetectInfo is nullptr.";
+        Q_ASSERT(info);
+        return false;
+    }
+    if(!info->socketObj){
+        qDebug()<<"EnginePackage Init fail...socketObj is nullptr.";
+        Q_ASSERT(info->socketObj);
+        return false;
+    }
+    this->setSocketObj(info->socketObj);
     this->setType(ECommunicatType::ECT_COM);
     this->setFromType(EPackageFromType::EPFT_Send);
     return true;

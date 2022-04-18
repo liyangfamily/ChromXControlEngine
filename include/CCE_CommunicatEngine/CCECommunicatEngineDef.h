@@ -36,6 +36,13 @@ enum EDeviceStatus
     EDS_Online = 0x01, //在线
 };
 
+//设备类型
+enum EDeviceType{
+    EDT_NULL = 0,
+    EDT_MainCOMDevice,
+    EDT_AssistCOMDevice,
+};
+
 #if(1)
 #pragma pack(1)
 /*探卡能读取到的信息,用于添加设备*/
@@ -56,6 +63,7 @@ typedef struct tagDetectItemInfo
     ECommunicatType communType;
 
     EDeviceStatus deviceStatus;
+    EDeviceType deviceType;
 
     SNetInfo netInfo;
     SComInfo comInfo;
@@ -72,6 +80,7 @@ typedef struct tagDetectItemInfo
         this->detectType = EDeviceDetectType::EDDT_NULL;
         this->communType = ECommunicatType::ECT_NULL;
         this->deviceStatus = EDeviceStatus::EDS_OffLine;
+        this->deviceType = EDeviceType::EDT_NULL;
         this->netInfo.ipAddr.clear();
         this->netInfo.port = 0;
         this->comInfo.comName.clear();
@@ -85,6 +94,7 @@ typedef struct tagDetectItemInfo
         this->detectType = other.detectType;
         this->communType = other.communType;
         this->deviceStatus = other.deviceStatus;
+        this->deviceType = other.deviceType;
         this->netInfo.ipAddr = other.netInfo.ipAddr;
         this->netInfo.port = other.netInfo.port;
         this->comInfo.comName = other.comInfo.comName;

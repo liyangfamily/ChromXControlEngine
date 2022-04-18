@@ -36,8 +36,8 @@ protected:
 public slots:
     /******************************Engine信号响应槽函数********************************/
     //建立连接
-    virtual void slot_EstablishUDPConnection(CCE_NetEngine_TransThread* threadid, const QString& addr, quint16 port);
-    virtual void slot_EstablishCOMConnection(CCE_NetEngine_TransThread* threadid, QString comName);
+    virtual void slot_EstablishUDPConnection(CCE_NetEngine_TransThread* threadid, const QString& addr, quint16 port,quint64 extraData);
+    virtual void slot_EstablishCOMConnection(CCE_NetEngine_TransThread* threadid, QString comName,quint64 extraData);
     //发送数据
     virtual void slot_SendData(QObject* objSocket, CCEEnginePackage);
     //设置为不活动
@@ -73,8 +73,8 @@ signals:
     //向Engine发送发送数据信号
     void sig_Data_Sended(QObject* objSocket, qint64);
     //向Engine发送连接建立的信号
-    void sig_NewUDPConnectionEstablish(QObject* objSocket, const QString& addr, quint16 port);
-    void sig_NewCOMConnectionEstablish(QObject* objSocket, QString comName);
+    void sig_NewUDPConnectionEstablish(QObject* objSocket, const QString& addr, quint16 port,quint64 extraData);
+    void sig_NewCOMConnectionEstablish(QObject* objSocket, QString comName,quint64 extraData);
 
 protected:
     static int RUBBISH_CAN_SIZE;

@@ -49,13 +49,13 @@ signals:
     //向外部发送发送数据信号
     void sig_Data_Sended(QObject* objSocket, qint64);
     //向外部发送连接建立的信号，信号内容会被替换为结构体
-    void sig_NewUDPConnectionEstablish(QObject* objSocket, const QString& addr, quint16 port);
-    void sig_NewCOMConnectionEstablish(QObject* objSocket, QString comName);
+    void sig_NewUDPConnectionEstablish(QObject* objSocket, const QString& addr, quint16 port,quint64 extraData);
+    void sig_NewCOMConnectionEstablish(QObject* objSocket, QString comName,quint64 extraData);
 
     /*********************************发往TransThread信号**********************************/
     //向TransThread发送建立连接信号
-    void sig_EstablishUDPConnection(CCE_NetEngine_TransThread* threadid, const QString& addr, quint16 port);
-    void sig_EstablishCOMConnection(CCE_NetEngine_TransThread* threadid, QString comName);
+    void sig_EstablishUDPConnection(CCE_NetEngine_TransThread* threadid, const QString& addr, quint16 port,quint64 extraData);
+    void sig_EstablishCOMConnection(CCE_NetEngine_TransThread* threadid, QString comName,quint64 extraData);
     //向TransThread发送数据
     void sig_SendData(QObject * objSocket, CCEEnginePackage);
     //向TransThread发送断开连接信号
@@ -72,8 +72,8 @@ public slots:
     //断开某个连接
     void slot_Disconnect(QObject * objSocket);
     //与目标建立连接
-    bool slot_ConnectToUDP(const QString & address, quint16 nPort);
-    bool slot_ConnectToCOM(QString comName);
+    bool slot_ConnectToUDP(const QString & address, quint16 nPort,quint64 extraData);
+    bool slot_ConnectToCOM(QString comName,quint64 extraData);
 protected:
     int m_nThread = 2;
     int m_nPayLoad;

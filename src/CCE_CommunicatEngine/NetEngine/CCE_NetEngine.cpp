@@ -92,21 +92,21 @@ bool CCE_NetEngine::transThreadDelete(CCE_NetEngine_TransThread *threadid)
 
         if (clientTH->transThreadType() == ECommunicatType::ECT_UDP)
         {
-            disconnect(clientTH, QOverload<QObject*, const QString&, quint16>::of(&CCE_NetEngine_TransThread::sig_NewUDPConnectionEstablish),
-                this, QOverload<QObject*, const QString&, quint16>::of(&CCE_NetEngine::sig_NewUDPConnectionEstablish));
+            disconnect(clientTH, QOverload<QObject*, const QString&, quint16,quint64>::of(&CCE_NetEngine_TransThread::sig_NewUDPConnectionEstablish),
+                this, QOverload<QObject*, const QString&, quint16,quint64>::of(&CCE_NetEngine::sig_NewUDPConnectionEstablish));
             disconnect(clientTH, QOverload<QObject*, QAbstractSocket::SocketError>::of(&CCE_NetEngine_TransThread::sig_SocketError),
                 this, QOverload<QObject*, QAbstractSocket::SocketError>::of(&CCE_NetEngine::sig_SocketError));
-            disconnect(this, QOverload<CCE_NetEngine_TransThread*, const QString&, quint16>::of(&CCE_NetEngine::sig_EstablishUDPConnection),
-                clientTH, QOverload<CCE_NetEngine_TransThread*, const QString&, quint16>::of(&CCE_NetEngine_TransThread::slot_EstablishUDPConnection));
+            disconnect(this, QOverload<CCE_NetEngine_TransThread*, const QString&, quint16,quint64>::of(&CCE_NetEngine::sig_EstablishUDPConnection),
+                clientTH, QOverload<CCE_NetEngine_TransThread*, const QString&, quint16,quint64>::of(&CCE_NetEngine_TransThread::slot_EstablishUDPConnection));
         }
         else if (clientTH->transThreadType() == ECommunicatType::ECT_COM)
         {
-            disconnect(clientTH, QOverload<QObject*, QString>::of(&CCE_NetEngine_TransThread::sig_NewCOMConnectionEstablish),
-                this, QOverload<QObject*, QString>::of(&CCE_NetEngine::sig_NewCOMConnectionEstablish));
+            disconnect(clientTH, QOverload<QObject*, QString,quint64>::of(&CCE_NetEngine_TransThread::sig_NewCOMConnectionEstablish),
+                this, QOverload<QObject*, QString,quint64>::of(&CCE_NetEngine::sig_NewCOMConnectionEstablish));
             disconnect(clientTH, QOverload<QObject*, QSerialPort::SerialPortError>::of(&CCE_NetEngine_TransThread::sig_SocketError),
                 this, QOverload<QObject*, QSerialPort::SerialPortError>::of(&CCE_NetEngine::sig_SocketError));
-            disconnect(this, QOverload<CCE_NetEngine_TransThread*, QString>::of(&CCE_NetEngine::sig_EstablishCOMConnection),
-                clientTH, QOverload<CCE_NetEngine_TransThread*, QString>::of(&CCE_NetEngine_TransThread::slot_EstablishCOMConnection));
+            disconnect(this, QOverload<CCE_NetEngine_TransThread*, QString,quint64>::of(&CCE_NetEngine::sig_EstablishCOMConnection),
+                clientTH, QOverload<CCE_NetEngine_TransThread*, QString,quint64>::of(&CCE_NetEngine_TransThread::slot_EstablishCOMConnection));
         }
 
         disconnect(this, &CCE_NetEngine::sig_SendData, clientTH, &CCE_NetEngine_TransThread::slot_SendData);
@@ -145,12 +145,12 @@ void CCE_NetEngine::creatUDPTransThreads(int nThreads)
             connect(clientTH, &CCE_NetEngine_TransThread::sig_Data_Sended, this, &CCE_NetEngine::sig_Data_Sended, Qt::QueuedConnection);
             connect(clientTH, &CCE_NetEngine_TransThread::sig_Message, this, &CCE_NetEngine::sig_Message, Qt::QueuedConnection);
 
-            connect(clientTH, QOverload<QObject*, const QString&, quint16>::of(&CCE_NetEngine_TransThread::sig_NewUDPConnectionEstablish),
-                this, QOverload<QObject*, const QString&, quint16>::of(&CCE_NetEngine::sig_NewUDPConnectionEstablish), Qt::QueuedConnection);
+            connect(clientTH, QOverload<QObject*, const QString&, quint16,quint64>::of(&CCE_NetEngine_TransThread::sig_NewUDPConnectionEstablish),
+                this, QOverload<QObject*, const QString&, quint16,quint64>::of(&CCE_NetEngine::sig_NewUDPConnectionEstablish), Qt::QueuedConnection);
             connect(clientTH, QOverload<QObject*, QAbstractSocket::SocketError>::of(&CCE_NetEngine_TransThread::sig_SocketError),
                 this, QOverload<QObject*, QAbstractSocket::SocketError>::of(&CCE_NetEngine::sig_SocketError), Qt::QueuedConnection);
-            connect(this, QOverload<CCE_NetEngine_TransThread*, const QString&, quint16>::of(&CCE_NetEngine::sig_EstablishUDPConnection),
-                clientTH, QOverload<CCE_NetEngine_TransThread*, const QString&, quint16>::of(&CCE_NetEngine_TransThread::slot_EstablishUDPConnection), Qt::QueuedConnection);
+            connect(this, QOverload<CCE_NetEngine_TransThread*, const QString&, quint16,quint64>::of(&CCE_NetEngine::sig_EstablishUDPConnection),
+                clientTH, QOverload<CCE_NetEngine_TransThread*, const QString&, quint16,quint64>::of(&CCE_NetEngine_TransThread::slot_EstablishUDPConnection), Qt::QueuedConnection);
 
             connect(this, &CCE_NetEngine::sig_SendData, clientTH, &CCE_NetEngine_TransThread::slot_SendData, Qt::QueuedConnection);
             connect(this, &CCE_NetEngine::sig_DisconnectAll, clientTH, &CCE_NetEngine_TransThread::slot_DisconnectAll, Qt::QueuedConnection);
@@ -180,12 +180,12 @@ void CCE_NetEngine::creatCOMTransThreads(int nThreads)
             connect(clientTH, &CCE_NetEngine_TransThread::sig_Data_Sended, this, &CCE_NetEngine::sig_Data_Sended, Qt::QueuedConnection);
             connect(clientTH, &CCE_NetEngine_TransThread::sig_Message, this, &CCE_NetEngine::sig_Message, Qt::QueuedConnection);
 
-            connect(clientTH, QOverload<QObject*, QString>::of(&CCE_NetEngine_TransThread::sig_NewCOMConnectionEstablish),
-                this, QOverload<QObject*, QString>::of(&CCE_NetEngine::sig_NewCOMConnectionEstablish), Qt::QueuedConnection);
+            connect(clientTH, QOverload<QObject*, QString,quint64>::of(&CCE_NetEngine_TransThread::sig_NewCOMConnectionEstablish),
+                this, QOverload<QObject*, QString,quint64>::of(&CCE_NetEngine::sig_NewCOMConnectionEstablish), Qt::QueuedConnection);
             connect(clientTH, QOverload<QObject*, QSerialPort::SerialPortError>::of(&CCE_NetEngine_TransThread::sig_SocketError),
                 this, QOverload<QObject*, QSerialPort::SerialPortError>::of(&CCE_NetEngine::sig_SocketError), Qt::QueuedConnection);
-            connect(this, QOverload<CCE_NetEngine_TransThread*, QString>::of(&CCE_NetEngine::sig_EstablishCOMConnection),
-                clientTH, QOverload<CCE_NetEngine_TransThread*, QString>::of(&CCE_NetEngine_TransThread::slot_EstablishCOMConnection), Qt::QueuedConnection);
+            connect(this, QOverload<CCE_NetEngine_TransThread*, QString,quint64>::of(&CCE_NetEngine::sig_EstablishCOMConnection),
+                clientTH, QOverload<CCE_NetEngine_TransThread*, QString,quint64>::of(&CCE_NetEngine_TransThread::slot_EstablishCOMConnection), Qt::QueuedConnection);
 
             connect(this, &CCE_NetEngine::sig_SendData, clientTH, &CCE_NetEngine_TransThread::slot_SendData, Qt::QueuedConnection);
             connect(this, &CCE_NetEngine::sig_DisconnectAll, clientTH, &CCE_NetEngine_TransThread::slot_DisconnectAll, Qt::QueuedConnection);
@@ -207,7 +207,7 @@ void CCE_NetEngine::slot_Disconnect(QObject * objSocket)
     emit sig_Disconnect(objSocket);
 }
 
-bool CCE_NetEngine::slot_ConnectToUDP(const QString & address, quint16 nPort)
+bool CCE_NetEngine::slot_ConnectToUDP(const QString & address, quint16 nPort,quint64 extraData)
 {
     bool res = false;
     //m_mutex_trans.lock();
@@ -239,7 +239,7 @@ bool CCE_NetEngine::slot_ConnectToUDP(const QString & address, quint16 nPort)
     if (nMinIdx >= 0 && nMinIdx < nsz)
     {
         res = true;
-        emit sig_EstablishUDPConnection(m_vec_TransThreads[nMinIdx], address, nPort);
+        emit sig_EstablishUDPConnection(m_vec_TransThreads[nMinIdx], address, nPort,extraData);
     }
     else
     {
@@ -248,7 +248,7 @@ bool CCE_NetEngine::slot_ConnectToUDP(const QString & address, quint16 nPort)
     return res;
 }
 
-bool CCE_NetEngine::slot_ConnectToCOM(QString comName)
+bool CCE_NetEngine::slot_ConnectToCOM(QString comName,quint64 extraData)
 {
     bool res = false;
     //m_mutex_trans.lock();
@@ -277,7 +277,7 @@ bool CCE_NetEngine::slot_ConnectToCOM(QString comName)
     if (nMinIdx >= 0 && nMinIdx < nsz)
     {
         res = true;
-        emit sig_EstablishCOMConnection(m_vec_TransThreads[nMinIdx], comName);
+        emit sig_EstablishCOMConnection(m_vec_TransThreads[nMinIdx], comName,extraData);
     }
     else
     {

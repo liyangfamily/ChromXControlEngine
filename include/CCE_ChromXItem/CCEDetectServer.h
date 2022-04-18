@@ -2,6 +2,7 @@
 #define CCEDETECTSERVER_H
 
 #include <CCE_ChromXItem/CCEChromXItemGlobal>
+#include <CCE_CommunicatEngine/CCECommunicatEngineDef.h>
 #include <QObject>
 
 class CCEDetectServerPrivate;
@@ -18,14 +19,15 @@ public:
     void connectAssistCOM(QString comName);
     void disConnectCOM(QString comName);
     void disConnectAllCOM();
-    QObject* mainCOMSocket();
-    QObject* assistCOMSocket();
+    SDetectItemInfo* getMainDetectInfo();
+    SDetectItemInfo* getAssistDetectInfo();
 signals:
     void sig_DeviceConnect();
     void sig_DeviceDisConnect();
+protected slots:
+    void slot_NewCOMConnectionEstablish(QObject* objSocket, QString comName,quint64 extraData);
 private:
     void prepareComDevice();
-    bool setCOMInfo(QObject* socket,QString comName);
 private:
     QScopedPointer<CCEDetectServerPrivate> d_ptr;
 };

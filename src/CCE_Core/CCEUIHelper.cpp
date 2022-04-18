@@ -30,7 +30,7 @@ QString CCEUIHelper::appDocumentsPath()
     static QString appDocumentsPath;
     if (appDocumentsPath.isEmpty()) {
         QString tempPath= QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-        tempPath.append(appName());
+        tempPath.append("/"+appName());
         appDocumentsPath=tempPath;
     }
     return appDocumentsPath;

@@ -64,8 +64,8 @@ signals:
     //Task主动发送数据信号
     void sig_SendData(QObject * objClient, CCEEnginePackage  dataArray);
     //Task接收到数据后，解析到是我们的设备，则与目标建立连接
-    bool sig_ConnectToUDP(const QString & address, quint16 nPort);
-    bool sig_ConnectToCOM(QString comName);
+    bool sig_ConnectToUDP(const QString & address, quint16 nPort,quint64 extraData);
+    bool sig_ConnectToCOM(QString comName,quint64 extraData);
     //Task会主动检测在线状态，如果超时没有回复就主动断开连接
     void sig_Disconnect(QObject * objClient);
     //Task向外部发送消息
