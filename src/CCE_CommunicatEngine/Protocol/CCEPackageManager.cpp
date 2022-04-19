@@ -37,7 +37,11 @@ void CCEPackageManager::unregisterAll()
     while (iMaps != m_maps.end()) {
         CmdMap::iterator iCmdNumber = iMaps.value().begin();
         while (iCmdNumber != iMaps.value().end()) {
-            //delete iCmdNumber.value();
+            CbMap::iterator iCbmap = iCmdNumber.value().begin();
+            while (iCbmap != iCmdNumber.value().end()) {
+                //delete iCmdNumber.value();
+                iCmdNumber.value().erase(iCbmap++);
+            }
             iMaps.value().erase(iCmdNumber++);
         }
         m_maps.erase(iMaps++);
@@ -48,16 +52,20 @@ quint16 CCEPackageManager::handle(const CCEPackage & package)
 {
     quint8 unitAddr = package.getUnitAddr();
     quint16 cmdNum = package.getCtrlAddr();
+    quint8 frameType = package.getFrameType();
 
     UnitMap::iterator iMaps = m_maps.find(unitAddr);
     if (iMaps != m_maps.end()) {
         CmdMap::iterator iCmdNumber = iMaps.value().find(cmdNum);
         if (iCmdNumber != iMaps.value().end()) {
-            auto cb = iCmdNumber.value();
-            quint16 ret = cb(package.getDataToSend());
-            //iCmdNumber.value()->onReceive(package);
-            //qDebug() << "CCEPackageManager" << QString("handle cmd number : %1 .").arg(QString::number(cmdNum, 16));
-            return ret;
+            CbMap::iterator iCbmap = iCmdNumber.value().find(frameType);
+            if (iCbmap != iCmdNumber.value().end()) {
+                auto cb = iCbmap.value();
+                quint16 ret = cb(package.getDataToSend());
+                //iCmdNumber.value()->onReceive(package);
+                //qDebug() << "CCEPackageManager" << QString("handle cmd number : %1 .").arg(QString::number(cmdNum, 16));
+                return ret;
+            }
         }
         else {
             //qDebug() << "CCEPackageManager" << QString("unknown cmd number : %1 ").arg(QString::number(cmdNum, 16));

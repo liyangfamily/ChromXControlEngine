@@ -21,7 +21,8 @@ class CCE_COMMUNICATENGINE_EXPORT CCEPackageDispatcher : public QObject
     Q_OBJECT
 
 public:
-    typedef QMap<quint16, QList<QObject *>> CmdMap;
+    typedef QMap<quint8, QList<QObject *>> CbMap;
+    typedef QMap<quint16, CbMap> CmdMap;
     typedef QMap<quint8, CmdMap> UnitMap;
     CCEPackageDispatcher(QObject *parent = nullptr);
     ~CCEPackageDispatcher();
@@ -35,17 +36,22 @@ public:
         QMutexLocker locker(&m_mutex_protect);
         quint8 unitAddr = package.CmdUnitAddr();
         quint16 cmdNum = package.CmdCtrlAddr();
+        quint8 frameType = package.CmdFrameType();
+
         UnitMap::iterator iUnitMap = m_maps.find(unitAddr);
         if (iUnitMap != m_maps.end()) {
-            CmdMap::iterator icmdNumber = iUnitMap.value().find(cmdNum);
-            if (icmdNumber != iUnitMap.value().end()) {
-                qDebug() << "CCEPackageManager" <<
-                            QString("registerPackage failed cmd name : %1   cmd number : %2 is existed").arg(unitAddr).arg(QString::number(cmdNum, 16));
-                return false;
+            CmdMap::iterator iCmdNumber = iUnitMap.value().find(cmdNum);
+            if (iCmdNumber != iUnitMap.value().end()) {
+                CbMap::iterator iCbmap = iCmdNumber.value().find(frameType);
+                if (iCbmap != iCmdNumber.value().end()) {
+                    qDebug() << "CCEPackageManager" <<
+                                QString("registerPackage failed cmd name : %1   cmd number : %2 is existed").arg(unitAddr).arg(QString::number(cmdNum, 16));
+                    return false;
+                }
             }
         }
 
-        m_maps[unitAddr][cmdNum].append(obj);
+        m_maps[unitAddr][cmdNum][frameType].append(obj);
         return true;
     }
 
@@ -55,11 +61,16 @@ public:
         QMutexLocker locker(&m_mutex_protect);
         quint8 unitAddr = package.CmdUnitAddr();
         quint16 cmdNum = package.CmdCtrlAddr();
+        quint8 frameType = package.CmdFrameType();
+
         UnitMap::iterator iUnitMap = m_maps.find(unitAddr);
         if (iUnitMap != m_maps.end()) {
             CmdMap::iterator iCmdNumber = iUnitMap.value().find(cmdNum);
             if (iCmdNumber != iUnitMap.value().end()) {
-                iCmdNumber->removeOne(obj);
+                CbMap::iterator iCbmap = iCmdNumber.value().find(frameType);
+                if (iCbmap != iCmdNumber.value().end()) {
+                    iCbmap->removeOne(obj);
+                }
             }
         }
     }

@@ -16,7 +16,6 @@ CCEMainCtrlDevice::CCEMainCtrlDevice(QObject *parent): CCEAbstractModule{*new CC
 
 CCEMainCtrlDevice::~CCEMainCtrlDevice()
 {
-    int i=0;
 }
 
 quint16 CCEMainCtrlDevice::writeHardwareVersion(int value, bool sync, int msec)
@@ -40,6 +39,8 @@ quint8 CCEMainCtrlDevice::getHardwareVersion()
 void CCEMainCtrlDevice::registerCallBack()
 {
     d_ptr->m_packageMgr.registerPackage(CCEMainCtrlPackage_ReadHardwareVersion(),
+                                        std::bind(&CCEMainCtrlDevice::onParseReadHardwareVersion,this,std::placeholders::_1));
+    d_ptr->m_packageMgr.registerPackage(CCEMainCtrlPackage_WriteHardwareVersion(),
                                         std::bind(&CCEMainCtrlDevice::onParseReadHardwareVersion,this,std::placeholders::_1));
 }
 

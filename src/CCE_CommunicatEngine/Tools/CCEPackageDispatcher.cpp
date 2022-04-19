@@ -92,20 +92,24 @@ bool CCEPackageDispatcher::dispatcherPackage(const CCEEnginePackage &package)
 
     quint8 unitAddr = tempPackage.getUnitAddr();
     quint16 cmdNum = tempPackage.getCtrlAddr();
+    quint8 frameType = tempPackage.getFrameType();
 
     UnitMap::iterator iMaps = m_maps.find(unitAddr);
     if (iMaps != m_maps.end()) {
         CmdMap::iterator iCmdNumber = iMaps.value().find(cmdNum);
         if (iCmdNumber != iMaps.value().end()) {
-            QList<QObject*>& objList = iCmdNumber.value();
-            foreach(QObject* item, objList)
-            {
-                CCEPackageEvent *event = new CCEPackageEvent(CCEPackageEvent::s_disPatcherPackage_eventType, unitAddr, cmdNum);
-                event->setPackage(package);
-                QCoreApplication::postEvent(item, event);
+            CbMap::iterator iCbmap = iCmdNumber.value().find(frameType);
+            if (iCbmap != iCmdNumber.value().end()) {
+                QList<QObject*>& objList = iCbmap.value();
+                foreach(QObject* item, objList)
+                {
+                    CCEPackageEvent *event = new CCEPackageEvent(CCEPackageEvent::s_disPatcherPackage_eventType, unitAddr, cmdNum);
+                    event->setPackage(package);
+                    QCoreApplication::postEvent(item, event);
+                }
+                //qDebug() << "CCEPackageDispatcher" << QString("handle cmd number : %1 .").arg(QString::number(cmdNum, 16));
+                return true;
             }
-            //qDebug() << "CCEPackageDispatcher" << QString("handle cmd number : %1 .").arg(QString::number(cmdNum, 16));
-            return true;
         }
         else {
             //qDebug() << "CCEPackageDispatcher" << QString("unknown cmd number : %1 ").arg(QString::number(cmdNum, 16));
