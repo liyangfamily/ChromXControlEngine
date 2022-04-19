@@ -26,6 +26,7 @@ signals:
     void sig_DeviceDisConnect();
 protected slots:
     void slot_NewCOMConnectionEstablish(QObject* objSocket, QString comName,quint64 extraData);
+    void slot_SocketAbort(QObject* objSocket);
 private:
     void prepareComDevice();
 private:

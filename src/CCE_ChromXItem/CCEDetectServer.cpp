@@ -19,6 +19,7 @@ CCEDetectServer::CCEDetectServer(QObject *parent)
     : QObject{parent},d_ptr(new CCEDetectServerPrivate)
 {
     connect(gCluster,&CCECluster::sig_NewCOMConnectionEstablish,this,&CCEDetectServer::slot_NewCOMConnectionEstablish);
+    connect(gCluster,&CCECluster::sig_SocketAbort,this,&CCEDetectServer::slot_SocketAbort);
 }
 
 CCEDetectServer::~CCEDetectServer()
@@ -113,6 +114,22 @@ void CCEDetectServer::slot_NewCOMConnectionEstablish(QObject *objSocket, QString
 
     if(d_ptr->m_mainDeviceDetectInfo.socketObj/*&&d_ptr->m_assistDeviceDetectInfo.socketObj*/){
         emit sig_DeviceConnect();
+    }
+}
+
+void CCEDetectServer::slot_SocketAbort(QObject *objSocket)
+{
+    if(d_ptr->m_mainDeviceDetectInfo.socketObj==objSocket){
+        d_ptr->m_mainDeviceDetectInfo.clear();
+        emit sig_DeviceDisConnect();
+        qDebug()<<"Abort Main Ctrl Device...";
+        return;
+    }
+    if(d_ptr->m_assistDeviceDetectInfo.socketObj==objSocket){
+        d_ptr->m_assistDeviceDetectInfo.clear();
+        emit sig_DeviceDisConnect();
+        qDebug()<<"Abort Assist Ctrl Device...";
+        return;
     }
 }
 
