@@ -4,12 +4,26 @@
 #include <CCE_ChromXItem/CCEChromXItemGlobal>
 #include <QObject>
 
-#define gChromXDevice CCEChromXDevice::getInstance()
-#define gChromXDetectServer CCEChromXDevice::getInstance().detectServer()
-#define gChromXMainCtrl CCEChromXDevice::getInstance().mainCtrlDevice()
+#define gChromXDevice           CCEChromXDevice::getInstance()
+#define gChromXDetectServer     CCEChromXDevice::getInstance().detectServer()
+
+#define gChromXMainCtrl         CCEChromXDevice::getInstance().mainCtrlDevice()
+#define gChromXPressureSensor   CCEChromXDevice::getInstance().pressureSensorDevice()
+#define gChromXSingleCtrl       CCEChromXDevice::getInstance().singleCtrlDevice()
+#define gChromXSingleStatus     CCEChromXDevice::getInstance().singleStatusDevice()
+#define gChromXStatusWarn       CCEChromXDevice::getInstance().statusWarnDevice()
+#define gChromXTestData         CCEChromXDevice::getInstance().testDataDevice()
+#define gChromXTestParamSet     CCEChromXDevice::getInstance().testParamSetDevice()
 
 class CCEDetectServer;
+
 class CCEMainCtrlDevice;
+class CCEPressureSensorDevice;
+class CCESingleCtrlDevice;
+class CCESingleStatusDevice;
+class CCEStatusWarnDevice;
+class CCETestDataDevice;
+class CCETestParamSetDevice;
 
 class CCEChromXDevicePrivate;
 class CCE_CHROMXITEM_EXPORT CCEChromXDevice : public QObject
@@ -19,7 +33,14 @@ public:
     ~CCEChromXDevice();
     static CCEChromXDevice &getInstance();
     CCEDetectServer& detectServer();
+
     CCEMainCtrlDevice& mainCtrlDevice();
+    CCEPressureSensorDevice& pressureSensorDevice();
+    CCESingleCtrlDevice& singleCtrlDevice();
+    CCESingleStatusDevice& singleStatusDevice();
+    CCEStatusWarnDevice& statusWarnDevice();
+    CCETestDataDevice& testDataDevice();
+    CCETestParamSetDevice& testParamSetDevice();
 private:
     bool registerModule();
     bool releaseSubModule();

@@ -10,7 +10,8 @@ public:
 };
 
 
-CCEMainCtrlDevice::CCEMainCtrlDevice(QObject *parent): CCEAbstractModule{*new CCEMainCtrlDevicePrivate, parent}
+CCEMainCtrlDevice::CCEMainCtrlDevice(QObject *parent):
+    CCEAbstractModule{*new CCEMainCtrlDevicePrivate, parent}
 {
 }
 
