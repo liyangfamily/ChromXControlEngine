@@ -1,4 +1,4 @@
-﻿#include "CCESingleStatusDevice.h"
+﻿#include "CCE_ChromXItem/CCESingleStatusDevice.h"
 #include "CCEAbstractModule_p.h"
 
 class CCESingleStatusDevicePrivate : public CCEAbstractModulePrivate

@@ -1,4 +1,4 @@
-﻿#include "CCESingleCtrlDevice.h"
+﻿#include "CCE_ChromXItem/CCESingleCtrlDevice.h"
 #include "CCEAbstractModule_p.h"
 
 class CCESingleCtrlDevicePrivate : public CCEAbstractModulePrivate

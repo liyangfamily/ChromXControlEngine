@@ -1,4 +1,4 @@
-﻿#include "CCETestParamSetDevice.h"
+﻿#include "CCE_ChromXItem/CCETestParamSetDevice.h"
 #include "CCEAbstractModule_p.h"
 
 class CCETestParamSetDevicePrivate : public CCEAbstractModulePrivate
