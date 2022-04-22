@@ -120,6 +120,7 @@ bool CCEPackageDispatcher::dispatcherPackage(const CCEEnginePackage &package)
         //qDebug() << "CCEPackageDispatcher" << QString("unknown protocol name : %1 ").arg(protocolNum);
         return false;
     }
+    return false;
 }
 
 bool CCEPackageDispatcher::transitPackage(const CCEEnginePackage &package)

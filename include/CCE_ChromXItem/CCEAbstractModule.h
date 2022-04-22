@@ -3,6 +3,8 @@
 
 #include <CCE_ChromXItem/CCEChromXItemGlobal>
 #include <CCE_CommunicatEngine/CCECommunicatEngineDef.h>
+#include <CCE_CommunicatEngine/CCEMainDeviceCtrlPackage>
+#include <CCE_ChromXItem/CCEChromXItemStructGlobal.h>
 #include <QObject>
 
 

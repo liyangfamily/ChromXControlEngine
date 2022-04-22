@@ -8,7 +8,7 @@
 #define gChromXDetectServer     CCEChromXDevice::getInstance().detectServer()
 
 #define gChromXMainCtrl         CCEChromXDevice::getInstance().mainCtrlDevice()
-#define gChromXPressureSensor   CCEChromXDevice::getInstance().pressureSensorDevice()
+#define gChromXLEDPanelUnit   CCEChromXDevice::getInstance().LEDPanelUnitDevice()
 #define gChromXSingleCtrl       CCEChromXDevice::getInstance().singleCtrlDevice()
 #define gChromXSingleStatus     CCEChromXDevice::getInstance().singleStatusDevice()
 #define gChromXStatusWarn       CCEChromXDevice::getInstance().statusWarnDevice()
@@ -18,7 +18,7 @@
 class CCEDetectServer;
 
 class CCEMainCtrlDevice;
-class CCEPressureSensorDevice;
+class CCELEDPanelUnitDevice;
 class CCESingleCtrlDevice;
 class CCESingleStatusDevice;
 class CCEStatusWarnDevice;
@@ -35,7 +35,7 @@ public:
     CCEDetectServer& detectServer();
 
     CCEMainCtrlDevice& mainCtrlDevice();
-    CCEPressureSensorDevice& pressureSensorDevice();
+    CCELEDPanelUnitDevice& LEDPanelUnitDevice();
     CCESingleCtrlDevice& singleCtrlDevice();
     CCESingleStatusDevice& singleStatusDevice();
     CCEStatusWarnDevice& statusWarnDevice();

@@ -4,7 +4,7 @@
 #ifndef CVTE_H_CCEPACKAGEDISPATCHER
 #define CVTE_H_CCEPACKAGEDISPATCHER
 #pragma once
-#include <CCE_CommunicatEngine/CCEMainCtrlPackage>
+#include <CCE_CommunicatEngine/CCEMainDeviceCtrlPackage>
 #include <CCE_CommunicatEngine/CCEPackageEvent>
 
 #include <QByteArray>

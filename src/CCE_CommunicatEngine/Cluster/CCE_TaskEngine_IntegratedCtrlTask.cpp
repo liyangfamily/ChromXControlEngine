@@ -98,6 +98,20 @@ int CCE_TaskEngine_IntegratedCtrlTask::filter_message(const CCEEnginePackage& bl
         {
             m_currentBlock.push_back(dataptr[offset++]);
             m_currentMessageSize++;
+            if(m_currentMessageSize==1){
+                if((quint8)m_currentBlock.front()!=m_standerFrameLimit.head1){
+                    m_currentMessageSize = 0;
+                    m_currentBlock = QByteArray();
+                    continue;
+                }
+            }
+            if(m_currentMessageSize==2){
+                if((quint8)m_currentBlock.back()==m_standerFrameLimit.head1){
+                    m_currentMessageSize = 1;
+                    m_currentBlock = m_currentBlock.mid(1,1);
+                    continue;
+                }
+            }
         }
         if (m_currentMessageSize < sizeof(SIntegratedFrameLimit)) //帧头未完成
             continue;
@@ -113,81 +127,6 @@ int CCE_TaskEngine_IntegratedCtrlTask::filter_message(const CCEEnginePackage& bl
             //! [1]
         {
             offset = filter_identifyProtocolHeader(block,offset);
-#if(0)
-            if (m_currentMessageSize< sizeof(SIntegratedCtrlHeader) && blocklen>offset)
-            {
-                int nCpy = int(sizeof(SIntegratedCtrlHeader) - m_currentMessageSize);
-                if (nCpy > blocklen - offset)
-                    nCpy = blocklen - offset;
-                QByteArray arrCpy(dataptr + offset, nCpy);
-                m_currentBlock.push_back(arrCpy);
-                offset += nCpy;
-                m_currentMessageSize += nCpy;
-            }
-            //! [2]
-            if (m_currentMessageSize < sizeof(SIntegratedCtrlHeader)) //包头未完成
-                continue;
-            else if (m_currentMessageSize == sizeof(SIntegratedCtrlHeader))//包头刚刚完成
-            {
-                const char * headerptr = m_currentBlock.constData();
-                memcpy((void *)&m_currentHeader, headerptr, sizeof(SIntegratedCtrlHeader));
-
-                //如果有数据剩下则继续读
-                if (block.data().length() > offset)
-                {
-                    qint32 byteLeft = quint32(m_currentHeader.dataLength + sizeof(SIntegratedCtrlHeader) + 2
-                                              - m_currentMessageSize);
-                    if (byteLeft > 0 && blocklen > offset)
-                    {
-                        int nCpy = byteLeft;
-                        if (nCpy > blocklen - offset)
-                            nCpy = blocklen - offset;
-                        QByteArray arrCpy(dataptr + offset, nCpy);
-                        m_currentBlock.push_back(arrCpy);
-                        offset += nCpy;
-                        m_currentMessageSize += nCpy;
-                        byteLeft -= nCpy;
-                    }
-                    //尽快处理数据块
-                    deal_current_message_block(block);
-                    if (byteLeft > 0)
-                        continue;
-
-                    //帧处理完毕，开始处理下一个
-                    m_currentMessageSize = 0;
-                    m_currentBlock = QByteArray();
-                    continue;
-                }
-            }
-            else
-            {
-                //如果有数据剩下则继续读
-                if (block.data().length() > offset)
-                {
-                    qint32 byteLeft = quint32(m_currentHeader.dataLength + sizeof(SIntegratedCtrlHeader) + 2
-                                              - m_currentMessageSize);
-                    if (byteLeft > 0 && blocklen > offset)
-                    {
-                        int nCpy = byteLeft;
-                        if (nCpy > blocklen - offset)
-                            nCpy = blocklen - offset;
-                        QByteArray arrCpy(dataptr + offset, nCpy);
-                        m_currentBlock.push_back(arrCpy);
-                        offset += nCpy;
-                        m_currentMessageSize += nCpy;
-                        byteLeft -= nCpy;
-                    }
-                    //尽快处理数据块
-                    deal_current_message_block(block);
-                    if (byteLeft > 0)
-                        continue;
-                    //帧处理完毕，开始处理下一个
-                    m_currentMessageSize = 0;
-                    m_currentBlock = QByteArray();
-                    continue;
-                }
-            } //! [2]
-#endif
         } //! [1]
         else
         {
@@ -288,7 +227,6 @@ int CCE_TaskEngine_IntegratedCtrlTask::filter_identifyStandardHeader(const CCEEn
             //帧处理完毕，开始处理下一个
             m_currentMessageSize = 0;
             m_currentBlock = QByteArray();
-            offset = blocklen;
         }
     }
     else
@@ -316,7 +254,6 @@ int CCE_TaskEngine_IntegratedCtrlTask::filter_identifyStandardHeader(const CCEEn
             //帧处理完毕，开始处理下一个
             m_currentMessageSize = 0;
             m_currentBlock = QByteArray();
-            offset = blocklen;
         }
     } //! [2]
     return offset;

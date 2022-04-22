@@ -6,6 +6,8 @@ class CCESingleStatusDevicePrivate : public CCEAbstractModulePrivate
 public:
     CCESingleStatusDevicePrivate(){}
     ~CCESingleStatusDevicePrivate(){}
+
+    SSingleStatus m_singleStatus;
 };
 
 
