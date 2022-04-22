@@ -66,7 +66,7 @@ public:
     enum EUnitAddr{
         EUA_NULL = 0,               //空
         EUA_MainCtrl = 0x10,        //主控单元板
-        EUA_PressureSensor = 0x11,  //压力传感器单元
+        EUA_LEDPanelUnit = 0x11,    //压力传感器单元
         EUA_SingleCtrl = 0x12,      //单控控制单元
         EUA_SingleStatus = 0x13,    //单控状态单元
         EUA_TestParamSet = 0x14,    //测试参数设置单元

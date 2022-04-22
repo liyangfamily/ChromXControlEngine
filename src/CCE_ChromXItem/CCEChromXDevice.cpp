@@ -1,7 +1,7 @@
 ﻿#include "CCE_ChromXItem/CCEChromXDevice.h"
 #include "CCE_ChromXItem/CCEDetectServer.h"
 #include "CCE_ChromXItem/CCEMainCtrlDevice.h"
-#include "CCE_ChromXItem/CCEPressureSensorDevice.h"
+#include "CCE_ChromXItem/CCELEDPanelUnitDevice.h"
 #include "CCE_ChromXItem/CCESingleCtrlDevice.h"
 #include "CCE_ChromXItem/CCESingleStatusDevice.h"
 #include "CCE_ChromXItem/CCEStatusWarnDevice.h"
@@ -20,7 +20,7 @@ public:
     //定义模块类
     CCEDetectServer* m_detectServer = nullptr;
     CCEMainCtrlDevice* m_mainCtrlDevice = nullptr;
-    CCEPressureSensorDevice* m_pressureSensorDevice = nullptr;
+    CCELEDPanelUnitDevice* m_LEDPanelUnitDevice = nullptr;
     CCESingleCtrlDevice* m_singleCtrlDevice = nullptr;
     CCESingleStatusDevice* m_singleStatusDevice = nullptr;
     CCEStatusWarnDevice* m_statusWarnDevice = nullptr;
@@ -49,9 +49,9 @@ CCEMainCtrlDevice &CCEChromXDevice::mainCtrlDevice()
     return *d_ptr->m_mainCtrlDevice;
 }
 
-CCEPressureSensorDevice &CCEChromXDevice::pressureSensorDevice()
+CCELEDPanelUnitDevice &CCEChromXDevice::LEDPanelUnitDevice()
 {
-return *d_ptr->m_pressureSensorDevice;
+return *d_ptr->m_LEDPanelUnitDevice;
 }
 
 CCESingleCtrlDevice &CCEChromXDevice::singleCtrlDevice()
@@ -89,8 +89,8 @@ bool CCEChromXDevice::registerModule()
     d_ptr->m_mainCtrlDevice->init(d_ptr->m_detectServer->getMainDetectInfo());
 
     //初始化压力传感器单元
-    d_ptr->m_pressureSensorDevice = new CCEPressureSensorDevice(this);
-    d_ptr->m_pressureSensorDevice->init(d_ptr->m_detectServer->getMainDetectInfo());
+    d_ptr->m_LEDPanelUnitDevice = new CCELEDPanelUnitDevice(this);
+    d_ptr->m_LEDPanelUnitDevice->init(d_ptr->m_detectServer->getAssistDetectInfo());
 
     //初始化单控控制单元
     d_ptr->m_singleCtrlDevice = new CCESingleCtrlDevice(this);

@@ -6,6 +6,8 @@ class CCESingleCtrlDevicePrivate : public CCEAbstractModulePrivate
 public:
     CCESingleCtrlDevicePrivate(){}
     ~CCESingleCtrlDevicePrivate(){}
+
+    SSingleCtrl m_singleCtrl;
 };
 
 CCESingleCtrlDevice::CCESingleCtrlDevice(QObject *parent)

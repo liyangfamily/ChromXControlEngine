@@ -6,8 +6,10 @@ DEFINES += CCE_COMMUNICATENGINE_LIB
 HEADERS += \
     $$PWD/../../include/CCE_CommunicatEngine/CCECluster.h \
     $$PWD/../../include/CCE_CommunicatEngine/CCEClusterProxy.h \
+    $$PWD/../../include/CCE_CommunicatEngine/CCELEDPanelUnitPackage.h \
     $$PWD/../../include/CCE_CommunicatEngine/CCEMainCtrlPackage.h \
-    $$PWD/../../include/CCE_CommunicatEngine/CCESingleCtrlPackage.h \    $$PWD/../../include/CCE_CommunicatEngine/CCEEnginePackage.h \
+    $$PWD/../../include/CCE_CommunicatEngine/CCESingleCtrlPackage.h \    
+	$$PWD/../../include/CCE_CommunicatEngine/CCEEnginePackage.h \
     $$PWD/../../include/CCE_CommunicatEngine/CCEPackageDispatcher.h \
     $$PWD/../../include/CCE_CommunicatEngine/CCEPackageEvent.h \
     $$PWD/../../include/CCE_CommunicatEngine/CCESocketLock.h \
@@ -37,6 +39,7 @@ SOURCES += \
     $$PWD/NetEngine/CCE_NetEngine_UDPTransThread.cpp \
     $$PWD/Protocol/MainCtrl/CCEMainCtrlPackage.cpp \
     $$PWD/Protocol/SingleCtrl/CCESingleCtrlPackage.cpp \
+    $$PWD/Protocol/LEDPanelUnit/CCELEDPanelUnitPackage.cpp \
     $$PWD/TaskEngine/CCE_TaskEngine.cpp \
     $$PWD/TaskEngine/CCE_TaskEngine_TaskBase.cpp \
     $$PWD/TaskEngine/CCE_TaskEngine_WorkingThread.cpp \

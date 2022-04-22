@@ -6,6 +6,8 @@ class CCEStatusWarnDevicePrivate : public CCEAbstractModulePrivate
 public:
     CCEStatusWarnDevicePrivate(){}
     ~CCEStatusWarnDevicePrivate(){}
+
+    SStatusWarn m_statusWarn;
 };
 
 

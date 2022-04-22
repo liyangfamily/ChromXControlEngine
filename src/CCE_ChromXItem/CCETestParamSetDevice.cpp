@@ -6,6 +6,8 @@ class CCETestParamSetDevicePrivate : public CCEAbstractModulePrivate
 public:
     CCETestParamSetDevicePrivate(){}
     ~CCETestParamSetDevicePrivate(){}
+
+    STestParamSet m_testParamSet;
 };
 
 

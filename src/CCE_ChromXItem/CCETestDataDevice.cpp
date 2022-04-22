@@ -6,6 +6,8 @@ class CCETestDataDevicePrivate : public CCEAbstractModulePrivate
 public:
     CCETestDataDevicePrivate(){}
     ~CCETestDataDevicePrivate(){}
+
+    STestData m_testData;
 };
 
 

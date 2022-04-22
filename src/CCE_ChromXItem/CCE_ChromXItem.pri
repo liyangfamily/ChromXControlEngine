@@ -8,10 +8,10 @@ HEADERS += \
     $$PWD/../../include/CCE_ChromXItem/CCEChromXItemStructGlobal.h \
     $$PWD/../../include/CCE_ChromXItem/CCEChromXDevice.h \
     $$PWD/../../include/CCE_ChromXItem/CCEDetectServer.h \
+    $$PWD/../../include/CCE_ChromXItem/CCELEDPanelUnitDevice.h \
     $$PWD/../../include/CCE_ChromXItem/CCEMainCtrlDevice.h \
     $$PWD/../../include/CCE_ChromXItem/CCEAbstractModule.h \
     $$PWD/CCEAbstractModule_p.h \
-    $$PWD/../../include/CCE_ChromXItem/CCEPressureSensorDevice.h \
     $$PWD/../../include/CCE_ChromXItem/CCESingleCtrlDevice.h \
     $$PWD/../../include/CCE_ChromXItem/CCESingleStatusDevice.h \
     $$PWD/../../include/CCE_ChromXItem/CCEStatusWarnDevice.h \
@@ -22,8 +22,8 @@ SOURCES += \
     $$PWD/CCEAbstractModule.cpp \
     $$PWD/CCEChromXDevice.cpp \
     $$PWD/CCEDetectServer.cpp \
+    $$PWD/CCELEDPanelUnitDevice.cpp \
     $$PWD/CCEMainCtrlDevice.cpp \
-    $$PWD/CCEPressureSensorDevice.cpp \
     $$PWD/CCESingleCtrlDevice.cpp \
     $$PWD/CCESingleStatusDevice.cpp \
     $$PWD/CCEStatusWarnDevice.cpp \

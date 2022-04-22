@@ -65,7 +65,15 @@ bool CCEPackage::isValid()
     }
     QByteArray arrCpy(m_data.data() + sizeof(SIntegratedFrameLimit), m_data.size() - sizeof(SIntegratedFrameLimit) - sizeof(quint16));
     quint16 tempCheckSum =  CCEUIHelper::byteToUShort(CCEUIHelper::getCRCCode(arrCpy));
-    return (tempCheckSum==getCheckSum());
+    if(tempCheckSum){
+        if(this->getUnitAddr()==this->CmdUnitAddr()&&\
+                this->getCtrlAddr()==this->CmdCtrlAddr()&&\
+                this->getFrameType()==this->CmdFrameType()){
+            return true;
+        }
+        return false;
+    }
+    return false;
 }
 
 quint8 CCEPackage::getFrameLength() const

@@ -151,6 +151,7 @@ void CCEDetectServer::prepareComDevice()
     //判断连接辅助串口
     QStringList assistPortDescriptionList;
     assistPortDescriptionList.append("Silicon Labs CP210x USB to UART Bridge");
+    assistPortDescriptionList.append("USB-SERIAL CH340");
 
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {

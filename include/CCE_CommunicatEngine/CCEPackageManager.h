@@ -5,7 +5,8 @@
 #define CHROMX_H_CCEPACKAGEMANAGER
 #pragma once
 
-#include <CCE_CommunicatEngine/CCEMainCtrlPackage>
+#include <CCE_CommunicatEngine/CCEMainDeviceCtrlPackage>
+#include <CCE_CommunicatEngine/CCELEDPanelUnitPackage.h>
 
 #include <QMap>
 

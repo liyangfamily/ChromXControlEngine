@@ -1,7 +1,7 @@
 ﻿#include "CCEChromXDevice.h"
 #include "CCEDetectServer.h"
 #include "CCEMainCtrlDevice.h"
-#include "CCEPressureSensorDevice.h"
+#include "CCELEDPanelUnitDevice.h"
 #include "CCESingleCtrlDevice.h"
 #include "CCESingleStatusDevice.h"
 #include "CCEStatusWarnDevice.h"

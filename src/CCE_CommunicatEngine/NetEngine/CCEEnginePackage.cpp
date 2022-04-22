@@ -168,6 +168,14 @@ bool CCEEnginePackage::initByDetectInfo(const SDetectItemInfo* info)
     this->setSocketObj(info->socketObj);
     this->setType(ECommunicatType::ECT_COM);
     this->setFromType(EPackageFromType::EPFT_Send);
+    if (info->communType == ECommunicatType::ECT_TCP || info->communType == ECommunicatType::ECT_UDP)
+    {
+        this->setNetInfo(info->netInfo.ipAddr, info->netInfo.port);
+    }
+    else if(info->communType==ECommunicatType::ECT_COM)
+    {
+        this->setComName(info->comInfo.comName);
+    }
     return true;
 }
 
