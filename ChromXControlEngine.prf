@@ -57,3 +57,6 @@ defineReplace(nativePath) {
     win32:path ~= s,/,\\,g
     return($$path)
 }
+
+HEADERS += \
+    include/CCE_CommunicatEngine/CCESeparateCtrlPackage.h
