@@ -191,13 +191,43 @@ typedef struct tagSingleDeviceCtrl{
     quint16 startTime;
     quint8 PWMValue;
     quint8 startSwitch;
+
+    bool setRawData(const QByteArray& rawData,int pos = 0) {
+        int effectSize = sizeof(tagSingleDeviceCtrl) - pos;
+        if(effectSize<0){
+            return false;
+        }
+        if(rawData.size() > effectSize) {
+            qWarning("Raw data is too large , Trigger interception.");
+            memcpy(this + pos, rawData.constData(), effectSize);
+        }
+        else {
+            memcpy(this + pos, rawData.constData(), rawData.size());
+        }
+        return true;
+    }
 }SSingleDeviceCtrl;
 
 typedef struct tagSingleMicroPIDCtrl{
     quint16 biasVoltage;
     quint16 freq;
     quint8 startSwitch;
-}SSingleMicroPIDCtrll;
+
+    bool setRawData(const QByteArray& rawData,int pos = 0) {
+        int effectSize = sizeof(tagSingleMicroPIDCtrl) - pos;
+        if(effectSize<0){
+            return false;
+        }
+        if(rawData.size() > effectSize) {
+            qWarning("Raw data is too large , Trigger interception.");
+            memcpy(this + pos, rawData.constData(), effectSize);
+        }
+        else {
+            memcpy(this + pos, rawData.constData(), rawData.size());
+        }
+        return true;
+    }
+}SSingleMicroPIDCtrl;
 
 typedef struct tagSingleCtrl{
     quint8 pumpVoltage;                     //0x0001	R/W	Pump的电压值：0-100%， 0为关，100为12V
@@ -215,11 +245,11 @@ typedef struct tagSingleCtrl{
 
     quint8 reserved3[12];
 
-    SSingleDeviceCtrl COLIMNCtrl;           //0x0030 COLUMN 单控
+    SSingleDeviceCtrl COLUMNCtrl;           //0x0030 COLUMN 单控
 
     quint8 reserved4[12];
 
-    SSingleMicroPIDCtrll MicroPIDCtrl;      //0x0040 MicroPID 单控
+    SSingleMicroPIDCtrl MicroPIDCtrl;      //0x0040 MicroPID 单控
 
     quint8 reserved5[11];
 

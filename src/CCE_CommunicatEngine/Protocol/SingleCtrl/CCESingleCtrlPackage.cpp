@@ -1,4 +1,4 @@
-#include "CCE_CommunicatEngine/CCESingleCtrlPackage.h"
+﻿#include "CCE_CommunicatEngine/CCESingleCtrlPackage.h"
 
 CCEAbstractSingleCtrlPackage::CCEAbstractSingleCtrlPackage()
 {
@@ -19,9 +19,9 @@ CCEAbstractSingleCtrlPackage::~CCEAbstractSingleCtrlPackage()
 
 //写入pump的电压值
 CCESingleCtrlPackage_WritePumpVoltage::CCESingleCtrlPackage_WritePumpVoltage(quint8 voltage)
-//    : m_voltage(voltage)
+    : m_voltage(voltage)
 {
-    m_voltage = voltage;
+
 }
 
 
@@ -29,16 +29,17 @@ CCESingleCtrlPackage_WritePumpVoltage::CCESingleCtrlPackage_WritePumpVoltage(qui
 quint8 CCESingleCtrlPackage_ReadPumpVoltage::getPumpVoltage() const
 {
     QByteArray buffer = getContent();
-    if (buffer.size() < 1)
+    if (buffer.size() < m_dataLength)
         return 0;
-    return  buffer.front();
+    return buffer.front();
 }
 
 
 //写入sample valve的状态
 CCESingleCtrlPackage_WriteSampleValve::CCESingleCtrlPackage_WriteSampleValve(quint8 onORoff)
+    : m_onORoff(onORoff)
 {
-    m_onORoff = onORoff;
+
 }
 
 
@@ -46,16 +47,17 @@ CCESingleCtrlPackage_WriteSampleValve::CCESingleCtrlPackage_WriteSampleValve(qui
 quint8 CCESingleCtrlPackage_ReadSampleValve::getSampleValveStatus() const
 {
     QByteArray buffer = getContent();
-    if (buffer.size() < 1)
+    if (buffer.size() < m_dataLength)
         return 0;
-    return  buffer.front();
+    return buffer.front();
 }
 
 
 //写入detect valve的状态
 CCESingleCtrlPackage_WriteDetectValve::CCESingleCtrlPackage_WriteDetectValve(quint8 onORoff)
+    : m_onORoff(onORoff)
 {
-    m_onORoff = onORoff;
+
 }
 
 
@@ -63,16 +65,17 @@ CCESingleCtrlPackage_WriteDetectValve::CCESingleCtrlPackage_WriteDetectValve(qui
 quint8 CCESingleCtrlPackage_ReadDetectValve::getDetectValveStatus() const
 {
     QByteArray buffer = getContent();
-    if (buffer.size() < 1)
+    if (buffer.size() < m_dataLength)
         return 0;
-    return  buffer.front();
+    return buffer.front();
 }
 
 
 //写入fan的状态
 CCESingleCtrlPackage_WriteFan::CCESingleCtrlPackage_WriteFan(quint8 onORoff)
+    : m_onORoff(onORoff)
 {
-    m_onORoff = onORoff;
+
 }
 
 
@@ -80,9 +83,9 @@ CCESingleCtrlPackage_WriteFan::CCESingleCtrlPackage_WriteFan(quint8 onORoff)
 quint8 CCESingleCtrlPackage_ReadFan::getFanStatus() const
 {
     QByteArray buffer = getContent();
-    if (buffer.size() < 1)
+    if (buffer.size() < m_dataLength)
         return 0;
-    return  buffer.front();
+    return buffer.front();
 }
 
 
@@ -109,11 +112,8 @@ CCESingleCtrlPackage_WriteTDModule
 
 CCESingleCtrlPackage_WriteTDModule
     ::CCESingleCtrlPackage_WriteTDModule(quint16 TD_StartTime, quint8 TD_PWM, bool TD_Switch)
+    : m_TDStartTime(TD_StartTime), m_TDPWM(TD_PWM), m_TDSwitch(TD_Switch)
 {
-    m_TDStartTime = TD_StartTime;
-    m_TDPWM = TD_PWM;
-    m_TDSwitch = TD_Switch;
-
     TDParaTypeValue = TD_AllData;
 }
 
@@ -147,49 +147,52 @@ QByteArray CCESingleCtrlPackage_WriteTDModule::CmdContent() const
         QByteArray TDStartTime = QByteArray((char *)&m_TDStartTimeSwap, 2);
         QByteArray TDPWM = QByteArray((char *)&m_TDPWM, 1);
         QByteArray TDSwitch = QByteArray((char *)&m_TDSwitch, 1);
-        QByteArray TDAllData = TDStartTime.append(TDPWM);
-        TDAllData.append(TDSwitch);
+        QByteArray TDAllData = TDStartTime.append(TDPWM).append(TDSwitch);
         return TDAllData;
     }
 }
 
 
-
+//读取TD所有设置
+SSingleDeviceCtrl CCESingleCtrlPackage_ReadTDModule::getTDAllData() const
+{
+    SSingleDeviceCtrl TDAllData;
+    QByteArray data = getContent();
+    TDAllData.setRawData(data);
+    return TDAllData;
+}
 
 
 //读取TD启动时间
-quint16 CCESingleCtrlPackage_ReadTDStartTime::getTDStartTime() const
+quint16 CCESingleCtrlPackage_ReadTDModule::getTDStartTime() const
 {
-    quint16 TDStartTime = 0;
     QByteArray buffer = getContent();
     if (buffer.size() < m_dataLength)
         return 0;
-    memcpy(&TDStartTime, buffer.constData(), m_dataLength);
-    return TDStartTime;
+    const SSingleDeviceCtrl* TDAllData = (SSingleDeviceCtrl*)buffer.constData();
+    return TDAllData->startTime;
 }
 
 
 //读取TDPWM
-quint8 CCESingleCtrlPackage_ReadTDPWM::getTDPWM() const
+quint8 CCESingleCtrlPackage_ReadTDModule::getTDPWM() const
 {
-    quint8 TDPWM = 0;
     QByteArray buffer = getContent();
     if (buffer.size() < m_dataLength)
         return 0;
-    memcpy(&TDPWM, buffer.constData(), m_dataLength);
-    return TDPWM;
+    const SSingleDeviceCtrl* TDAllData = (SSingleDeviceCtrl*)buffer.constData();
+    return TDAllData->PWMValue;
 }
 
 
 //读取TDSwitch
-quint8 CCESingleCtrlPackage_ReadTDSwitch::getTDSwitch() const
+quint8 CCESingleCtrlPackage_ReadTDModule::getTDSwitch() const
 {
-    quint8 TDSwitch = 0;
     QByteArray buffer = getContent();
     if (buffer.size() < m_dataLength)
         return 0;
-    memcpy(&TDSwitch, buffer.constData(), m_dataLength);
-    return TDSwitch;
+    const SSingleDeviceCtrl* TDAllData = (SSingleDeviceCtrl*)buffer.constData();
+    return TDAllData->startSwitch;
 }
 
 
@@ -216,11 +219,8 @@ CCESingleCtrlPackage_WriteTIModule
 
 CCESingleCtrlPackage_WriteTIModule
     ::CCESingleCtrlPackage_WriteTIModule(quint16 TI_StartTime, quint8 TI_PWM, bool TI_Switch)
+    : m_TIStartTime(TI_StartTime), m_TIPWM(TI_PWM), m_TISwitch(TI_Switch)
 {
-    m_TIStartTime = TI_StartTime;
-    m_TIPWM = TI_PWM;
-    m_TISwitch = TI_Switch;
-
     TIParaTypeValue = TI_AllData;
 }
 
@@ -255,46 +255,52 @@ QByteArray CCESingleCtrlPackage_WriteTIModule::CmdContent() const
         QByteArray TIStartTime = QByteArray((char *)&m_TIStartTimeSwap, 2);
         QByteArray TIPWM = QByteArray((char *)&m_TIPWM, 1);
         QByteArray TISwitch = QByteArray((char *)&m_TISwitch, 1);
-        QByteArray TIAllData = TIStartTime.append(TIPWM);
-        TIAllData.append(TISwitch);
+        QByteArray TIAllData = TIStartTime.append(TIPWM).append(TISwitch);
         return TIAllData;
     }
 }
 
 
-//读取TI启动时间
-quint16 CCESingleCtrlPackage_ReadTIStartTime::getTIStartTime() const
+//读取TI所有设置
+SSingleDeviceCtrl CCESingleCtrlPackage_ReadTIModule::getTIAllData() const
 {
-    quint16 TIStartTime = 0;
+    SSingleDeviceCtrl TIAllData;
+    QByteArray data = getContent();
+    TIAllData.setRawData(data);
+    return TIAllData;
+}
+
+
+//读取TI启动时间
+quint16 CCESingleCtrlPackage_ReadTIModule::getTIStartTime() const
+{
     QByteArray buffer = getContent();
     if (buffer.size() < m_dataLength)
         return 0;
-    memcpy(&TIStartTime, buffer.constData(), m_dataLength);
-    return TIStartTime;
+    const SSingleDeviceCtrl* TIAllData = (SSingleDeviceCtrl*)buffer.constData();
+    return TIAllData->startTime;
 }
 
 
 //读取TIPWM
-quint8 CCESingleCtrlPackage_ReadTIPWM::getTIPWM() const
+quint8 CCESingleCtrlPackage_ReadTIModule::getTIPWM() const
 {
-    quint8 TIPWM = 0;
     QByteArray buffer = getContent();
     if (buffer.size() < m_dataLength)
         return 0;
-    memcpy(&TIPWM, buffer.constData(), m_dataLength);
-    return TIPWM;
+    const SSingleDeviceCtrl* TIAllData = (SSingleDeviceCtrl*)buffer.constData();
+    return TIAllData->PWMValue;
 }
 
 
 //读取TISwitch
-quint8 CCESingleCtrlPackage_ReadTISwitch::getTISwitch() const
+quint8 CCESingleCtrlPackage_ReadTIModule::getTISwitch() const
 {
-    quint8 TISwitch = 0;
     QByteArray buffer = getContent();
     if (buffer.size() < m_dataLength)
         return 0;
-    memcpy(&TISwitch, buffer.constData(), m_dataLength);
-    return TISwitch;
+    const SSingleDeviceCtrl* TIAllData = (SSingleDeviceCtrl*)buffer.constData();
+    return TIAllData->startSwitch;
 }
 
 
@@ -320,10 +326,9 @@ CCESingleCtrlPackage_WriteCOLUMNModule
 
 CCESingleCtrlPackage_WriteCOLUMNModule
     ::CCESingleCtrlPackage_WriteCOLUMNModule(quint16 COLUMN_StartTime, quint8 COLUMN_PWM, bool COLUMN_Switch)
+    : m_COLUMNStartTime(COLUMN_StartTime), m_COLUMNPWM(COLUMN_PWM), m_COLUMNSwitch(COLUMN_Switch)
 {
-    m_COLUMNStartTime = COLUMN_StartTime;
-    m_COLUMNPWM = COLUMN_PWM;
-    m_COLUMNSwitch = COLUMN_Switch;
+    COLUMNParaTypeValue = COLUMN_AllData;
 }
 
 quint16 CCESingleCtrlPackage_WriteCOLUMNModule::CmdCtrlAddr() const
@@ -357,46 +362,52 @@ QByteArray CCESingleCtrlPackage_WriteCOLUMNModule::CmdContent() const
         QByteArray COLUMNStartTime = QByteArray((char *)&m_COLUMNStartTimeSwap, 2);
         QByteArray COLUMNPWM = QByteArray((char *)&m_COLUMNPWM, 1);
         QByteArray COLUMNSwitch = QByteArray((char *)&m_COLUMNSwitch, 1);
-        QByteArray COLUMNAllData = COLUMNStartTime.append(COLUMNPWM);
-        COLUMNAllData.append(COLUMNSwitch);
+        QByteArray COLUMNAllData = COLUMNStartTime.append(COLUMNPWM).append(COLUMNSwitch);
         return COLUMNAllData;
     }
 }
 
 
-//读取COLUMN启动时间
-quint16 CCESingleCtrlPackage_ReadCOLUMNStartTime::getCOLUMNStartTime() const
+//读取COLUMN所有设置
+SSingleDeviceCtrl CCESingleCtrlPackage_ReadCOLUMNModule::getCOLUMNAllData() const
 {
-    quint16 COLUMNStartTime = 0;
+    SSingleDeviceCtrl COLUMNAllData;
+    QByteArray data = getContent();
+    COLUMNAllData.setRawData(data);
+    return COLUMNAllData;
+}
+
+
+//读取COLUMN启动时间
+quint16 CCESingleCtrlPackage_ReadCOLUMNModule::getCOLUMNStartTime() const
+{
     QByteArray buffer = getContent();
     if (buffer.size() < m_dataLength)
         return 0;
-    memcpy(&COLUMNStartTime, buffer.constData(), m_dataLength);
-    return COLUMNStartTime;
+    const SSingleDeviceCtrl* COLUMNAllData = (SSingleDeviceCtrl*)buffer.constData();
+    return COLUMNAllData->startTime;
 }
 
 
 //读取COLUMNPWM
-quint8 CCESingleCtrlPackage_ReadCOLUMNPWM::getCOLUMNPWM() const
+quint8 CCESingleCtrlPackage_ReadCOLUMNModule::getCOLUMNPWM() const
 {
-    quint8 COLUMNPWM = 0;
     QByteArray buffer = getContent();
     if (buffer.size() < m_dataLength)
         return 0;
-    memcpy(&COLUMNPWM, buffer.constData(), m_dataLength);
-    return COLUMNPWM;
+    const SSingleDeviceCtrl* COLUMNAllData = (SSingleDeviceCtrl*)buffer.constData();
+    return COLUMNAllData->PWMValue;
 }
 
 
 //读取COLUMNSwitch
-quint8 CCESingleCtrlPackage_ReadCOLUMNSwitch::getCOLUMNSwitch() const
+quint8 CCESingleCtrlPackage_ReadCOLUMNModule::getCOLUMNSwitch() const
 {
-    quint8 COLUMNSwitch = 0;
     QByteArray buffer = getContent();
     if (buffer.size() < m_dataLength)
         return 0;
-    memcpy(&COLUMNSwitch, buffer.constData(), m_dataLength);
-    return COLUMNSwitch;
+    const SSingleDeviceCtrl* COLUMNAllData = (SSingleDeviceCtrl*)buffer.constData();
+    return COLUMNAllData->startSwitch;
 }
 
 
@@ -422,10 +433,9 @@ CCESingleCtrlPackage_WritePIDModule
 
 CCESingleCtrlPackage_WritePIDModule
     ::CCESingleCtrlPackage_WritePIDModule(quint16 PID_BiasVoltage, quint16 PID_Frequency, bool PID_Switch)
+    : m_PIDBiasVoltage(PID_BiasVoltage), m_PIDFrequency(PID_Frequency), m_PIDSwitch(PID_Switch)
 {
-    m_PIDBiasVoltage = PID_BiasVoltage;
-    m_PIDFrequency = PID_Frequency;
-    m_PIDSwitch = PID_Switch;
+    PIDParaTypeValue = PID_AllData;
 }
 
 quint16 CCESingleCtrlPackage_WritePIDModule::CmdCtrlAddr() const
@@ -462,53 +472,59 @@ QByteArray CCESingleCtrlPackage_WritePIDModule::CmdContent() const
         QByteArray PIDBiasVoltage = QByteArray((char *)&m_PIDBiasVoltageSwap, 2);
         QByteArray PIDFrequency = QByteArray((char *)&m_PIDFrequencySwap, 2);
         QByteArray PIDSwitch = QByteArray((char *)&m_PIDSwitch, 1);
-        QByteArray PIDAllData = PIDBiasVoltage.append(PIDFrequency);
-        PIDAllData.append(PIDSwitch);
+        QByteArray PIDAllData = PIDBiasVoltage.append(PIDFrequency).append(PIDSwitch);
         return PIDAllData;
     }
 }
 
 
-//读取PID启动时间
-quint16 CCESingleCtrlPackage_ReadPIDBiasVoltage::getPIDBiasVoltage() const
+//读取PID所有设置
+SSingleMicroPIDCtrl CCESingleCtrlPackage_ReadPIDModule::getPIDAllData() const
 {
-    quint16 PIDBiasVoltage = 0;
-    QByteArray buffer = getContent();
-    if (buffer.size() < m_dataLength)
-        return 0;
-    memcpy(&PIDBiasVoltage, buffer.constData(), m_dataLength);
-    return PIDBiasVoltage;
+    SSingleMicroPIDCtrl PIDAllData;
+    QByteArray data = getContent();
+    PIDAllData.setRawData(data);
+    return PIDAllData;
 }
 
 
-//读取PIDFrequency
-quint16 CCESingleCtrlPackage_ReadPIDFrequency::getPIDFrequency() const
+//读取PID偏置电压
+quint16 CCESingleCtrlPackage_ReadPIDModule::getPIDBiasVoltage() const
 {
-    quint16 PIDFrequency = 0;
     QByteArray buffer = getContent();
     if (buffer.size() < m_dataLength)
         return 0;
-    memcpy(&PIDFrequency, buffer.constData(), m_dataLength);
-    return PIDFrequency;
+    const SSingleMicroPIDCtrl* PIDAllData = (SSingleMicroPIDCtrl*)buffer.constData();
+    return PIDAllData->biasVoltage;
 }
 
 
-//读取PIDSwitch
-quint8 CCESingleCtrlPackage_ReadPIDSwitch::getPIDSwitch() const
+//读取PID频率
+quint8 CCESingleCtrlPackage_ReadPIDModule::getPIDFrequency() const
 {
-    quint8 PIDSwitch = 0;
     QByteArray buffer = getContent();
     if (buffer.size() < m_dataLength)
         return 0;
-    memcpy(&PIDSwitch, buffer.constData(), m_dataLength);
-    return PIDSwitch;
+    const SSingleMicroPIDCtrl* PIDAllData = (SSingleMicroPIDCtrl*)buffer.constData();
+    return PIDAllData->freq;
 }
 
+
+//读取PID开关状态
+quint8 CCESingleCtrlPackage_ReadPIDModule::getPIDSwitch() const
+{
+    QByteArray buffer = getContent();
+    if (buffer.size() < m_dataLength)
+        return 0;
+    const SSingleMicroPIDCtrl* PIDAllData = (SSingleMicroPIDCtrl*)buffer.constData();
+    return PIDAllData->startSwitch;
+}
 
 //写入EPC的控制电压
 CCESingleCtrlPackage_WriteEPCVoltage::CCESingleCtrlPackage_WriteEPCVoltage(quint16 EPC_Voltage)
+    : m_EPCVoltage(EPC_Voltage)
 {
-    m_EPCVoltage = EPC_Voltage;
+
 }
 
 
@@ -526,8 +542,9 @@ quint16 CCESingleCtrlPackage_ReadEPCVoltage::getEPCVoltage() const
 
 //写入EPC的开关状态
 CCESingleCtrlPackage_WriteEPCSwitch::CCESingleCtrlPackage_WriteEPCSwitch(quint8 EPC_Switch)
+    : m_EPCSwitch(EPC_Switch)
 {
-    m_EPCSwitch = EPC_Switch;
+
 }
 
 

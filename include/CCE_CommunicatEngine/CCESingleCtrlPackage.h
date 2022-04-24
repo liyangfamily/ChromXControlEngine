@@ -1,4 +1,4 @@
-#ifndef CCESINGLECTRLPACKAGE_H
+﻿#ifndef CCESINGLECTRLPACKAGE_H
 #define CCESINGLECTRLPACKAGE_H
 
 #include <CCE_CommunicatEngine/CCEPackage>
@@ -123,8 +123,11 @@ protected:
         return quint16(ECommand::EC_Read_PumpVoltage);
     }
     QByteArray CmdContent() const override {
-        return QByteArray().fill(0, 1);
+        return QByteArray().fill(0, m_dataLength);
     }
+
+private:
+    quint8 m_dataLength = 1;
 };
 
 
@@ -171,8 +174,11 @@ protected:
         return quint16(ECommand::EC_Read_SampleValve);
     }
     QByteArray CmdContent() const override {
-        return QByteArray().fill(0, 1);
+        return QByteArray().fill(0, m_dataLength);
     }
+
+private:
+    quint8 m_dataLength = 1;
 };
 
 
@@ -219,8 +225,11 @@ protected:
         return quint16(ECommand::EC_Read_DetectValve);
     }
     QByteArray CmdContent() const override {
-        return QByteArray().fill(0, 1);
+        return QByteArray().fill(0, m_dataLength);
     }
+
+private:
+    quint8 m_dataLength = 1;
 };
 
 
@@ -267,8 +276,11 @@ protected:
         return quint16(ECommand::EC_Read_Fan);
     }
     QByteArray CmdContent() const override {
-        return QByteArray().fill(0, 1);
+        return QByteArray().fill(0, m_dataLength);
     }
+
+private:
+    quint8 m_dataLength = 1;
 };
 
 
@@ -311,6 +323,7 @@ class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadTDModule
     CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadTDModule, CCEAbstractSingleCtrlPackage)
 
 public:
+    SSingleDeviceCtrl getTDAllData() const;
     quint16 getTDStartTime() const;
     quint8 getTDPWM() const;
     quint8 getTDSwitch() const;
@@ -323,86 +336,11 @@ protected:
         return quint16(ECommand::EC_Read_TDStartTime);
     }
     QByteArray CmdContent() const override {
-        return QByteArray().fill(0, m_dataLength);
+        return QByteArray().fill(0, sizeof(SSingleDeviceCtrl));
     }
 
 private:
     quint8 m_dataLength = 4;
-};
-
-
-//读取TD启动时间
-class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadTDStartTime
-        : public CCEAbstractSingleCtrlPackage
-{
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadTDStartTime, CCEAbstractSingleCtrlPackage)
-
-public:
-    quint16 getTDStartTime() const;
-
-protected:
-    EFrameType CmdFrameType() const override {
-        return EFrameType::EFT_ReadFrame;
-    }
-    quint16 CmdCtrlAddr() const override {
-        return quint16(ECommand::EC_Read_TDStartTime);
-    }
-    QByteArray CmdContent() const override {
-        return QByteArray().fill(0, m_dataLength);
-    }
-
-private:
-    quint8 m_dataLength = 2;
-};
-
-
-//读取TDPWM值
-class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadTDPWM
-        : public CCEAbstractSingleCtrlPackage
-{
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadTDPWM, CCEAbstractSingleCtrlPackage)
-
-public:
-    quint8 getTDPWM() const;
-
-protected:
-    EFrameType CmdFrameType() const override {
-        return EFrameType::EFT_ReadFrame;
-    }
-    quint16 CmdCtrlAddr() const override {
-        return quint16(ECommand::EC_Read_TDPWM);
-    }
-    QByteArray CmdContent() const override {
-        return QByteArray().fill(0, m_dataLength);
-    }
-
-private:
-    quint8 m_dataLength = 1;
-};
-
-
-//读取TD开关状态
-class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadTDSwitch
-        : public CCEAbstractSingleCtrlPackage
-{
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadTDSwitch, CCEAbstractSingleCtrlPackage)
-
-public:
-    quint8 getTDSwitch() const;
-
-protected:
-    EFrameType CmdFrameType() const override {
-        return EFrameType::EFT_ReadFrame;
-    }
-    quint16 CmdCtrlAddr() const override {
-        return quint16(ECommand::EC_Read_TDSwitch);
-    }
-    QByteArray CmdContent() const override {
-        return QByteArray().fill(0, m_dataLength);
-    }
-
-private:
-    quint8 m_dataLength = 1;
 };
 
 
@@ -445,6 +383,7 @@ class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadTIModule
     CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadTIModule, CCEAbstractSingleCtrlPackage)
 
 public:
+    SSingleDeviceCtrl getTIAllData() const;
     quint16 getTIStartTime() const;
     quint8 getTIPWM() const;
     quint8 getTISwitch() const;
@@ -465,82 +404,6 @@ private:
 };
 
 
-//读取TI启动时间
-class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadTIStartTime
-        : public CCEAbstractSingleCtrlPackage
-{
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadTIStartTime, CCEAbstractSingleCtrlPackage)
-
-public:
-    quint16 getTIStartTime() const;
-
-protected:
-    EFrameType CmdFrameType() const override {
-        return EFrameType::EFT_ReadFrame;
-    }
-    quint16 CmdCtrlAddr() const override {
-        return quint16(ECommand::EC_Read_TIStartTime);
-    }
-    QByteArray CmdContent() const override {
-        return QByteArray().fill(0, m_dataLength);
-    }
-
-private:
-    quint8 m_dataLength = 2;
-};
-
-
-//读取TIPWM值
-class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadTIPWM
-        : public CCEAbstractSingleCtrlPackage
-{
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadTIPWM, CCEAbstractSingleCtrlPackage)
-
-public:
-    quint8 getTIPWM() const;
-
-protected:
-    EFrameType CmdFrameType() const override {
-        return EFrameType::EFT_ReadFrame;
-    }
-    quint16 CmdCtrlAddr() const override {
-        return quint16(ECommand::EC_Read_TIPWM);
-    }
-    QByteArray CmdContent() const override {
-        return QByteArray().fill(0, m_dataLength);
-    }
-
-private:
-    quint8 m_dataLength = 1;
-};
-
-
-//读取TI开关状态
-class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadTISwitch
-        : public CCEAbstractSingleCtrlPackage
-{
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadTISwitch, CCEAbstractSingleCtrlPackage)
-
-public:
-    quint8 getTISwitch() const;
-
-protected:
-    EFrameType CmdFrameType() const override {
-        return EFrameType::EFT_ReadFrame;
-    }
-    quint16 CmdCtrlAddr() const override {
-        return quint16(ECommand::EC_Read_TISwitch);
-    }
-    QByteArray CmdContent() const override {
-        return QByteArray().fill(0, m_dataLength);
-    }
-
-private:
-    quint8 m_dataLength = 1;
-};
-
-
-
 //写入COLUNN状态
 class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_WriteCOLUMNModule
         : public CCEAbstractSingleCtrlPackage
@@ -553,6 +416,7 @@ public:
         COLUMN_StartTime,
         COLUMN_PWM,
         COLUMN_Switch,
+        COLUMN_AllData,
     }COLUMNParaTypeValue;
 
     CCESingleCtrlPackage_WriteCOLUMNModule(enum COLUMNParaType COLUMNParaType, quint16 COLUMNParaValue);
@@ -579,6 +443,7 @@ class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadCOLUMNModule
     CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadCOLUMNModule, CCEAbstractSingleCtrlPackage)
 
 public:
+    SSingleDeviceCtrl getCOLUMNAllData() const;
     quint16 getCOLUMNStartTime() const;
     quint8 getCOLUMNPWM() const;
     quint8 getCOLUMNSwitch() const;
@@ -599,81 +464,6 @@ private:
 };
 
 
-//读取COLUMN启动时间
-class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadCOLUMNStartTime
-        : public CCEAbstractSingleCtrlPackage
-{
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadCOLUMNStartTime, CCEAbstractSingleCtrlPackage)
-
-public:
-    quint16 getCOLUMNStartTime() const;
-
-protected:
-    EFrameType CmdFrameType() const override {
-        return EFrameType::EFT_ReadFrame;
-    }
-    quint16 CmdCtrlAddr() const override {
-        return quint16(ECommand::EC_Read_COLUMNStartTime);
-    }
-    QByteArray CmdContent() const override {
-        return QByteArray().fill(0, m_dataLength);
-    }
-
-private:
-    quint8 m_dataLength = 2;
-};
-
-
-//读取COLUMNPWM值
-class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadCOLUMNPWM
-        : public CCEAbstractSingleCtrlPackage
-{
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadCOLUMNPWM, CCEAbstractSingleCtrlPackage)
-
-public:
-    quint8 getCOLUMNPWM() const;
-
-protected:
-    EFrameType CmdFrameType() const override {
-        return EFrameType::EFT_ReadFrame;
-    }
-    quint16 CmdCtrlAddr() const override {
-        return quint16(ECommand::EC_Read_COLUMNPWM);
-    }
-    QByteArray CmdContent() const override {
-        return QByteArray().fill(0, m_dataLength);
-    }
-
-private:
-    quint8 m_dataLength = 1;
-};
-
-
-//读取COLUMN开关状态
-class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadCOLUMNSwitch
-        : public CCEAbstractSingleCtrlPackage
-{
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadCOLUMNSwitch, CCEAbstractSingleCtrlPackage)
-
-public:
-    quint8 getCOLUMNSwitch() const;
-
-protected:
-    EFrameType CmdFrameType() const override {
-        return EFrameType::EFT_ReadFrame;
-    }
-    quint16 CmdCtrlAddr() const override {
-        return quint16(ECommand::EC_Read_COLUMNSwitch);
-    }
-    QByteArray CmdContent() const override {
-        return QByteArray().fill(0, m_dataLength);
-    }
-
-private:
-    quint8 m_dataLength = 1;
-};
-
-
 //写入PID的状态
 class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_WritePIDModule
         : public CCEAbstractSingleCtrlPackage
@@ -686,6 +476,7 @@ public:
         PID_BiasVoltage,
         PID_Frequency,
         PID_Switch,
+        PID_AllData,
     }PIDParaTypeValue;
 
     CCESingleCtrlPackage_WritePIDModule(enum PIDParaType PIDParaType, quint16 PIDParaValue);
@@ -712,6 +503,7 @@ class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadPIDModule
     CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadPIDModule, CCEAbstractSingleCtrlPackage)
 
 public:
+    SSingleMicroPIDCtrl getPIDAllData() const;
     quint16 getPIDBiasVoltage() const;
     quint8 getPIDFrequency() const;
     quint8 getPIDSwitch() const;
@@ -728,82 +520,7 @@ protected:
     }
 
 private:
-    quint8 m_dataLength = 4;
-};
-
-
-//读取PID启动时间
-class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadPIDBiasVoltage
-        : public CCEAbstractSingleCtrlPackage
-{
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadPIDBiasVoltage, CCEAbstractSingleCtrlPackage)
-
-public:
-    quint16 getPIDBiasVoltage() const;
-
-protected:
-    EFrameType CmdFrameType() const override {
-        return EFrameType::EFT_ReadFrame;
-    }
-    quint16 CmdCtrlAddr() const override {
-        return quint16(ECommand::EC_Read_PIDBiasVoltage);
-    }
-    QByteArray CmdContent() const override {
-        return QByteArray().fill(0, m_dataLength);
-    }
-
-private:
-    quint8 m_dataLength = 2;
-};
-
-
-//读取PIDFrequency值
-class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadPIDFrequency
-        : public CCEAbstractSingleCtrlPackage
-{
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadPIDFrequency, CCEAbstractSingleCtrlPackage)
-
-public:
-    quint16 getPIDFrequency() const;
-
-protected:
-    EFrameType CmdFrameType() const override {
-        return EFrameType::EFT_ReadFrame;
-    }
-    quint16 CmdCtrlAddr() const override {
-        return quint16(ECommand::EC_Read_PIDFrequency);
-    }
-    QByteArray CmdContent() const override {
-        return QByteArray().fill(0, m_dataLength);
-    }
-
-private:
-    quint8 m_dataLength = 2;
-};
-
-
-//读取PID开关状态
-class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadPIDSwitch
-        : public CCEAbstractSingleCtrlPackage
-{
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleCtrlPackage_ReadPIDSwitch, CCEAbstractSingleCtrlPackage)
-
-public:
-    quint8 getPIDSwitch() const;
-
-protected:
-    EFrameType CmdFrameType() const override {
-        return EFrameType::EFT_ReadFrame;
-    }
-    quint16 CmdCtrlAddr() const override {
-        return quint16(ECommand::EC_Read_PIDSwitch);
-    }
-    QByteArray CmdContent() const override {
-        return QByteArray().fill(0, m_dataLength);
-    }
-
-private:
-    quint8 m_dataLength = 1;
+    quint8 m_dataLength = 5;
 };
 
 
