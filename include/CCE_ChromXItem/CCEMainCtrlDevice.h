@@ -15,16 +15,16 @@ public:
     /*********************************************************************************************************
     **主控设备控制
     *********************************************************************************************************/
-    quint16 writeHardwareVersion(quint8 value, bool sync, int msec);
-    quint16 readHardwareVersion(bool sync, int msec);
+    quint16 writeHardwareVersion(quint8 value, bool sync=true, int msec=CCE_Defalut_SyncTimeout);
+    quint16 readHardwareVersion(bool sync=true, int msec=1000);
     quint8  getHardwareVersion();
 
-    quint16 writeARMSoftwareVersion(quint8 value, bool sync, int msec);
-    quint16 readARMSoftwareVersion(bool sync, int msec);
+    quint16 writeARMSoftwareVersion(quint8 value, bool sync=true, int msec=CCE_Defalut_SyncTimeout);
+    quint16 readARMSoftwareVersion(bool sync=true, int msec=1000);
     quint8  getARMSoftwareVersion();
 
-    quint16 writeStartSelfTest(quint8 value, bool sync, int msec);
-    quint16 readStartSelfTest(bool sync, int msec);
+    quint16 writeStartSelfTest(quint8 value, bool sync=true, int msec=CCE_Defalut_SyncTimeout);
+    quint16 readStartSelfTest(bool sync=true, int msec=1000);
     quint8  getStartSelfTest();
 protected:
     virtual void registerCallBack() override;

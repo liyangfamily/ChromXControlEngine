@@ -109,58 +109,52 @@ quint16 CCEMainCtrlDevice::onParseReadHardwareVersion(const QByteArray &data)
 {
     Q_D(CCEMainCtrlDevice);
     CCEMainCtrlPackage_ReadHardwareVersion pack(data);
-    if(pack.isValid()){
+    quint16 ret = pack.isValid();
+    if(ret==CCEAPI::EResult::ER_Success){
         d->m_mainCtrlData.hardWareVersion = pack.getVersion();
         qDebug()<<"Got it! hard version:"<<d->m_mainCtrlData.hardWareVersion;
     }
-    return CCEAPI::EResult::ER_Success;
+    return ret;
 }
 
 quint16 CCEMainCtrlDevice::onParseWriteHardwareVersion(const QByteArray &data)
 {
     CCEMainCtrlPackage_WriteHardwareVersion pack(data);
-    if(pack.isValid()){;
-        qDebug()<<"Got it! result:"<<pack.getOperationResult();
-    }
-    return CCEAPI::EResult::ER_Success;
+    DO_RETOPERATIONRESULT(pack);
 }
 
 quint16 CCEMainCtrlDevice::onParseReadARMSoftwareVersion(const QByteArray &data)
 {
     Q_D(CCEMainCtrlDevice);
     CCEMainCtrlPackage_ReadARMSoftwareVersion pack(data);
-    if(pack.isValid()){
+    quint16 ret = pack.isValid();
+    if(ret==CCEAPI::EResult::ER_Success){
         d->m_mainCtrlData.armSoftwareVersion = pack.getVersion();
         qDebug()<<"Got it! arm version:"<<d->m_mainCtrlData.armSoftwareVersion;
     }
-    return CCEAPI::EResult::ER_Success;
+    return ret;
 }
 
 quint16 CCEMainCtrlDevice::onParseWriteARMSoftwareVersion(const QByteArray &data)
 {
     CCEMainCtrlPackage_WriteARMSoftwareVersion pack(data);
-     if(pack.isValid()){;
-         qDebug()<<"Got it! result:"<<pack.getOperationResult();
-     }
-     return CCEAPI::EResult::ER_Success;
+    DO_RETOPERATIONRESULT(pack);
 }
 
 quint16 CCEMainCtrlDevice::onParseReadStartSelfTest(const QByteArray &data)
 {
     Q_D(CCEMainCtrlDevice);
     CCEMainCtrlPackage_ReadStartSelfTest pack(data);
-    if(pack.isValid()){
+    quint16 ret = pack.isValid();
+    if(ret==CCEAPI::EResult::ER_Success){
         d->m_mainCtrlData.selfTestStatus = pack.getStatus();
         qDebug()<<"Got it! self test status:"<<d->m_mainCtrlData.selfTestStatus;
     }
-    return CCEAPI::EResult::ER_Success;
+    return ret;
 }
 
 quint16 CCEMainCtrlDevice::onParseWriteStartSelfTest(const QByteArray &data)
 {
     CCEMainCtrlPackage_WriteStartSelfTest pack(data);
-    if(pack.isValid()){;
-        qDebug()<<"Got it! result:"<<pack.getOperationResult();
-    }
-    return CCEAPI::EResult::ER_Success;
+    DO_RETOPERATIONRESULT(pack);
 }
