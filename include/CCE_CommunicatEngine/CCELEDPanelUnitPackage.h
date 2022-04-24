@@ -116,6 +116,7 @@ protected:
     }
 private:
     const quint8 m_dataLength = 6;
+
 };
 
 #endif // CCELEDPANELUNITPACKAGE_H

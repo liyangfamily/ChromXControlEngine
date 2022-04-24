@@ -34,13 +34,14 @@ CCELEDPanelUnitPackage_WriteHardwareVersion::CCELEDPanelUnitPackage_WriteHardwar
 
 quint16 CCELEDPanelUnitPackage_ReadAllLEDPanelUnit::getCarrierGasPressure() const
 {
-    quint16 value = 0;
     QByteArray buffer = getContent();
     if (buffer.size() < m_dataLength) {
-        return value;
+        return 0;
     }
-    memcpy(&value, buffer.constData(), 2);
-    return value;
+    const SPressureSensor* test = (SPressureSensor*)buffer.constData();
+
+    //memcpy(&test, buffer.constData(), m_dataLength);
+    return test->carrierGasPressure;
 }
 
 quint16 CCELEDPanelUnitPackage_ReadAllLEDPanelUnit::getSamplingPumpPressure() const
