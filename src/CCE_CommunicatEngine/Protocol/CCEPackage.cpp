@@ -57,23 +57,27 @@ QByteArray CCEPackage::getDataToSend() const
     return m_data;
 }
 
-bool CCEPackage::isValid()
+quint16 CCEPackage::isValid()
 {
     if (m_data.size() < sizeof(SIntegratedCtrlHeader) + sizeof(SIntegratedFrameLimit))
     {
-        return false;
+        return CCEAPI::EResult::ER_DataLenErr;;
     }
     QByteArray arrCpy(m_data.data() + sizeof(SIntegratedFrameLimit), m_data.size() - sizeof(SIntegratedFrameLimit) - sizeof(quint16));
     quint16 tempCheckSum =  CCEUIHelper::byteToUShort(CCEUIHelper::getCRCCode(arrCpy));
-    if(tempCheckSum){
-        if(this->getUnitAddr()==this->CmdUnitAddr()&&\
-                this->getCtrlAddr()==this->CmdCtrlAddr()&&\
-                this->getFrameType()==this->CmdFrameType()){
-            return true;
-        }
-        return false;
+    if(tempCheckSum!=getCheckSum()){
+        return CCEAPI::EResult::ER_CRCErr;
     }
-    return false;
+    if(this->getUnitAddr()!=this->CmdUnitAddr()){
+        return CCEAPI::EResult::ER_UnitAddrErr;
+    }
+    if(this->getCtrlAddr()!=this->CmdCtrlAddr()){
+        return CCEAPI::EResult::ER_CtrlAddrErr;
+    }
+    if(this->getFrameType()!=this->CmdFrameType()){
+        return CCEAPI::EResult::ER_FrameTypeErr;
+    }
+    return CCEAPI::EResult::ER_Success;
 }
 
 quint8 CCEPackage::getFrameLength() const

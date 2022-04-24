@@ -47,11 +47,19 @@ void CCEDetectServer::autoConnect()
 
 void CCEDetectServer::connectMainCOM(QString comName)
 {
+    if(comName.isEmpty()){
+        qDebug()<<"COM Name is Empty...";
+        return;
+    }
     gCluster->slot_ConnectToCOM(comName,quint64(EDeviceType::EDT_MainCOMDevice));
 }
 
 void CCEDetectServer::connectAssistCOM(QString comName)
 {
+    if(comName.isEmpty()){
+        qDebug()<<"COM Name is Empty...";
+        return;
+    }
     gCluster->slot_ConnectToCOM(comName,quint64(EDeviceType::EDT_AssistCOMDevice));
 }
 

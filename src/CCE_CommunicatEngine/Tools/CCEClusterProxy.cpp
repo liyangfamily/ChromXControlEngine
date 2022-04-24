@@ -26,6 +26,7 @@ maybe you can refer to class CCEPackageEvent and class CCEPackageDispatcher inmo
 #include "CCE_CommunicatEngine/CCESocketLock.h"
 
 #include "CCE_CommunicatEngine/CCECluster.h"
+#include "CCE_Core/CCEAPIDef"
 
 QMutex CCEClusterProxy::m_mutex_protect;
 QMutex CCEClusterProxy::m_exclusive_protect;
@@ -35,15 +36,15 @@ CCEClusterProxy::~CCEClusterProxy()
 {
 }
 
-bool CCEClusterProxy::syncSend(const CCEEnginePackage& sendPack, CCEEnginePackage& recPack, int mesc/* = 1500*/,bool force/*=false*/)
+quint16 CCEClusterProxy::syncSend(const CCEEnginePackage& sendPack, CCEEnginePackage& recPack, int mesc/* = 1500*/,bool force/*=false*/)
 {
     if (isItemExlusive(sendPack.hostName())) {
         qDebug() << QString("SyncSend====(%1)..is in Exclusive.").arg(sendPack.hostName());
-        return false;
+        return CCEAPI::EResult::ER_InExclusiveMode;
     }
     if (!m_mutex_protect.try_lock()) {
         qDebug() << "Lock Failed.";
-        return false;
+        return CCEAPI::EResult::ER_SyncSendLockFail;
     }
     CCESyncWaiter syncLocker(sendPack);
     gCluster->slot_SendData(sendPack.socketObj(), sendPack);
@@ -51,22 +52,22 @@ bool CCEClusterProxy::syncSend(const CCEEnginePackage& sendPack, CCEEnginePackag
     {
         m_mutex_protect.unlock();
         recPack = syncLocker.syncRecPackage();
-        return true;
+        return CCEAPI::EResult::ER_Success;
     }
     else
     {
         m_mutex_protect.unlock();
         qDebug() << "Timed out while waiting on syncSend(). hostName:" << sendPack.hostName();
-        return false;
+        return CCEAPI::EResult::ER_SyncSendTimeOut;
     }
 }
 
-bool CCEClusterProxy::exclusiveSyncSend(const CCEEnginePackage & sendPack, CCEEnginePackage & recPack, int mesc)
+quint16 CCEClusterProxy::exclusiveSyncSend(const CCEEnginePackage & sendPack, CCEEnginePackage & recPack, int mesc)
 {
     if (isItemExlusive(sendPack.hostName())) {
         if (sendPack.exclusiveKey() != m_hash_exclusiveHostName[sendPack.hostName()]) {
             qDebug() << QString("%1 Exclusive key not matched.").arg(sendPack.hostName());
-            return false;
+            return CCEAPI::EResult::ER_ExclusiveKeyNotMatch;
         }
     }
     CCESyncWaiter syncLocker(sendPack);
@@ -74,12 +75,12 @@ bool CCEClusterProxy::exclusiveSyncSend(const CCEEnginePackage & sendPack, CCEEn
     if (syncLocker.syncLockEventLoop(mesc))
     {
         recPack = syncLocker.syncRecPackage();
-        return true;
+        return CCEAPI::EResult::ER_Success;
     }
     else
     {
         qDebug() << "Timed out while waiting on syncSend(). hostName:" << sendPack.hostName();
-        return false;
+        return CCEAPI::EResult::ER_SyncSendTimeOut;
     }
 }
 

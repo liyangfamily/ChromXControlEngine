@@ -19,8 +19,8 @@ class CCE_COMMUNICATENGINE_EXPORT CCEClusterProxy: public QObject
 public:
     ~CCEClusterProxy();
 
-    static bool syncSend(const CCEEnginePackage& sendPack, CCEEnginePackage& recPack, int mesc = CCE_Defalut_SyncTimeout, bool force = false);
-    static bool exclusiveSyncSend(const CCEEnginePackage& sendPack, CCEEnginePackage& recPack, int mesc = CCE_Defalut_SyncTimeout);
+    static quint16 syncSend(const CCEEnginePackage& sendPack, CCEEnginePackage& recPack, int mesc = CCE_Defalut_SyncTimeout, bool force = false);
+    static quint16 exclusiveSyncSend(const CCEEnginePackage& sendPack, CCEEnginePackage& recPack, int mesc = CCE_Defalut_SyncTimeout);
     static bool asyncSend(const CCEEnginePackage& sendPack);
 
     static bool isItemExlusive(QString hostName);

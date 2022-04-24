@@ -20,7 +20,7 @@
 #define CCE_VERSION_MINOR 0
 #define CCE_VERSION_PATCH 0
 
-#define CCE_Defalut_SyncTimeout 1500
+#define CCE_Defalut_SyncTimeout 1000
 
 #ifdef _DEBUG
 #define CCE_MemoryLeaksDetect false

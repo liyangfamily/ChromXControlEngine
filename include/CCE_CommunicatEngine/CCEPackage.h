@@ -33,13 +33,17 @@ public:\
     enginePack.setData(pack.getDataToSend());\
     if (sync) {\
         CCEEnginePackage recEnginePack;\
-        CCEClusterProxy::syncSend(enginePack, recEnginePack, msec);\
+        quint16 ret = CCEClusterProxy::syncSend(enginePack, recEnginePack, msec);\
+        if(ret!=CCEAPI::EResult::ER_Success){ \
+            return ret; \
+        } \
         return d->m_packageMgr.handle(CCEPackage(recEnginePack.data()));\
     }\
     else {\
         return CCEClusterProxy::asyncSend(enginePack) ? CCEAPI::EResult::ER_Success : CCEAPI::EResult::ER_Fail;\
     }\
 
+//用于Package中获取写入操作结果
 #define DO_GETOPERATIONRESULT() \
     quint8 value = 0xFF;\
     QByteArray buffer = getContent(); \
@@ -47,6 +51,36 @@ public:\
         return value; }\
     memcpy(&value, buffer, sizeof(quint8)); \
     return value; \
+
+
+//用于device写入帧获取操作返回结果
+#define DO_RETOPERATIONRESULT(pack) \
+    quint16 ret = pack.isValid(); \
+    if(ret==CCEAPI::EResult::ER_Success){\
+        ret = pack.getOperationResult(); \
+    } \
+    return ret; \
+
+
+//用于device读取帧获取单个字节的返回结果
+#define DO_GETCHARRESULT(content) \
+    QByteArray buffer = content; \
+    if (buffer.size() < 1) { \
+        return 0; \
+    } \
+    return buffer.front(); \
+
+
+//用于device读取帧获取两个字节的返回结果
+#define DO_GETUSHORTRESULT(content) \
+    quint16 value = 0; \
+    QByteArray buffer = content; \
+    if (buffer.size() < 2) { \
+        return value; \
+    } \
+    memcpy(&value, buffer.constData(), 2); \
+    return CCEUIHelper::bigLittleSwap16(value); \
+
 
 //此类提供给不同协议的Package类在onReceive中调用
 class CCE_COMMUNICATENGINE_EXPORT CCEPackage
@@ -101,7 +135,7 @@ public:
 
     /*********************解析数据时获取**************************/
     //判断是否有效
-    bool isValid();
+    quint16 isValid();
     //获取帧长度
     quint8 getFrameLength() const;
     //获取协议版本
