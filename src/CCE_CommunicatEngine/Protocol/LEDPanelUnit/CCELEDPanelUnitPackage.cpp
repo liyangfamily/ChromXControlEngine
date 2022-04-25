@@ -32,36 +32,79 @@ CCELEDPanelUnitPackage_WriteHardwareVersion::CCELEDPanelUnitPackage_WriteHardwar
 
 }
 
-quint16 CCELEDPanelUnitPackage_ReadAllLEDPanelUnit::getCarrierGasPressure() const
+quint16 CCELEDPanelUnitPackage_ReadAllPressureSensor::getCarrierGasPressure() const
 {
     QByteArray buffer = getContent();
-    if (buffer.size() < m_dataLength) {
+    if (buffer.size() < sizeof(SPressureSensor)) {
         return 0;
     }
     const SPressureSensor* test = (SPressureSensor*)buffer.constData();
-
-    //memcpy(&test, buffer.constData(), m_dataLength);
-    return test->carrierGasPressure;
+    return CCEUIHelper::bigLittleSwap16(test->carrierGasPressure);
 }
 
-quint16 CCELEDPanelUnitPackage_ReadAllLEDPanelUnit::getSamplingPumpPressure() const
+quint16 CCELEDPanelUnitPackage_ReadAllPressureSensor::getSamplingPumpPressure() const
 {
-    quint32 value = 0;
     QByteArray buffer = getContent();
-    if (buffer.size() < m_dataLength) {
-        return value;
+    if (buffer.size() < sizeof(SPressureSensor)) {
+        return 0;
     }
-    memcpy(&value, buffer.constData()+2, 2);
-    return value;
+    const SPressureSensor* test = (SPressureSensor*)buffer.constData();
+    return CCEUIHelper::bigLittleSwap16(test->samplingPumpPressure);
 }
 
-quint16 CCELEDPanelUnitPackage_ReadAllLEDPanelUnit::getAuxGasPressure() const
+quint16 CCELEDPanelUnitPackage_ReadAllPressureSensor::getAuxGasPressure() const
 {
-    quint32 value = 0;
     QByteArray buffer = getContent();
-    if (buffer.size() < m_dataLength) {
-        return value;
+    if (buffer.size() < sizeof(SPressureSensor)) {
+        return 0;
     }
-    memcpy(&value, buffer.constData()+4, 2);
-    return value;
+    const SPressureSensor* test = (SPressureSensor*)buffer.constData();
+    return CCEUIHelper::bigLittleSwap16(test->auxGasPressure);
+}
+
+quint16 CCELEDPanelUnitPackage_ReadAllEvnSensor::getEnvTemperature() const
+{
+    QByteArray buffer = getContent();
+    if (buffer.size() < sizeof(SEnvSensor)) {
+        return 0;
+    }
+    const SEnvSensor* test = (SEnvSensor*)buffer.constData();
+    return CCEUIHelper::bigLittleSwap16(test->envTemperature);
+}
+
+quint16 CCELEDPanelUnitPackage_ReadAllEvnSensor::getEnvHumidity() const
+{
+    QByteArray buffer = getContent();
+    if (buffer.size() < sizeof(SEnvSensor)) {
+        return 0;
+    }
+    const SEnvSensor* test = (SEnvSensor*)buffer.constData();
+    return CCEUIHelper::bigLittleSwap16(test->envHumidity);
+}
+
+quint16 CCELEDPanelUnitPackage_ReadAllEvnSensor::getEnvPressure() const
+{
+    QByteArray buffer = getContent();
+    if (buffer.size() < sizeof(SEnvSensor)) {
+        return 0;
+    }
+    const SEnvSensor* test = (SEnvSensor*)buffer.constData();
+    return CCEUIHelper::bigLittleSwap16(test->envPressure);
+}
+
+SLEDPanelLight CCELEDPanelUnitPackage_ReadAllLight::getValue() const
+{
+    SLEDPanelLight light;
+    QByteArray buffer = getContent();
+    if (buffer.size() < sizeof(SLEDPanelLight)) {
+        return light;
+    }
+    memcpy(&light,buffer.data(),sizeof(SLEDPanelLight));
+    return light;
+}
+
+CCELEDPanelUnitPackage_WriteAllLight::CCELEDPanelUnitPackage_WriteAllLight(SLEDPanelLight light):
+    m_light(light)
+{
+
 }

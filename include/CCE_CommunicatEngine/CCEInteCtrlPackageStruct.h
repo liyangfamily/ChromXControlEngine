@@ -125,6 +125,15 @@ typedef struct tagPressureSensor{
     quint16 carrierGasPressure;         //0x0002-0x0003	R/	LED面板 压力传感器 载气压力1值
     quint16 samplingPumpPressure;       //0x0004-0x0005	R/	LED面板 压力传感器 采样泵压力2值
     quint16 auxGasPressure;             //0x0006-0x0007	R/	LED面板 压力传感器 辅助气压力3值
+    tagPressureSensor()
+    {
+        Q_ASSERT(sizeof(tagPressureSensor) == 6);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagPressureSensor));
+    }
 }SPressureSensor;
 
 typedef struct tagLEDPanelLight{
@@ -134,12 +143,31 @@ typedef struct tagLEDPanelLight{
     quint8 light3;      //0x0013	R/W	LED 面板 指示灯3： 0为关，1为开
     quint8 light4;      //0x0014	R/W	LED 面板 指示灯4： 0为关，1为开
     quint8 light5;      //0x0015	R/W	LED 面板 指示灯5： 0为关，1为开
+    tagLEDPanelLight()
+    {
+        Q_ASSERT(sizeof(tagLEDPanelLight) == 6);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagLEDPanelLight));
+    }
 }SLEDPanelLight;
 
 typedef struct tagEnvSensor{
     quint16 envTemperature;             //0x0020-0x0021	R/	LED 面板 HDC1080环境温度值
     quint16 envHumidity;                //0x0022-0x0023	R/	LED 面板 HDC1080环境湿度值
-    quint16 ambientAtmosphericPressure; //0x0024-0x0025	R/	LED 面板 BMP388环境大气压力值
+    quint16 envPressure;                //0x0024-0x0025	R/	LED 面板 BMP388环境大气压力值
+
+    tagEnvSensor()
+    {
+        Q_ASSERT(sizeof(tagEnvSensor) == 6);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagEnvSensor));
+    }
 }SEnvSensor;
 
 typedef struct tagLEDPanelUnit{
@@ -192,6 +220,15 @@ typedef struct tagSingleDeviceCtrl{
     quint8 PWMValue;
     quint8 startSwitch;
 
+    tagSingleDeviceCtrl()
+    {
+        Q_ASSERT(sizeof(tagSingleDeviceCtrl) == 4);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagSingleDeviceCtrl));
+    }
     bool setRawData(const QByteArray& rawData,int pos = 0) {
         int effectSize = sizeof(tagSingleDeviceCtrl) - pos;
         if(effectSize<0){
@@ -212,6 +249,16 @@ typedef struct tagSingleMicroPIDCtrl{
     quint16 biasVoltage;
     quint16 freq;
     quint8 startSwitch;
+
+    tagSingleMicroPIDCtrl()
+    {
+        Q_ASSERT(sizeof(tagSingleMicroPIDCtrl) == 5);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagSingleMicroPIDCtrl));
+    }
 
     bool setRawData(const QByteArray& rawData,int pos = 0) {
         int effectSize = sizeof(tagSingleMicroPIDCtrl) - pos;
@@ -338,6 +385,15 @@ typedef struct tagSingleStatus{
 typedef struct tagTimeCtrl{
     quint16 timeValue;
     quint8 PWMValue;
+    tagTimeCtrl()
+    {
+        Q_ASSERT(sizeof(tagTimeCtrl) == 3);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagTimeCtrl));
+    }
 }STimeCtrl;
 
 typedef struct tagPIDCtrl{
@@ -345,6 +401,15 @@ typedef struct tagPIDCtrl{
     quint16 temperatureValue;
     quint8 PWMValue_Min;
     quint8 PWMValue_Max;
+    tagPIDCtrl()
+    {
+        Q_ASSERT(sizeof(tagPIDCtrl) == 6);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagPIDCtrl));
+    }
 }SPIDCtrl;
 
 typedef struct tagTDCtrl{
@@ -357,6 +422,16 @@ typedef struct tagTDCtrl{
 
     STimeCtrl timeCtrlArray[5];
     SPIDCtrl PIDTimeCtrlArray[5];
+
+    tagTDCtrl()
+    {
+        Q_ASSERT(sizeof(tagTDCtrl) == 54);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagTDCtrl));
+    }
 }STDCtrl;
 
 typedef struct tagTICtrl{
@@ -366,6 +441,15 @@ typedef struct tagTICtrl{
 
     STimeCtrl timeCtrlArray[5];
     SPIDCtrl PIDTimeCtrlArray[5];
+    tagTICtrl()
+    {
+        Q_ASSERT(sizeof(tagTICtrl) == 51);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagTICtrl));
+    }
 }STICtrl;
 
 typedef struct tagCOLUMNCtrl{
@@ -373,6 +457,15 @@ typedef struct tagCOLUMNCtrl{
 
     STimeCtrl timeCtrlArray[8];
     SPIDCtrl PIDTimeCtrlArray[8];
+    tagCOLUMNCtrl()
+    {
+        Q_ASSERT(sizeof(tagCOLUMNCtrl) == 73);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagCOLUMNCtrl));
+    }
 }SCOLUMNCtrl;
 
 typedef struct tagMicroPIDCtrl{
@@ -380,14 +473,21 @@ typedef struct tagMicroPIDCtrl{
     quint8  samplingFreq;
     quint16 plasmaFreq;
     quint16 baseLineVoltage;
+    tagMicroPIDCtrl()
+    {
+        Q_ASSERT(sizeof(tagMicroPIDCtrl) == 7);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagMicroPIDCtrl));
+    }
 }SMicroPIDCtrl;
 
 
 
 
-
-
-typedef struct tagTestParamSet{
+typedef struct tagPIDAll{
     quint32 TD_PID_P_Parma;                 //0x0000-0x0003	R/W	TD  PID 参数 ， P 数值 ， (定点，6位小数)
     quint32 TD_PID_I_Parma;                 //0x0004-0x0007	R/W	TD  PID 参数 ， I 数值 ， (定点，6位小数)
     quint32 TD_PID_D_Parma;                 //0x0008-0x000b	R/W	TD  PID 参数 ，D 数值 ，(定点，6位小数)
@@ -399,7 +499,18 @@ typedef struct tagTestParamSet{
     quint32 COLUMN_PID_P_Parma;             //0x0018-0x001b	R/W	COLUMN PID 参数 ， P 数值 ， (定点，6位小数)
     quint32 COLUMN_PID_I_Parma;             //0x001c-0x001f	R/W	COLUMN PID 参数 ， I 数值 ， (定点，6位小数)
     quint32 COLUMN_PID_D_Parma;             //0x0020-0x0023	R/W	COLUMN PID 参数 ，D 数值 ，(定点，6位小数)
+    tagPIDAll()
+    {
+        Q_ASSERT(sizeof(tagPIDAll) == 36);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagPIDAll));
+    }
+}SPIDAll;
 
+typedef struct tagRunParamSet{
     quint16 COLUMNFanCloseTemperature;      //0x0024-0x0025	R/W	column风扇关闭条件： column 温度值：0-65536
 
     quint8 reserved1[10];
@@ -418,8 +529,23 @@ typedef struct tagTestParamSet{
     quint8  reserved3[3];
 
     SMicroPIDCtrl microPIDCtrl;             //microPID 控制
-
     quint8 testData_AutoRepo;               //0x00f7	R/W	测试数据自动上传  0 不自动上传， 1自动上传
+    tagRunParamSet()
+    {
+        Q_ASSERT(sizeof(tagRunParamSet) == 212);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagRunParamSet));
+    }
+}SRunParamSet;
+
+
+typedef struct tagTestParamSet{
+    SPIDAll PIDCtrl;
+    SRunParamSet runParamSet;
+
     quint8 testStatus;                      //0x00f8	R/W	测试运行/停止  0 停止，1 为运行
 
     tagTestParamSet()
@@ -505,11 +631,13 @@ typedef struct tagTestData{
 typedef struct tagStatusWarn{
     quint8 existAbnormal;           //0x0000	R/	是否存在异常： 0 无， 1 有
     quint8 deviceStatus;            //0x0001	R/	bit0: 载气即将耗尽；bit1:无法维持载气压力；bit2: 采样压力异常；bit3:TD 故障;bit4: TI故障； bit5: Column 故障;bit6: PID故障;  bit7 超温报警
-    quint8 mainCtrlSelfTestStatus;  //0x0002	R/	主控板自检完成标志：0 自检中，1自检完成
+    quint8 deviceSelfTestStatus;    //0x0002	R/	主控板自检完成标志：0 自检中，1自检完成
+    quint8 reserved1[7];
+    quint8 deviceTestComplete;     //0x000A	R/	整机测试运行结束  0 无， 1 有
 
     tagStatusWarn()
     {
-        Q_ASSERT(sizeof(tagStatusWarn) == 3);
+        Q_ASSERT(sizeof(tagStatusWarn) == 11);
         clear();
     }
     void clear()

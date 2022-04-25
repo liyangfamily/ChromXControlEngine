@@ -10,6 +10,9 @@ HEADERS += \
     $$PWD/../../include/CCE_CommunicatEngine/CCEMainCtrlPackage.h \
     $$PWD/../../include/CCE_CommunicatEngine/CCESingleCtrlPackage.h \
     $$PWD/../../include/CCE_CommunicatEngine/CCESingleStatusPackage.h \
+    $$PWD/../../include/CCE_CommunicatEngine/CCEStatusWarnPackage.h \
+    $$PWD/../../include/CCE_CommunicatEngine/CCETestDataPackage.h \
+    $$PWD/../../include/CCE_CommunicatEngine/CCETestParamSetPackage.h \
     $$PWD/../../include/CCE_CommunicatEngine/CCEEnginePackage.h \
     $$PWD/../../include/CCE_CommunicatEngine/CCEPackageDispatcher.h \
     $$PWD/../../include/CCE_CommunicatEngine/CCEPackageEvent.h \
@@ -42,6 +45,9 @@ SOURCES += \
     $$PWD/Protocol/SingleCtrl/CCESingleCtrlPackage.cpp \
     $$PWD/Protocol/LEDPanelUnit/CCELEDPanelUnitPackage.cpp \
     $$PWD/Protocol/SingleStatus/CCESingleStatusPackage.cpp \
+    $$PWD/Protocol/StatusWarn/CCEStatusWarnPackage.cpp \
+    $$PWD/Protocol/TestData/CCETestDataPackage.cpp \
+    $$PWD/Protocol/TestParamSet/CCETestParamSetPackage.cpp \
     $$PWD/TaskEngine/CCE_TaskEngine.cpp \
     $$PWD/TaskEngine/CCE_TaskEngine_TaskBase.cpp \
     $$PWD/TaskEngine/CCE_TaskEngine_WorkingThread.cpp \

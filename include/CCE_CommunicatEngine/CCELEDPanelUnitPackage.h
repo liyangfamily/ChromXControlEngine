@@ -97,9 +97,9 @@ private:
 };
 
 /*******************************************************LED板压力传感器压力值*************************************************************/
-class CCE_COMMUNICATENGINE_EXPORT CCELEDPanelUnitPackage_ReadAllLEDPanelUnit : public CCEAbstractLEDPanelUnitPackage
+class CCE_COMMUNICATENGINE_EXPORT CCELEDPanelUnitPackage_ReadAllPressureSensor : public CCEAbstractLEDPanelUnitPackage
 {
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCELEDPanelUnitPackage_ReadAllLEDPanelUnit, CCEAbstractLEDPanelUnitPackage)
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCELEDPanelUnitPackage_ReadAllPressureSensor, CCEAbstractLEDPanelUnitPackage)
 public:
     quint16 getCarrierGasPressure() const;
     quint16 getSamplingPumpPressure() const;
@@ -112,11 +112,67 @@ protected:
         return quint16(ECommand::EC_Read_CarrierGasPressure);
     }
     QByteArray CmdContent() const override{
-     return QByteArray().fill(0,m_dataLength);
+     return QByteArray().fill(0,sizeof(SPressureSensor));
     }
-private:
-    const quint8 m_dataLength = 6;
-
 };
 
+/*******************************************************LED板指示灯*************************************************************/
+class CCE_COMMUNICATENGINE_EXPORT CCELEDPanelUnitPackage_ReadAllLight : public CCEAbstractLEDPanelUnitPackage
+{
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCELEDPanelUnitPackage_ReadAllLight, CCEAbstractLEDPanelUnitPackage)
+public:
+    SLEDPanelLight getValue() const;
+protected:
+    EFrameType CmdFrameType () const override {
+        return EFrameType::EFT_ReadFrame;
+    }
+    quint16 CmdCtrlAddr() const override{
+        return quint16(ECommand::EC_Read_TestProgeressBar);
+    }
+    QByteArray CmdContent() const override{
+     return QByteArray().fill(0,sizeof(SLEDPanelLight));
+    }
+};
+
+class CCE_COMMUNICATENGINE_EXPORT CCELEDPanelUnitPackage_WriteAllLight : public CCEAbstractLEDPanelUnitPackage
+{
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCELEDPanelUnitPackage_WriteAllLight, CCEAbstractLEDPanelUnitPackage)
+public:
+    CCELEDPanelUnitPackage_WriteAllLight(SLEDPanelLight light);
+    quint8 getOperationResult() const{
+        DO_GETOPERATIONRESULT();
+    }
+protected:
+    EFrameType CmdFrameType () const override {
+        return EFrameType::EFT_WriteFrame;
+    }
+    quint16 CmdCtrlAddr() const override{
+        return quint16(ECommand::EC_Write_TestProgeressBar);
+    }
+    QByteArray CmdContent() const override{
+     return QByteArray((char *)&m_light, sizeof(SLEDPanelLight));
+    }
+private:
+    SLEDPanelLight m_light;
+};
+
+/*******************************************************LED环境传感器*************************************************************/
+class CCE_COMMUNICATENGINE_EXPORT CCELEDPanelUnitPackage_ReadAllEvnSensor : public CCEAbstractLEDPanelUnitPackage
+{
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCELEDPanelUnitPackage_ReadAllEvnSensor, CCEAbstractLEDPanelUnitPackage)
+public:
+    quint16 getEnvTemperature() const;
+    quint16 getEnvHumidity() const;
+    quint16 getEnvPressure() const;
+protected:
+    EFrameType CmdFrameType () const override {
+        return EFrameType::EFT_ReadFrame;
+    }
+    quint16 CmdCtrlAddr() const override{
+        return quint16(ECommand::EC_Read_EnvironmentTemperature);
+    }
+    QByteArray CmdContent() const override{
+     return QByteArray().fill(0,sizeof(SEnvSensor));
+    }
+};
 #endif // CCELEDPANELUNITPACKAGE_H

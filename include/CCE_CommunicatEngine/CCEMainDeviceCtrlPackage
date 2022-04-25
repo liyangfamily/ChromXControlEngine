@@ -1,3 +1,4 @@
 ﻿#include "CCE_CommunicatEngine/CCEMainCtrlPackage.h"
 #include "CCE_CommunicatEngine/CCESingleStatusPackage.h"
 #include "CCE_CommunicatEngine/CCESingleCtrlPackage.h"
+#include "CCE_CommunicatEngine/CCETestDataPackage.h"
