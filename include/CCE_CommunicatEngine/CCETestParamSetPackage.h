@@ -140,7 +140,7 @@ protected:
         return quint16(ECommand::EC_Read_TD_PID_P_Parma);
     }
     QByteArray CmdContent() const override{
-     return QByteArray().fill(0,sizeof(SPIDCtrl));
+     return QByteArray().fill(0,sizeof(SPIDAll));
     }
 };
 
@@ -171,7 +171,10 @@ class CCE_COMMUNICATENGINE_EXPORT CCETestParamSetPackage_ReadRunParam : public C
 {
     CCE_DECLARE_PACKAGECONSTRUCTOR(CCETestParamSetPackage_ReadRunParam, CCEAbstractTestParamSetPackage)
 public:
+    //在读取不同偏移时用
     CCETestParamSetPackage_ReadRunParam(quint16 offsetPos,quint8 readLenght);
+    //在解析不同偏移时用
+    CCETestParamSetPackage_ReadRunParam(quint16 offsetPos,const QByteArray& data);
     QByteArray getValue() const;
 protected:
     EFrameType CmdFrameType () const override {
@@ -192,7 +195,10 @@ class CCE_COMMUNICATENGINE_EXPORT CCETestParamSetPackage_WriteRunParam : public 
 {
     CCE_DECLARE_PACKAGECONSTRUCTOR(CCETestParamSetPackage_WriteRunParam, CCEAbstractTestParamSetPackage)
 public:
+    //在写入不同偏移时用
     CCETestParamSetPackage_WriteRunParam(quint16 offsetPos, const QByteArray& writeData);
+    //在解析不同偏移时用
+    CCETestParamSetPackage_WriteRunParam(const QByteArray& parseData,quint16 offsetPos);
     quint8 getOperationResult() const{
         DO_GETOPERATIONRESULT();
     }

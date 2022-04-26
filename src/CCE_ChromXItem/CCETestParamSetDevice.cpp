@@ -2,7 +2,7 @@
 #include "CCEAbstractModule_p.h"
 #include <CCE_CommunicatEngine/CCEClusterProxy>
 
-static const int singlePackLength = 200;
+static const int g_singlePackLength = 212;
 
 class CCETestParamSetDevicePrivate : public CCEAbstractModulePrivate
 {
@@ -58,14 +58,14 @@ quint16 CCETestParamSetDevice::writeRunParam(const SRunParamSet &data, bool sync
     tempData.bigLittleSwap();
 
     //计算包个数
-    int packageCount = sizeof(SRunParamSet)/singlePackLength;
-    if (0 != sizeof(SRunParamSet)%singlePackLength)
+    int packageCount = sizeof(SRunParamSet)/g_singlePackLength;
+    if (0 != sizeof(SRunParamSet)%g_singlePackLength)
         packageCount += 1;
 
     for(int i = 0;i<packageCount;++i){
         //计算便宜与下发数据
-        int offsetPos = singlePackLength*i;
-        QByteArray writeData = QByteArray((char*)&tempData+offsetPos,(i == packageCount - 1)?(sizeof(SRunParamSet) - offsetPos):singlePackLength);
+        int offsetPos = g_singlePackLength*i;
+        QByteArray writeData = QByteArray((char*)&tempData+offsetPos,(i == packageCount - 1)?(sizeof(SRunParamSet) - offsetPos):g_singlePackLength);
 
         CCETestParamSetPackage_WriteRunParam pack(offsetPos,writeData);
         pack.build();
@@ -101,13 +101,13 @@ quint16 CCETestParamSetDevice::readRunParam(bool sync, int msec)
 {
     Q_D(CCETestParamSetDevice);
 
-    int packageCount = sizeof(SRunParamSet)/singlePackLength;
-    if (0 != sizeof(SRunParamSet)%singlePackLength)
+    int packageCount = sizeof(SRunParamSet)/g_singlePackLength;
+    if (0 != sizeof(SRunParamSet)%g_singlePackLength)
         packageCount += 1;
 
     for(int i = 0;i<packageCount;++i){
-        int offsetPos = singlePackLength*i;
-        int tempReadLength = (i == packageCount - 1)?(sizeof(SRunParamSet) - offsetPos):singlePackLength;
+        int offsetPos = g_singlePackLength*i;
+        int tempReadLength = (i == packageCount - 1)?(sizeof(SRunParamSet) - offsetPos):g_singlePackLength;
         CCETestParamSetPackage_ReadRunParam pack(offsetPos,tempReadLength);
         pack.build();
 
@@ -136,6 +136,7 @@ quint16 CCETestParamSetDevice::readRunParam(bool sync, int msec)
     }
     if(sync){
         d->m_testParamSet.runParamSet.bigLittleSwap();
+        qDebug()<<QString("Got it! Read RunParam:%1.").arg(CCEUIHelper::byteArrayToHexStr(QByteArray((char*)&d->m_testParamSet.runParamSet,sizeof(SRunParamSet))));
     }
     else{
         d->m_runParamAsyncReadComplete = true;
@@ -178,10 +179,17 @@ void CCETestParamSetDevice::registerCallBack()
                                         std::bind(&CCETestParamSetDevice::onParseWriteAllPID,this,std::placeholders::_1));
     d->m_packageMgr.registerPackage(CCETestParamSetPackage_ReadAllPID(),
                                         std::bind(&CCETestParamSetDevice::onParseReadAllPID,this,std::placeholders::_1));
+
     d->m_packageMgr.registerPackage(CCETestParamSetPackage_WriteRunParam(),
                                         std::bind(&CCETestParamSetDevice::onParseWriteRunParam,this,std::placeholders::_1));
+    d->m_packageMgr.registerPackage(CCETestParamSetPackage_WriteRunParam(g_singlePackLength,QByteArray()),
+                                        std::bind(&CCETestParamSetDevice::onParseWriteRunParam,this,std::placeholders::_1));
+
     d->m_packageMgr.registerPackage(CCETestParamSetPackage_ReadRunParam(),
                                         std::bind(&CCETestParamSetDevice::onParseReadRunParam,this,std::placeholders::_1));
+    d->m_packageMgr.registerPackage(CCETestParamSetPackage_ReadRunParam(g_singlePackLength,0),
+                                        std::bind(&CCETestParamSetDevice::onParseReadRunParam,this,std::placeholders::_1));
+
     d->m_packageMgr.registerPackage(CCETestParamSetPackage_WriteTestStatus(),
                                         std::bind(&CCETestParamSetDevice::onParseWriteTestStatus,this,std::placeholders::_1));
     d->m_packageMgr.registerPackage(CCETestParamSetPackage_ReadTestStatus(),
@@ -212,7 +220,18 @@ quint16 CCETestParamSetDevice::onParseReadAllPID(const QByteArray &data)
 quint16 CCETestParamSetDevice::onParseWriteRunParam(const QByteArray &data)
 {
     CCETestParamSetPackage_WriteRunParam pack(data);
-    DO_RETOPERATIONRESULT(pack);
+    quint16 ret = pack.isValid(); \
+    if(ret==CCEAPI::EResult::ER_Success){\
+        ret = pack.getOperationResult(); \
+    } \
+    else if(ret==CCEAPI::EResult::ER_CtrlAddrErr){
+        CCETestParamSetPackage_WriteRunParam pack(data,g_singlePackLength);
+        ret = pack.isValid(); \
+        if(ret==CCEAPI::EResult::ER_Success){\
+            ret = pack.getOperationResult(); \
+        } \
+    }
+    return ret; \
 }
 
 quint16 CCETestParamSetDevice::onParseReadRunParam(const QByteArray &data)
@@ -229,10 +248,30 @@ quint16 CCETestParamSetDevice::onParseReadRunParam(const QByteArray &data)
             qDebug()<<"Got it! But RunParam Address has Problem.";
         }
         memcpy(&d->m_testParamSet.runParamSet + offsetPos,content,content.size());
-        qDebug()<<QString("Got it! RunParam Single Package:%1.").arg(CCEUIHelper::byteArrayToHexStr(content));
+        //qDebug()<<QString("Got it! RunParam Single Package.").arg(CCEUIHelper::byteArrayToHexStr(content));
         if(d->m_runParamAsyncReadComplete){
             d->m_runParamAsyncReadComplete = false;
             d->m_testParamSet.runParamSet.bigLittleSwap();
+            qDebug()<<QString("Got it! Read RunParam:%1.").arg(CCEUIHelper::byteArrayToHexStr(QByteArray((char*)&d->m_testParamSet.runParamSet,sizeof(SRunParamSet))));
+        }
+    }
+    else if(ret==CCEAPI::EResult::ER_CtrlAddrErr){
+        CCETestParamSetPackage_ReadRunParam pack(g_singlePackLength,data);
+        ret = pack.isValid();
+        if(ret==CCEAPI::EResult::ER_Success){
+            quint16 addr = pack.getCtrlAddr();
+            QByteArray content = pack.getContent();
+            int offsetPos = addr - CCETestParamSetPackage_ReadRunParam::EC_Read_COLUMNFanCloseTemperature;
+            if(offsetPos<0){
+                qDebug()<<"Got it! But RunParam Address has Problem.";
+            }
+            memcpy(&d->m_testParamSet.runParamSet + offsetPos,content,content.size());
+            //qDebug()<<QString("Got it! Read RunParam Single Package.").arg(CCEUIHelper::byteArrayToHexStr(content));
+            if(d->m_runParamAsyncReadComplete){
+                d->m_runParamAsyncReadComplete = false;
+                d->m_testParamSet.runParamSet.bigLittleSwap();
+                qDebug()<<QString("Got it! Read RunParam:%1.").arg(CCEUIHelper::byteArrayToHexStr(QByteArray((char*)&d->m_testParamSet.runParamSet,sizeof(SRunParamSet))));
+            }
         }
     }
     return ret;

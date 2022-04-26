@@ -40,8 +40,20 @@ CCETestParamSetPackage_WriteRunParam::CCETestParamSetPackage_WriteRunParam(quint
     m_address += offsetPos;
 }
 
+CCETestParamSetPackage_WriteRunParam::CCETestParamSetPackage_WriteRunParam(const QByteArray &parseData, quint16 offsetPos):
+    CCEAbstractTestParamSetPackage(parseData)
+{
+    m_address += offsetPos;
+}
+
 CCETestParamSetPackage_ReadRunParam::CCETestParamSetPackage_ReadRunParam(quint16 offsetPos, quint8 readLenght):
     m_readLenght(readLenght)
+{
+    m_address += offsetPos;
+}
+
+CCETestParamSetPackage_ReadRunParam::CCETestParamSetPackage_ReadRunParam(quint16 offsetPos, const QByteArray &data):
+    CCEAbstractTestParamSetPackage(data)
 {
     m_address += offsetPos;
 }
