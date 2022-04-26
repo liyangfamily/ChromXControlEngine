@@ -28,13 +28,7 @@ quint16 CCETestDataPackage_ReadTICurTemperature::getCurTemperature() const
 
 quint32 CCETestDataPackage_ReadCurTestRunTime::getValue() const
 {
-    quint32 value = 0;
-    QByteArray buffer = getContent();
-    if (buffer.size() < 4) {
-        return value;
-    }
-    memcpy(&value, buffer.constData(), 4);
-    return CCEUIHelper::bigLittleSwap32(value);
+    DO_GETUINTRESULT(getContent());
 }
 
 quint16 CCETestDataPackage_ReadCOLUMNTemperature::getCurTemperature() const
@@ -52,5 +46,6 @@ STestData CCETestDataPackage_ReadAllInfo::getInfo() const
     STestData info;
     QByteArray data = getContent();
     info.setRawData(data);
+    info.bigLittleSwap();
     return info;
 }

@@ -81,6 +81,15 @@ public:\
     memcpy(&value, buffer.constData(), 2); \
     return CCEUIHelper::bigLittleSwap16(value); \
 
+//用于device读取帧获取四个字节的返回结果
+#define DO_GETUINTRESULT(content) \
+    quint32 value = 0; \
+    QByteArray buffer = content; \
+    if (buffer.size() < 4) { \
+        return value; \
+    } \
+    memcpy(&value, buffer.constData(), 4); \
+    return CCEUIHelper::bigLittleSwap32(value); \
 
 //此类提供给不同协议的Package类在onReceive中调用
 class CCE_COMMUNICATENGINE_EXPORT CCEPackage

@@ -46,5 +46,6 @@ SSingleStatus CCESingleStatusPackage_ReadAllInfo::getInfo() const
     SSingleStatus info;
     QByteArray data = getContent();
     info.setRawData(data);
+    info.bigLittleSwap();
     return info;
 }

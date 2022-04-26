@@ -23,20 +23,12 @@ CCEMainCtrlPackage_WriteHardwareVersion::CCEMainCtrlPackage_WriteHardwareVersion
 
 quint8 CCEMainCtrlPackage_ReadHardwareVersion::getVersion() const
 {
-    QByteArray buffer = getContent();
-    if (buffer.size() < 1) {
-        return 0;
-    }
-    return buffer.front();
+    DO_GETCHARRESULT(getContent());
 }
 
 quint8 CCEMainCtrlPackage_ReadARMSoftwareVersion::getVersion() const
 {
-    QByteArray buffer = getContent();
-    if (buffer.size() < 1) {
-        return 0;
-    }
-    return buffer.front();
+    DO_GETCHARRESULT(getContent());
 }
 
 CCEMainCtrlPackage_WriteARMSoftwareVersion::CCEMainCtrlPackage_WriteARMSoftwareVersion(quint8 ver):
@@ -47,11 +39,7 @@ CCEMainCtrlPackage_WriteARMSoftwareVersion::CCEMainCtrlPackage_WriteARMSoftwareV
 
 quint8 CCEMainCtrlPackage_ReadStartSelfTest::getStatus() const
 {
-    QByteArray buffer = getContent();
-    if (buffer.size() < 1) {
-        return 0;
-    }
-    return buffer.front();
+    DO_GETCHARRESULT(getContent());
 }
 
 CCEMainCtrlPackage_WriteStartSelfTest::CCEMainCtrlPackage_WriteStartSelfTest(quint8 status):

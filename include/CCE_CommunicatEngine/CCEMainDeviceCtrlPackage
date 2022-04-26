@@ -2,3 +2,5 @@
 #include "CCE_CommunicatEngine/CCESingleStatusPackage.h"
 #include "CCE_CommunicatEngine/CCESingleCtrlPackage.h"
 #include "CCE_CommunicatEngine/CCETestDataPackage.h"
+#include "CCE_CommunicatEngine/CCEStatusWarnPackage.h"
+#include "CCE_CommunicatEngine/CCETestParamSetPackage.h"

@@ -19,11 +19,7 @@ CCEAbstractLEDPanelUnitPackage::~CCEAbstractLEDPanelUnitPackage()
 
 quint8 CCELEDPanelUnitPackage_ReadHardwareVersion::getVersion() const
 {
-    QByteArray buffer = getContent();
-    if (buffer.size() < 1) {
-        return 0;
-    }
-    return buffer.front();
+    DO_GETCHARRESULT(getContent());
 }
 
 CCELEDPanelUnitPackage_WriteHardwareVersion::CCELEDPanelUnitPackage_WriteHardwareVersion(quint8 ver):

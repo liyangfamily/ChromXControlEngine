@@ -1,37 +1,37 @@
 ﻿#include "CCE_CommunicatEngine/CCEStatusWarnPackage.h"
 
-CCEAbstractWarnStatusPackage::CCEAbstractWarnStatusPackage()
+CCEAbstractStatusWarnPackage::CCEAbstractStatusWarnPackage()
 {
 
 }
 
-CCEAbstractWarnStatusPackage::CCEAbstractWarnStatusPackage(const QByteArray &data)
+CCEAbstractStatusWarnPackage::CCEAbstractStatusWarnPackage(const QByteArray &data)
     : CCEPackage(data)
 {
 
 }
 
-CCEAbstractWarnStatusPackage::~CCEAbstractWarnStatusPackage()
+CCEAbstractStatusWarnPackage::~CCEAbstractStatusWarnPackage()
 {
 
 }
 
-quint8 CCEWarnStatusPackage_ReadExistAbnormal::getValue() const
-{
-    DO_GETCHARRESULT(getContent());
-}
-
-quint8 CCEWarnStatusPackage_ReadDeviceStatus::getValue() const
+quint8 CCEStatusWarnPackage_ReadExistAbnormal::getValue() const
 {
     DO_GETCHARRESULT(getContent());
 }
 
-quint8 CCEWarnStatusPackage_ReadDeviceSelfTestStatus::getValue() const
+quint8 CCEStatusWarnPackage_ReadDeviceStatus::getValue() const
 {
     DO_GETCHARRESULT(getContent());
 }
 
-quint8 CCEWarnStatusPackage_ReadDeviceTestComplete::getValue() const
+quint8 CCEStatusWarnPackage_ReadDeviceSelfTestStatus::getValue() const
+{
+    DO_GETCHARRESULT(getContent());
+}
+
+quint8 CCEStatusWarnPackage_ReadDeviceTestComplete::getValue() const
 {
     DO_GETCHARRESULT(getContent());
 }

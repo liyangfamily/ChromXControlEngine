@@ -167,11 +167,11 @@ private:
 };
 
 /*******************************************************测试参数*************************************************************/
-class CCE_COMMUNICATENGINE_EXPORT CCETestParamSetPackage_ReadTestParamSet : public CCEAbstractTestParamSetPackage
+class CCE_COMMUNICATENGINE_EXPORT CCETestParamSetPackage_ReadRunParam : public CCEAbstractTestParamSetPackage
 {
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCETestParamSetPackage_ReadTestParamSet, CCEAbstractTestParamSetPackage)
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCETestParamSetPackage_ReadRunParam, CCEAbstractTestParamSetPackage)
 public:
-    CCETestParamSetPackage_ReadTestParamSet(quint16 offsetPos,quint8 readLenght);
+    CCETestParamSetPackage_ReadRunParam(quint16 offsetPos,quint8 readLenght);
     QByteArray getValue() const;
 protected:
     EFrameType CmdFrameType () const override {
@@ -188,11 +188,11 @@ private:
     quint8 m_readLenght = 0;
 };
 
-class CCE_COMMUNICATENGINE_EXPORT CCETestParamSetPackage_WriteTestParamSet : public CCEAbstractTestParamSetPackage
+class CCE_COMMUNICATENGINE_EXPORT CCETestParamSetPackage_WriteRunParam : public CCEAbstractTestParamSetPackage
 {
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCETestParamSetPackage_WriteTestParamSet, CCEAbstractTestParamSetPackage)
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCETestParamSetPackage_WriteRunParam, CCEAbstractTestParamSetPackage)
 public:
-    CCETestParamSetPackage_WriteTestParamSet(quint16 offsetPos, const QByteArray& writeData);
+    CCETestParamSetPackage_WriteRunParam(quint16 offsetPos, const QByteArray& writeData);
     quint8 getOperationResult() const{
         DO_GETOPERATIONRESULT();
     }
@@ -209,5 +209,45 @@ protected:
 private:
     quint16 m_address = ECommand::EC_Write_COLUMNFanCloseTemperature;
     QByteArray m_writeData;
+};
+
+/*******************************************************测试运行/停止*************************************************************/
+class CCE_COMMUNICATENGINE_EXPORT CCETestParamSetPackage_ReadTestStatus : public CCEAbstractTestParamSetPackage
+{
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCETestParamSetPackage_ReadTestStatus, CCEAbstractTestParamSetPackage)
+public:
+    quint8 getValue() const;
+protected:
+    EFrameType CmdFrameType () const override {
+        return EFrameType::EFT_ReadFrame;
+    }
+    quint16 CmdCtrlAddr() const override{
+        return quint16(ECommand::EC_Read_TestStatus);
+    }
+    QByteArray CmdContent() const override{
+     return QByteArray().fill(0,1);
+    }
+};
+
+class CCE_COMMUNICATENGINE_EXPORT CCETestParamSetPackage_WriteTestStatus : public CCEAbstractTestParamSetPackage
+{
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCETestParamSetPackage_WriteTestStatus, CCEAbstractTestParamSetPackage)
+public:
+    CCETestParamSetPackage_WriteTestStatus(quint8 value);
+    quint8 getOperationResult() const{
+        DO_GETOPERATIONRESULT();
+    }
+protected:
+    EFrameType CmdFrameType () const override {
+        return EFrameType::EFT_WriteFrame;
+    }
+    quint16 CmdCtrlAddr() const override{
+        return quint16(ECommand::EC_Write_TestStatus);
+    }
+    QByteArray CmdContent() const override{
+     return QByteArray((char *)&m_value, 1);
+    }
+private:
+    quint8 m_value = 0;
 };
 #endif // CCETESTPARAMSETPACKAGE_H

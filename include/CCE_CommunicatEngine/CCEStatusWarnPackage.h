@@ -3,7 +3,7 @@
 
 #include <CCE_CommunicatEngine/CCEPackage>
 
-class CCE_COMMUNICATENGINE_EXPORT CCEAbstractWarnStatusPackage : public CCEPackage
+class CCE_COMMUNICATENGINE_EXPORT CCEAbstractStatusWarnPackage : public CCEPackage
 {
     friend class CCEPackageManager;
     friend class CCEPackageDispatcher;
@@ -23,9 +23,9 @@ public:
     };
 
 public:
-    CCEAbstractWarnStatusPackage();
-    CCEAbstractWarnStatusPackage(const QByteArray &data);
-    virtual ~CCEAbstractWarnStatusPackage();
+    CCEAbstractStatusWarnPackage();
+    CCEAbstractStatusWarnPackage(const QByteArray &data);
+    virtual ~CCEAbstractStatusWarnPackage();
 
 protected:
     EUnitAddr CmdUnitAddr() const override {
@@ -35,9 +35,9 @@ protected:
 
 
 /*******************************************************是否存在异常： 0 无， 1 有*************************************************************/
-class CCE_COMMUNICATENGINE_EXPORT CCEWarnStatusPackage_ReadExistAbnormal : public CCEAbstractWarnStatusPackage
+class CCE_COMMUNICATENGINE_EXPORT CCEStatusWarnPackage_ReadExistAbnormal : public CCEAbstractStatusWarnPackage
 {
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCEWarnStatusPackage_ReadExistAbnormal, CCEAbstractWarnStatusPackage)
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCEStatusWarnPackage_ReadExistAbnormal, CCEAbstractStatusWarnPackage)
 public:
     quint8 getValue() const;
 protected:
@@ -53,9 +53,9 @@ protected:
 };
 
 /*******************************************************设备状态*************************************************************/
-class CCE_COMMUNICATENGINE_EXPORT CCEWarnStatusPackage_ReadDeviceStatus : public CCEAbstractWarnStatusPackage
+class CCE_COMMUNICATENGINE_EXPORT CCEStatusWarnPackage_ReadDeviceStatus : public CCEAbstractStatusWarnPackage
 {
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCEWarnStatusPackage_ReadDeviceStatus, CCEAbstractWarnStatusPackage)
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCEStatusWarnPackage_ReadDeviceStatus, CCEAbstractStatusWarnPackage)
 public:
     quint8 getValue() const;
 protected:
@@ -71,9 +71,9 @@ protected:
 };
 
 /*******************************************************主控板自检完成标志：0 自检中，1自检完成*************************************************************/
-class CCE_COMMUNICATENGINE_EXPORT CCEWarnStatusPackage_ReadDeviceSelfTestStatus : public CCEAbstractWarnStatusPackage
+class CCE_COMMUNICATENGINE_EXPORT CCEStatusWarnPackage_ReadDeviceSelfTestStatus : public CCEAbstractStatusWarnPackage
 {
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCEWarnStatusPackage_ReadDeviceSelfTestStatus, CCEAbstractWarnStatusPackage)
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCEStatusWarnPackage_ReadDeviceSelfTestStatus, CCEAbstractStatusWarnPackage)
 public:
     quint8 getValue() const;
 protected:
@@ -89,9 +89,9 @@ protected:
 };
 
 /*******************************************************整机测试运行结束  0 无， 1 有*************************************************************/
-class CCE_COMMUNICATENGINE_EXPORT CCEWarnStatusPackage_ReadDeviceTestComplete : public CCEAbstractWarnStatusPackage
+class CCE_COMMUNICATENGINE_EXPORT CCEStatusWarnPackage_ReadDeviceTestComplete : public CCEAbstractStatusWarnPackage
 {
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCEWarnStatusPackage_ReadDeviceTestComplete, CCEAbstractWarnStatusPackage)
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCEStatusWarnPackage_ReadDeviceTestComplete, CCEAbstractStatusWarnPackage)
 public:
     quint8 getValue() const;
 protected:

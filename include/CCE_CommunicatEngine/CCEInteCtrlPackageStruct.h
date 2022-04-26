@@ -5,6 +5,7 @@
 #define CHROMX_H_CCEINTECTRLPACKAGESTRUCT
 #pragma once
 #include <QUuid>
+#include <CCE_Core/CCEUIHelper.h>
 
 #pragma pack(push,1)
 typedef struct tagIntegratedFrameLimit
@@ -369,7 +370,13 @@ typedef struct tagSingleStatus{
         }
         return true;
     }
-
+    void bigLittleSwap(){
+        TDCurTemperature = CCEUIHelper::bigLittleSwap16(TDCurTemperature);
+        TICurTemperature = CCEUIHelper::bigLittleSwap16(TICurTemperature);
+        COLUMNTemperature = CCEUIHelper::bigLittleSwap16(COLUMNTemperature);
+        MicroPIDValue = CCEUIHelper::bigLittleSwap32(MicroPIDValue);
+        EPCPressure = CCEUIHelper::bigLittleSwap16(EPCPressure);
+    }
 }SSingleStatus;
 
 
@@ -394,6 +401,9 @@ typedef struct tagTimeCtrl{
     {
         memset(this, 0, sizeof(tagTimeCtrl));
     }
+    void bigLittleSwap(){
+        timeValue = CCEUIHelper::bigLittleSwap16(timeValue);
+    }
 }STimeCtrl;
 
 typedef struct tagPIDCtrl{
@@ -409,6 +419,10 @@ typedef struct tagPIDCtrl{
     void clear()
     {
         memset(this, 0, sizeof(tagPIDCtrl));
+    }
+    void bigLittleSwap(){
+        timeValue = CCEUIHelper::bigLittleSwap16(timeValue);
+        temperatureValue = CCEUIHelper::bigLittleSwap16(temperatureValue);
     }
 }SPIDCtrl;
 
@@ -432,6 +446,15 @@ typedef struct tagTDCtrl{
     {
         memset(this, 0, sizeof(tagTDCtrl));
     }
+    void bigLittleSwap(){
+        TDStart_CarrierPressure_UpLimit = CCEUIHelper::bigLittleSwap16(TDStart_CarrierPressure_UpLimit);
+        TDStart_CarrierPressure_LowLimit = CCEUIHelper::bigLittleSwap16(TDStart_CarrierPressure_LowLimit);
+        BeforeTDStartup_TITemperature_Max = CCEUIHelper::bigLittleSwap16(BeforeTDStartup_TITemperature_Max);
+        for(int i = 0;i<5;++i){
+            timeCtrlArray[i].bigLittleSwap();
+            PIDTimeCtrlArray[i].bigLittleSwap();
+        }
+    }
 }STDCtrl;
 
 typedef struct tagTICtrl{
@@ -450,6 +473,13 @@ typedef struct tagTICtrl{
     {
         memset(this, 0, sizeof(tagTICtrl));
     }
+    void bigLittleSwap(){
+        BeforeTIStartup_MicroPIDValue_Min = CCEUIHelper::bigLittleSwap32(BeforeTIStartup_MicroPIDValue_Min);
+        for(int i = 0;i<5;++i){
+            timeCtrlArray[i].bigLittleSwap();
+            PIDTimeCtrlArray[i].bigLittleSwap();
+        }
+    }
 }STICtrl;
 
 typedef struct tagCOLUMNCtrl{
@@ -466,6 +496,12 @@ typedef struct tagCOLUMNCtrl{
     {
         memset(this, 0, sizeof(tagCOLUMNCtrl));
     }
+    void bigLittleSwap(){
+        for(int i = 0;i<8;++i){
+            timeCtrlArray[i].bigLittleSwap();
+            PIDTimeCtrlArray[i].bigLittleSwap();
+        }
+    }
 }SCOLUMNCtrl;
 
 typedef struct tagMicroPIDCtrl{
@@ -481,6 +517,11 @@ typedef struct tagMicroPIDCtrl{
     void clear()
     {
         memset(this, 0, sizeof(tagMicroPIDCtrl));
+    }
+    void bigLittleSwap(){
+        startTime = CCEUIHelper::bigLittleSwap16(startTime);
+        plasmaFreq = CCEUIHelper::bigLittleSwap16(plasmaFreq);
+        baseLineVoltage = CCEUIHelper::bigLittleSwap16(baseLineVoltage);
     }
 }SMicroPIDCtrl;
 
@@ -507,6 +548,33 @@ typedef struct tagPIDAll{
     void clear()
     {
         memset(this, 0, sizeof(tagPIDAll));
+    }
+    bool setRawData(const QByteArray& rawData,int pos = 0){
+        int effectSize = sizeof(tagPIDAll) - pos;
+        if(effectSize<0){
+            return false;
+        }
+        if(rawData.size() > effectSize){
+            qWarning("Raw data is too large , Trigger interception.");
+            memcpy(this + pos,rawData.constData(),effectSize);
+        }
+        else{
+            memcpy(this + pos,rawData.constData(),rawData.size());
+        }
+        return true;
+    }
+    void bigLittleSwap(){
+        TD_PID_P_Parma = CCEUIHelper::bigLittleSwap32(TD_PID_P_Parma);
+        TD_PID_I_Parma = CCEUIHelper::bigLittleSwap32(TD_PID_I_Parma);
+        TD_PID_D_Parma = CCEUIHelper::bigLittleSwap32(TD_PID_D_Parma);
+
+        TI_PID_P_Parma = CCEUIHelper::bigLittleSwap32(TI_PID_P_Parma);
+        TI_PID_I_Parma = CCEUIHelper::bigLittleSwap32(TI_PID_I_Parma);
+        TI_PID_D_Parma = CCEUIHelper::bigLittleSwap32(TI_PID_D_Parma);
+
+        COLUMN_PID_P_Parma = CCEUIHelper::bigLittleSwap32(COLUMN_PID_P_Parma);
+        COLUMN_PID_I_Parma = CCEUIHelper::bigLittleSwap32(COLUMN_PID_I_Parma);
+        COLUMN_PID_D_Parma = CCEUIHelper::bigLittleSwap32(COLUMN_PID_D_Parma);
     }
 }SPIDAll;
 
@@ -539,11 +607,37 @@ typedef struct tagRunParamSet{
     {
         memset(this, 0, sizeof(tagRunParamSet));
     }
+    bool setRawData(const QByteArray& rawData,int pos = 0){
+        int effectSize = sizeof(tagRunParamSet) - pos;
+        if(effectSize<0){
+            return false;
+        }
+        if(rawData.size() > effectSize){
+            qWarning("Raw data is too large , Trigger interception.");
+            memcpy(this + pos,rawData.constData(),effectSize);
+        }
+        else{
+            memcpy(this + pos,rawData.constData(),rawData.size());
+        }
+        return true;
+    }
+    void bigLittleSwap(){
+        COLUMNFanCloseTemperature = CCEUIHelper::bigLittleSwap16(COLUMNFanCloseTemperature);
+        cleaningTime = CCEUIHelper::bigLittleSwap16(cleaningTime);
+        samplingTime = CCEUIHelper::bigLittleSwap16(samplingTime);
+        EPCControlVoltage = CCEUIHelper::bigLittleSwap16(EPCControlVoltage);
+
+        TDCtrl.bigLittleSwap();
+        TICtrl.bigLittleSwap();
+        COLUMNCtrl.bigLittleSwap();
+
+        microPIDCtrl.bigLittleSwap();
+    }
 }SRunParamSet;
 
 
 typedef struct tagTestParamSet{
-    SPIDAll PIDCtrl;
+    SPIDAll PIDAll;
     SRunParamSet runParamSet;
 
     quint8 testStatus;                      //0x00f8	R/W	测试运行/停止  0 停止，1 为运行
@@ -571,6 +665,10 @@ typedef struct tagTestParamSet{
             memcpy(this + pos,rawData.constData(),rawData.size());
         }
         return true;
+    }
+    void bigLittleSwap(){
+        PIDAll.bigLittleSwap();
+        runParamSet.bigLittleSwap();
     }
 
 }STestParamSet;
@@ -616,7 +714,13 @@ typedef struct tagTestData{
         }
         return true;
     }
-
+    void bigLittleSwap(){
+        TDCurTemperature =  CCEUIHelper::bigLittleSwap16(TDCurTemperature);
+        TICurTemperature =  CCEUIHelper::bigLittleSwap16(TICurTemperature);
+        curTestRunTime =    CCEUIHelper::bigLittleSwap32(curTestRunTime);
+        COLUMNTemperature = CCEUIHelper::bigLittleSwap16(COLUMNTemperature);
+        MicroPIDValue =     CCEUIHelper::bigLittleSwap16(MicroPIDValue);
+    }
 }STestData;
 
 
