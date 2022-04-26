@@ -301,6 +301,9 @@ public:
 
     CCESingleCtrlPackage_WriteTDModule(enum TDParaType TDParaType, quint16 TDParaValue);
     CCESingleCtrlPackage_WriteTDModule(quint16 TD_StartTime, quint8 TD_PWM, bool TD_Switch);
+    quint8 getOperationResult() const {
+        DO_GETOPERATIONRESULT();
+    }
 
 protected:
     EFrameType CmdFrameType() const override {
@@ -361,6 +364,9 @@ public:
 
     CCESingleCtrlPackage_WriteTIModule(enum TIParaType TIParaType, quint16 TIParaValue);
     CCESingleCtrlPackage_WriteTIModule(quint16 TI_StartTime, quint8 TI_PWM, bool TI_Switch);
+    quint8 getOperationResult() const {
+        DO_GETOPERATIONRESULT();
+    }
 
 protected:
     EFrameType CmdFrameType() const override {
@@ -421,6 +427,9 @@ public:
 
     CCESingleCtrlPackage_WriteCOLUMNModule(enum COLUMNParaType COLUMNParaType, quint16 COLUMNParaValue);
     CCESingleCtrlPackage_WriteCOLUMNModule(quint16 COLUMN_StartTime, quint8 COLUMN_PWM, bool COLUMN_Switch);
+    quint8 getOperationResult() const {
+        DO_GETOPERATIONRESULT();
+    }
 
 protected:
     EFrameType CmdFrameType() const override {
@@ -481,6 +490,9 @@ public:
 
     CCESingleCtrlPackage_WritePIDModule(enum PIDParaType PIDParaType, quint16 PIDParaValue);
     CCESingleCtrlPackage_WritePIDModule(quint16 PID_BiasVoltage, quint16 PID_Frequency, bool PID_Switch);
+    quint8 getOperationResult() const {
+        DO_GETOPERATIONRESULT();
+    }
 
 protected:
     EFrameType CmdFrameType() const override {
