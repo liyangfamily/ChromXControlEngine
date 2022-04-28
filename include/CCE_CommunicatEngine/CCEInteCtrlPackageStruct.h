@@ -435,7 +435,7 @@ typedef struct tagTDCtrl{
     quint8  controlMode;
 
     STimeCtrl timeCtrlArray[5];
-    SPIDCtrl PIDTimeCtrlArray[5];
+    SPIDCtrl PIDCtrlArray[5];
 
     tagTDCtrl()
     {
@@ -450,10 +450,24 @@ typedef struct tagTDCtrl{
         TDStart_CarrierPressure_UpLimit = CCEUIHelper::bigLittleSwap16(TDStart_CarrierPressure_UpLimit);
         TDStart_CarrierPressure_LowLimit = CCEUIHelper::bigLittleSwap16(TDStart_CarrierPressure_LowLimit);
         BeforeTDStartup_TITemperature_Max = CCEUIHelper::bigLittleSwap16(BeforeTDStartup_TITemperature_Max);
-        for(int i = 0;i<5;++i){
+        for(int i = 0;i<sizeof(timeCtrlArray)/sizeof(timeCtrlArray[0]);++i){
             timeCtrlArray[i].bigLittleSwap();
-            PIDTimeCtrlArray[i].bigLittleSwap();
+            PIDCtrlArray[i].bigLittleSwap();
         }
+    }
+    bool setTimeCtrlByIndex(const STimeCtrl& value,int index){
+        if(index<0||index>sizeof(timeCtrlArray)/sizeof(timeCtrlArray[0])){
+            return false;
+        }
+        timeCtrlArray[index] = value;
+        return true;
+    }
+    bool setPIDCtrlByIndex(const SPIDCtrl& value,int index){
+        if(index<0||index>sizeof(PIDCtrlArray)/sizeof(PIDCtrlArray[0])){
+            return false;
+        }
+        PIDCtrlArray[index] = value;
+        return true;
     }
 }STDCtrl;
 
@@ -463,7 +477,7 @@ typedef struct tagTICtrl{
     quint8  controlMode;
 
     STimeCtrl timeCtrlArray[5];
-    SPIDCtrl PIDTimeCtrlArray[5];
+    SPIDCtrl PIDCtrlArray[5];
     tagTICtrl()
     {
         Q_ASSERT(sizeof(tagTICtrl) == 51);
@@ -475,10 +489,24 @@ typedef struct tagTICtrl{
     }
     void bigLittleSwap(){
         BeforeTIStartup_MicroPIDValue_Min = CCEUIHelper::bigLittleSwap32(BeforeTIStartup_MicroPIDValue_Min);
-        for(int i = 0;i<5;++i){
+        for(int i = 0;i<sizeof(timeCtrlArray)/sizeof(timeCtrlArray[0]);++i){
             timeCtrlArray[i].bigLittleSwap();
-            PIDTimeCtrlArray[i].bigLittleSwap();
+            PIDCtrlArray[i].bigLittleSwap();
         }
+    }
+    bool setTimeCtrlByIndex(const STimeCtrl& value,int index){
+        if(index<0||index>sizeof(timeCtrlArray)/sizeof(timeCtrlArray[0])){
+            return false;
+        }
+        timeCtrlArray[index] = value;
+        return true;
+    }
+    bool setPIDCtrlByIndex(const SPIDCtrl& value,int index){
+        if(index<0||index>sizeof(PIDCtrlArray)/sizeof(PIDCtrlArray[0])){
+            return false;
+        }
+        PIDCtrlArray[index] = value;
+        return true;
     }
 }STICtrl;
 
@@ -486,7 +514,7 @@ typedef struct tagCOLUMNCtrl{
     quint8  controlMode;
 
     STimeCtrl timeCtrlArray[8];
-    SPIDCtrl PIDTimeCtrlArray[8];
+    SPIDCtrl PIDCtrlArray[8];
     tagCOLUMNCtrl()
     {
         Q_ASSERT(sizeof(tagCOLUMNCtrl) == 73);
@@ -497,10 +525,24 @@ typedef struct tagCOLUMNCtrl{
         memset(this, 0, sizeof(tagCOLUMNCtrl));
     }
     void bigLittleSwap(){
-        for(int i = 0;i<8;++i){
+        for(int i = 0;i<sizeof(timeCtrlArray)/sizeof(timeCtrlArray[0]);++i){
             timeCtrlArray[i].bigLittleSwap();
-            PIDTimeCtrlArray[i].bigLittleSwap();
+            PIDCtrlArray[i].bigLittleSwap();
         }
+    }
+    bool setTimeCtrlByIndex(const STimeCtrl& value,int index){
+        if(index<0||index>sizeof(timeCtrlArray)/sizeof(timeCtrlArray[0])){
+            return false;
+        }
+        timeCtrlArray[index] = value;
+        return true;
+    }
+    bool setPIDCtrlByIndex(const SPIDCtrl& value,int index){
+        if(index<0||index>sizeof(PIDCtrlArray)/sizeof(PIDCtrlArray[0])){
+            return false;
+        }
+        PIDCtrlArray[index] = value;
+        return true;
     }
 }SCOLUMNCtrl;
 
