@@ -379,7 +379,7 @@ quint16 CCESingleCtrlDevice::onParseReadDetectValve(const QByteArray &data)
     CCESingleCtrlPackage_ReadDetectValve pack(data);
     quint16 ret = pack.isValid();
     if(ret == CCEAPI::EResult::ER_Success) {
-        d->m_singleCtrlData.samplingValveSwitch = pack.getDetectValveStatus();
+        d->m_singleCtrlData.testValveSwitch = pack.getDetectValveStatus();
         qDebug()<<"Got it! detect valve:"<<d->m_singleCtrlData.testValveSwitch;
     }
     return ret;
@@ -397,8 +397,8 @@ quint16 CCESingleCtrlDevice::onParseReadFan(const QByteArray &data)
     CCESingleCtrlPackage_ReadFan pack(data);
     quint16 ret = pack.isValid();
     if(ret == CCEAPI::EResult::ER_Success) {
-        d->m_singleCtrlData.samplingValveSwitch = pack.getFanStatus();
-        qDebug()<<"Got it! fan:"<<d->m_singleCtrlData.fanSwitch;
+        d->m_singleCtrlData.fanSwitch = pack.getFanStatus();
+        qDebug()<<"Got it! fan switch:"<<d->m_singleCtrlData.fanSwitch;
     }
     return ret;
 }
@@ -484,9 +484,9 @@ quint16 CCESingleCtrlDevice::onParseReadMicroPIDModule(const QByteArray &data)
     CCESingleCtrlPackage_ReadPIDModule pack(data);
     quint16 ret = pack.isValid();
     if(ret == CCEAPI::EResult::ER_Success) {
-        d->m_singleCtrlData.COLUMNCtrl.startTime = pack.getPIDBiasVoltage();
-        d->m_singleCtrlData.COLUMNCtrl.PWMValue = pack.getPIDFrequency();
-        d->m_singleCtrlData.COLUMNCtrl.startSwitch = pack.getPIDSwitch();
+        d->m_singleCtrlData.MicroPIDCtrl.biasVoltage = pack.getPIDBiasVoltage();
+        d->m_singleCtrlData.MicroPIDCtrl.freq = pack.getPIDFrequency();
+        d->m_singleCtrlData.MicroPIDCtrl.startSwitch = pack.getPIDSwitch();
         qDebug()<<QString("Got it! PIDBiasVoltage:%1, Got it! PIDFrequency:%2, Got it! PIDSwitch:%3.")
                   .arg(d->m_singleCtrlData.MicroPIDCtrl.biasVoltage)
                   .arg(d->m_singleCtrlData.MicroPIDCtrl.freq)
@@ -526,7 +526,7 @@ quint16 CCESingleCtrlDevice::onParseReadEPCSwitch(const QByteArray &data)
     quint16 ret = pack.isValid();
     if(ret == CCEAPI::EResult::ER_Success) {
         d->m_singleCtrlData.EPCSwitch = pack.getEPCSwitch();
-        qDebug()<<"Got it! EPCVoltage:"<<d->m_singleCtrlData.EPCSwitch;
+        qDebug()<<"Got it! EPCSwitch:"<<d->m_singleCtrlData.EPCSwitch;
     }
     return ret;
 }

@@ -244,6 +244,10 @@ typedef struct tagSingleDeviceCtrl{
         }
         return true;
     }
+
+    void bigLittleSwap() {
+        startTime = CCEUIHelper::bigLittleSwap16(startTime);
+    }
 }SSingleDeviceCtrl;
 
 typedef struct tagSingleMicroPIDCtrl{
@@ -274,6 +278,10 @@ typedef struct tagSingleMicroPIDCtrl{
             memcpy(this + pos, rawData.constData(), rawData.size());
         }
         return true;
+    }
+    void bigLittleSwap() {
+        biasVoltage = CCEUIHelper::bigLittleSwap16(biasVoltage);
+        freq = CCEUIHelper::bigLittleSwap16(freq);
     }
 }SSingleMicroPIDCtrl;
 
@@ -327,6 +335,9 @@ typedef struct tagSingleCtrl{
             memcpy(this + pos,rawData.constData(),rawData.size());
         }
         return true;
+    }
+    void bigLittleSwap() {
+
     }
 
 }SSingleCtrl;
