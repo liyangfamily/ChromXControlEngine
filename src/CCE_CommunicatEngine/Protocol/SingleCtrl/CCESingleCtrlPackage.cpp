@@ -28,10 +28,7 @@ CCESingleCtrlPackage_WritePumpVoltage::CCESingleCtrlPackage_WritePumpVoltage(qui
 //读取pump的电压值
 quint8 CCESingleCtrlPackage_ReadPumpVoltage::getPumpVoltage() const
 {
-    QByteArray buffer = getContent();
-    if (buffer.size() < m_dataLength)
-        return 0;
-    return buffer.front();
+    DO_GETCHARRESULT(getContent());
 }
 
 
@@ -46,10 +43,7 @@ CCESingleCtrlPackage_WriteSampleValve::CCESingleCtrlPackage_WriteSampleValve(qui
 //读取sample valve的状态
 quint8 CCESingleCtrlPackage_ReadSampleValve::getSampleValveStatus() const
 {
-    QByteArray buffer = getContent();
-    if (buffer.size() < m_dataLength)
-        return 0;
-    return buffer.front();
+    DO_GETCHARRESULT(getContent());
 }
 
 
@@ -64,10 +58,7 @@ CCESingleCtrlPackage_WriteDetectValve::CCESingleCtrlPackage_WriteDetectValve(qui
 //读取detect valve的状态
 quint8 CCESingleCtrlPackage_ReadDetectValve::getDetectValveStatus() const
 {
-    QByteArray buffer = getContent();
-    if (buffer.size() < m_dataLength)
-        return 0;
-    return buffer.front();
+    DO_GETCHARRESULT(getContent());
 }
 
 
@@ -82,10 +73,7 @@ CCESingleCtrlPackage_WriteFan::CCESingleCtrlPackage_WriteFan(quint8 onORoff)
 //读取fan的状态
 quint8 CCESingleCtrlPackage_ReadFan::getFanStatus() const
 {
-    QByteArray buffer = getContent();
-    if (buffer.size() < m_dataLength)
-        return 0;
-    return buffer.front();
+    DO_GETCHARRESULT(getContent());
 }
 
 
@@ -159,6 +147,7 @@ SSingleDeviceCtrl CCESingleCtrlPackage_ReadTDModule::getTDAllData() const
     SSingleDeviceCtrl TDAllData;
     QByteArray data = getContent();
     TDAllData.setRawData(data);
+    TDAllData.bigLittleSwap();
     return TDAllData;
 }
 
@@ -170,7 +159,7 @@ quint16 CCESingleCtrlPackage_ReadTDModule::getTDStartTime() const
     if (buffer.size() < m_dataLength)
         return 0;
     const SSingleDeviceCtrl* TDAllData = (SSingleDeviceCtrl*)buffer.constData();
-    return TDAllData->startTime;
+    return CCEUIHelper::bigLittleSwap16(TDAllData->startTime);
 }
 
 
@@ -267,6 +256,7 @@ SSingleDeviceCtrl CCESingleCtrlPackage_ReadTIModule::getTIAllData() const
     SSingleDeviceCtrl TIAllData;
     QByteArray data = getContent();
     TIAllData.setRawData(data);
+    TIAllData.bigLittleSwap();
     return TIAllData;
 }
 
@@ -278,7 +268,7 @@ quint16 CCESingleCtrlPackage_ReadTIModule::getTIStartTime() const
     if (buffer.size() < m_dataLength)
         return 0;
     const SSingleDeviceCtrl* TIAllData = (SSingleDeviceCtrl*)buffer.constData();
-    return TIAllData->startTime;
+    return CCEUIHelper::bigLittleSwap16(TIAllData->startTime);
 }
 
 
@@ -374,6 +364,7 @@ SSingleDeviceCtrl CCESingleCtrlPackage_ReadCOLUMNModule::getCOLUMNAllData() cons
     SSingleDeviceCtrl COLUMNAllData;
     QByteArray data = getContent();
     COLUMNAllData.setRawData(data);
+    COLUMNAllData.bigLittleSwap();
     return COLUMNAllData;
 }
 
@@ -385,7 +376,7 @@ quint16 CCESingleCtrlPackage_ReadCOLUMNModule::getCOLUMNStartTime() const
     if (buffer.size() < m_dataLength)
         return 0;
     const SSingleDeviceCtrl* COLUMNAllData = (SSingleDeviceCtrl*)buffer.constData();
-    return COLUMNAllData->startTime;
+    return CCEUIHelper::bigLittleSwap16(COLUMNAllData->startTime);
 }
 
 
@@ -484,6 +475,7 @@ SSingleMicroPIDCtrl CCESingleCtrlPackage_ReadPIDModule::getPIDAllData() const
     SSingleMicroPIDCtrl PIDAllData;
     QByteArray data = getContent();
     PIDAllData.setRawData(data);
+    PIDAllData.bigLittleSwap();
     return PIDAllData;
 }
 
@@ -495,18 +487,18 @@ quint16 CCESingleCtrlPackage_ReadPIDModule::getPIDBiasVoltage() const
     if (buffer.size() < m_dataLength)
         return 0;
     const SSingleMicroPIDCtrl* PIDAllData = (SSingleMicroPIDCtrl*)buffer.constData();
-    return PIDAllData->biasVoltage;
+    return CCEUIHelper::bigLittleSwap16(PIDAllData->biasVoltage);
 }
 
 
 //读取PID频率
-quint8 CCESingleCtrlPackage_ReadPIDModule::getPIDFrequency() const
+quint16 CCESingleCtrlPackage_ReadPIDModule::getPIDFrequency() const
 {
     QByteArray buffer = getContent();
     if (buffer.size() < m_dataLength)
         return 0;
     const SSingleMicroPIDCtrl* PIDAllData = (SSingleMicroPIDCtrl*)buffer.constData();
-    return PIDAllData->freq;
+    return CCEUIHelper::bigLittleSwap16(PIDAllData->freq);
 }
 
 
@@ -522,7 +514,7 @@ quint8 CCESingleCtrlPackage_ReadPIDModule::getPIDSwitch() const
 
 //写入EPC的控制电压
 CCESingleCtrlPackage_WriteEPCVoltage::CCESingleCtrlPackage_WriteEPCVoltage(quint16 EPC_Voltage)
-    : m_EPCVoltage(EPC_Voltage)
+    : m_EPCVoltage(CCEUIHelper::bigLittleSwap16(EPC_Voltage))
 {
 
 }
@@ -531,12 +523,7 @@ CCESingleCtrlPackage_WriteEPCVoltage::CCESingleCtrlPackage_WriteEPCVoltage(quint
 //读取EPC控制电压
 quint16 CCESingleCtrlPackage_ReadEPCVoltage::getEPCVoltage() const
 {
-    quint16 EPCVoltage = 0;
-    QByteArray buffer = getContent();
-    if (buffer.size() < m_dataLength)
-        return 0;
-    memcpy(&EPCVoltage, buffer.constData(), m_dataLength);
-    return EPCVoltage;
+    DO_GETUSHORTRESULT(getContent());
 }
 
 
@@ -551,10 +538,5 @@ CCESingleCtrlPackage_WriteEPCSwitch::CCESingleCtrlPackage_WriteEPCSwitch(quint8 
 //读取EPC开关状态
 quint8 CCESingleCtrlPackage_ReadEPCSwitch::getEPCSwitch() const
 {
-    quint8 EPCSwitch = 0;
-    QByteArray buffer = getContent();
-    if (buffer.size() < m_dataLength)
-        return 0;
-    memcpy(&EPCSwitch, buffer.constData(), m_dataLength);
-    return EPCSwitch;
+    DO_GETCHARRESULT(getContent());
 }

@@ -517,7 +517,7 @@ class CCE_COMMUNICATENGINE_EXPORT CCESingleCtrlPackage_ReadPIDModule
 public:
     SSingleMicroPIDCtrl getPIDAllData() const;
     quint16 getPIDBiasVoltage() const;
-    quint8 getPIDFrequency() const;
+    quint16 getPIDFrequency() const;
     quint8 getPIDSwitch() const;
 
 protected:
@@ -555,6 +555,7 @@ protected:
         return quint16(ECommand::EC_Write_EPCVoltage);
     }
     QByteArray CmdContent() const override {
+        CCEUIHelper::bigLittleSwap16(m_EPCVoltage);
         return QByteArray((char *)&m_EPCVoltage, 2);
     }
 

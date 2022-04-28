@@ -58,5 +58,5 @@ defineReplace(nativePath) {
     return($$path)
 }
 
-HEADERS += \
-    include/CCE_CommunicatEngine/CCESeparateCtrlPackage.h
+# HEADERS += \
+#    include/CCE_CommunicatEngine/CCESingleCtrlPackage.h

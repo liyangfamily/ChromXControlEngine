@@ -247,10 +247,10 @@ protected:
     EFrameType CmdFrameType () const override {
         return EFrameType::EFT_WriteFrame;
     }
-    quint16 CmdCtrlAddr() const override{
+    quint16 CmdCtrlAddr() const override {
         return quint16(ECommand::EC_Write_TestStatus);
     }
-    QByteArray CmdContent() const override{
+    QByteArray CmdContent() const override {
      return QByteArray((char *)&m_value, 1);
     }
 private:
