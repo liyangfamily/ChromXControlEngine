@@ -247,7 +247,7 @@ quint16 CCETestParamSetDevice::onParseReadRunParam(const QByteArray &data)
         if(offsetPos<0){
             qDebug()<<"Got it! But RunParam Address has Problem.";
         }
-        memcpy(&d->m_testParamSet.runParamSet + offsetPos,content,content.size());
+        memcpy((char*)&d->m_testParamSet.runParamSet + offsetPos,content,content.size());
         //qDebug()<<QString("Got it! RunParam Single Package.").arg(CCEUIHelper::byteArrayToHexStr(content));
         if(d->m_runParamAsyncReadComplete){
             d->m_runParamAsyncReadComplete = false;
@@ -265,7 +265,7 @@ quint16 CCETestParamSetDevice::onParseReadRunParam(const QByteArray &data)
             if(offsetPos<0){
                 qDebug()<<"Got it! But RunParam Address has Problem.";
             }
-            memcpy(&d->m_testParamSet.runParamSet + offsetPos,content,content.size());
+            memcpy((char*)&d->m_testParamSet.runParamSet + offsetPos,content,content.size());
             //qDebug()<<QString("Got it! Read RunParam Single Package.").arg(CCEUIHelper::byteArrayToHexStr(content));
             if(d->m_runParamAsyncReadComplete){
                 d->m_runParamAsyncReadComplete = false;

@@ -102,10 +102,10 @@ typedef struct tagMainCtrl{
         }
         if(rawData.size() > effectSize){
             qWarning("Raw data is too large , Trigger interception.");
-            memcpy(this + pos,rawData.constData(),effectSize);
+            memcpy((char*)this + pos,rawData.constData(),effectSize);
         }
         else{
-            memcpy(this + pos,rawData.constData(),rawData.size());
+            memcpy((char*)this + pos,rawData.constData(),rawData.size());
         }
         return true;
     }
@@ -197,10 +197,10 @@ typedef struct tagLEDPanelUnit{
         }
         if(rawData.size() > effectSize){
             qWarning("Raw data is too large , Trigger interception.");
-            memcpy(this + pos,rawData.constData(),effectSize);
+            memcpy((char*)this + pos,rawData.constData(),effectSize);
         }
         else{
-            memcpy(this + pos,rawData.constData(),rawData.size());
+            memcpy((char*)this + pos,rawData.constData(),rawData.size());
         }
         return true;
     }
@@ -237,10 +237,10 @@ typedef struct tagSingleDeviceCtrl{
         }
         if(rawData.size() > effectSize) {
             qWarning("Raw data is too large , Trigger interception.");
-            memcpy(this + pos, rawData.constData(), effectSize);
+            memcpy((char*)this + pos, rawData.constData(), effectSize);
         }
         else {
-            memcpy(this + pos, rawData.constData(), rawData.size());
+            memcpy((char*)this + pos, rawData.constData(), rawData.size());
         }
         return true;
     }
@@ -272,10 +272,10 @@ typedef struct tagSingleMicroPIDCtrl{
         }
         if(rawData.size() > effectSize) {
             qWarning("Raw data is too large , Trigger interception.");
-            memcpy(this + pos, rawData.constData(), effectSize);
+            memcpy((char*)this + pos, rawData.constData(), effectSize);
         }
         else {
-            memcpy(this + pos, rawData.constData(), rawData.size());
+            memcpy((char*)this + pos, rawData.constData(), rawData.size());
         }
         return true;
     }
@@ -329,10 +329,10 @@ typedef struct tagSingleCtrl{
         }
         if(rawData.size() > effectSize){
             qWarning("Raw data is too large , Trigger interception.");
-            memcpy(this + pos,rawData.constData(),effectSize);
+            memcpy((char*)this + pos,rawData.constData(),effectSize);
         }
         else{
-            memcpy(this + pos,rawData.constData(),rawData.size());
+            memcpy((char*)this + pos,rawData.constData(),rawData.size());
         }
         return true;
     }
@@ -374,10 +374,10 @@ typedef struct tagSingleStatus{
         }
         if(rawData.size() > effectSize){
             qWarning("Raw data is too large , Trigger interception.");
-            memcpy(this + pos,rawData.constData(),effectSize);
+            memcpy((char*)this + pos,rawData.constData(),effectSize);
         }
         else{
-            memcpy(this + pos,rawData.constData(),rawData.size());
+            memcpy((char*)this + pos,rawData.constData(),rawData.size());
         }
         return true;
     }
@@ -593,6 +593,16 @@ typedef struct tagPIDAll{
     quint32 COLUMN_PID_P_Parma;             //0x0018-0x001b	R/W	COLUMN PID 参数 ， P 数值 ， (定点，6位小数)
     quint32 COLUMN_PID_I_Parma;             //0x001c-0x001f	R/W	COLUMN PID 参数 ， I 数值 ， (定点，6位小数)
     quint32 COLUMN_PID_D_Parma;             //0x0020-0x0023	R/W	COLUMN PID 参数 ，D 数值 ，(定点，6位小数)
+    enum EDevice{
+        ED_TD,
+        ED_TI,
+        ED_COLUMN
+    };
+    enum EPIDType{
+        EPID_P,
+        EPID_I,
+        EPID_D
+    };
     tagPIDAll()
     {
         Q_ASSERT(sizeof(tagPIDAll) == 36);
@@ -609,10 +619,10 @@ typedef struct tagPIDAll{
         }
         if(rawData.size() > effectSize){
             qWarning("Raw data is too large , Trigger interception.");
-            memcpy(this + pos,rawData.constData(),effectSize);
+            memcpy((char*)this + pos,rawData.constData(),effectSize);
         }
         else{
-            memcpy(this + pos,rawData.constData(),rawData.size());
+            memcpy((char*)this + pos,rawData.constData(),rawData.size());
         }
         return true;
     }
@@ -628,6 +638,23 @@ typedef struct tagPIDAll{
         COLUMN_PID_P_Parma = CCEUIHelper::bigLittleSwap32(COLUMN_PID_P_Parma);
         COLUMN_PID_I_Parma = CCEUIHelper::bigLittleSwap32(COLUMN_PID_I_Parma);
         COLUMN_PID_D_Parma = CCEUIHelper::bigLittleSwap32(COLUMN_PID_D_Parma);
+    }
+
+    void setValueFromUI(EDevice device ,EPIDType PID_Type,double value){
+
+        if(device>3||PID_Type>3){
+            return;
+        }
+        quint32 ret = value * 1000000;
+        memcpy((char*)this+((int)device*12+(int)PID_Type*4),&ret,4);
+    }
+    double getValueToUI(EDevice device ,EPIDType PID_Type){
+        if(device>3||PID_Type>3){
+            return 0.0;
+        }
+        quint32 ret =0;
+        memcpy(&ret,(char*)this+((int)device*12+(int)PID_Type*4),4);
+        return ret/1000000.0;
     }
 }SPIDAll;
 
@@ -667,10 +694,10 @@ typedef struct tagRunParamSet{
         }
         if(rawData.size() > effectSize){
             qWarning("Raw data is too large , Trigger interception.");
-            memcpy(this + pos,rawData.constData(),effectSize);
+            memcpy((char*)this + pos,rawData.constData(),effectSize);
         }
         else{
-            memcpy(this + pos,rawData.constData(),rawData.size());
+            memcpy((char*)this + pos,rawData.constData(),rawData.size());
         }
         return true;
     }
@@ -712,10 +739,10 @@ typedef struct tagTestParamSet{
         }
         if(rawData.size() > effectSize){
             qWarning("Raw data is too large , Trigger interception.");
-            memcpy(this + pos,rawData.constData(),effectSize);
+            memcpy((char*)this + pos,rawData.constData(),effectSize);
         }
         else{
-            memcpy(this + pos,rawData.constData(),rawData.size());
+            memcpy((char*)this + pos,rawData.constData(),rawData.size());
         }
         return true;
     }
@@ -760,10 +787,10 @@ typedef struct tagTestData{
         }
         if(rawData.size() > effectSize){
             qWarning("Raw data is too large , Trigger interception.");
-            memcpy(this + pos,rawData.constData(),effectSize);
+            memcpy((char*)this + pos,rawData.constData(),effectSize);
         }
         else{
-            memcpy(this + pos,rawData.constData(),rawData.size());
+            memcpy((char*)this + pos,rawData.constData(),rawData.size());
         }
         return true;
     }
@@ -809,10 +836,10 @@ typedef struct tagStatusWarn{
         }
         if(rawData.size() > effectSize){
             qWarning("Raw data is too large , Trigger interception.");
-            memcpy(this + pos,rawData.constData(),effectSize);
+            memcpy((char*)this + pos,rawData.constData(),effectSize);
         }
         else{
-            memcpy(this + pos,rawData.constData(),rawData.size());
+            memcpy((char*)this + pos,rawData.constData(),rawData.size());
         }
         return true;
     }

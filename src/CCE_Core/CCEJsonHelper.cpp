@@ -43,6 +43,7 @@ bool CCEJsonHelper::saveJson(const qint8 version)
         qDebug() << "json file write faild.";
         return false;
     }
+    qDebug() << "json write succeed.";
     return true;
 }
 
@@ -71,6 +72,7 @@ bool CCEJsonHelper::readJson(const qint8 version)
         qDebug() << "json parse faild.";
         return false;
     }
+    qDebug() << "json parse succeed.";
     return true;
 }
 

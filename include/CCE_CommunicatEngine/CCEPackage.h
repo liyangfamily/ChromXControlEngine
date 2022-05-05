@@ -49,7 +49,7 @@ public:\
     QByteArray buffer = getContent(); \
     if (buffer.size() < 1) { \
         return value; }\
-    memcpy(&value, buffer, sizeof(quint8)); \
+    memcpy(&value, buffer.constData(), sizeof(quint8)); \
     return value; \
 
 
