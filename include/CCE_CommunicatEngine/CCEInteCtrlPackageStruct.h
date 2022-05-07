@@ -5,6 +5,7 @@
 #define CHROMX_H_CCEINTECTRLPACKAGESTRUCT
 #pragma once
 #include <QUuid>
+#include <QVariant>
 #include <CCE_Core/CCEUIHelper.h>
 
 #pragma pack(push,1)
@@ -388,6 +389,47 @@ typedef struct tagSingleStatus{
         MicroPIDValue = CCEUIHelper::bigLittleSwap32(MicroPIDValue);
         EPCPressure = CCEUIHelper::bigLittleSwap16(EPCPressure);
     }
+
+    QVariant getModelData(int col) const{
+        switch(col){
+        case 1:
+            return TDCurTemperature;
+        case 2:
+            return TICurTemperature;
+        case 3:
+            return COLUMNTemperature;
+        case 4:
+            return MicroPIDValue;
+        case 5:
+            return EPCPressure;
+        default:
+            return QVariant();
+        }
+    }
+
+    bool setModelData(int col, const QVariant &value){
+        switch(col){
+        case 1:
+            TDCurTemperature = value.toUInt();
+            break;
+        case 2:
+            TICurTemperature = value.toUInt();
+            break;
+        case 3:
+            COLUMNTemperature = value.toUInt();
+            break;
+        case 4:
+            MicroPIDValue = value.toUInt();
+            break;
+        case 5:
+            EPCPressure = value.toUInt();
+            break;
+        default:
+            return false;
+        }
+        return true;
+    }
+
 }SSingleStatus;
 
 
@@ -437,7 +479,26 @@ typedef struct tagPIDCtrl{
     }
 }SPIDCtrl;
 
+typedef struct tagPressureCtrl{
+    quint16 timeValue;
+    quint16 pressureValue;
+    tagPressureCtrl()
+    {
+        Q_ASSERT(sizeof(tagPressureCtrl) == 4);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagPressureCtrl));
+    }
+    void bigLittleSwap(){
+        timeValue = CCEUIHelper::bigLittleSwap16(timeValue);
+        pressureValue = CCEUIHelper::bigLittleSwap16(pressureValue);
+    }
+}SPressureCtrl;
+
 typedef struct tagTDCtrl{
+    quint8  CounterBlowingTime;
     quint8  BeforeTDStartup_TestPCG;
     quint16 TDStart_CarrierPressure_UpLimit;
     quint16 TDStart_CarrierPressure_LowLimit;
@@ -450,7 +511,7 @@ typedef struct tagTDCtrl{
 
     tagTDCtrl()
     {
-        Q_ASSERT(sizeof(tagTDCtrl) == 54);
+        Q_ASSERT(sizeof(tagTDCtrl) == 55);
         clear();
     }
     void clear()
@@ -668,7 +729,7 @@ typedef struct tagRunParamSet{
     quint8  samplingPumpVoltage;            //0x0034	R/W	采样泵电压 （0-100）
     quint16 EPCControlVoltage;              //0x0035-0x0036	R/W	EPC控制电压
 
-    quint8  reserved2[4];
+    quint8  reserved2[3];
 
     STDCtrl TDCtrl;                         //TD 控制
     STICtrl TICtrl;                         //TI 控制
@@ -715,6 +776,39 @@ typedef struct tagRunParamSet{
     }
 }SRunParamSet;
 
+typedef struct tagPressureMode{
+    SPressureCtrl pressureCtrlArray[8];
+
+    tagPressureMode()
+    {
+        Q_ASSERT(sizeof(tagPressureMode) == 32);
+        clear();
+    }
+    void clear()
+    {
+        memset(this, 0, sizeof(tagPressureMode));
+    }
+    void bigLittleSwap(){
+        for(int i = 0;i<sizeof(pressureCtrlArray)/sizeof(pressureCtrlArray[0]);++i){
+            pressureCtrlArray[i].bigLittleSwap();
+        }
+    }
+    bool setTimeCtrlByIndex(const SPressureCtrl& value,int index){
+        if(index<0||index>sizeof(pressureCtrlArray)/sizeof(pressureCtrlArray[0])){
+            return false;
+        }
+        pressureCtrlArray[index] = value;
+        return true;
+    }
+    bool setPIDCtrlByIndex(const SPressureCtrl& value,int index){
+        if(index<0||index>sizeof(pressureCtrlArray)/sizeof(pressureCtrlArray[0])){
+            return false;
+        }
+        pressureCtrlArray[index] = value;
+        return true;
+    }
+}SPressureMode;
+
 
 typedef struct tagTestParamSet{
     SPIDAll PIDAll;
@@ -722,9 +816,13 @@ typedef struct tagTestParamSet{
 
     quint8 testStatus;                      //0x00f8	R/W	测试运行/停止  0 停止，1 为运行
 
+    quint8  reserved1[7];
+
+    SPressureMode pressureMode;
+
     tagTestParamSet()
     {
-        Q_ASSERT(sizeof(tagTestParamSet) == 249);
+        Q_ASSERT(sizeof(tagTestParamSet) == 288);
         clear();
     }
     void clear()
@@ -752,9 +850,6 @@ typedef struct tagTestParamSet{
     }
 
 }STestParamSet;
-
-
-
 
 
 
@@ -800,6 +895,46 @@ typedef struct tagTestData{
         curTestRunTime =    CCEUIHelper::bigLittleSwap32(curTestRunTime);
         COLUMNTemperature = CCEUIHelper::bigLittleSwap16(COLUMNTemperature);
         MicroPIDValue =     CCEUIHelper::bigLittleSwap16(MicroPIDValue);
+    }
+
+    QVariant getModelData(int col) const{
+        switch(col){
+        case 0:
+            return curTestRunTime;
+        case 1:
+            return TDCurTemperature;
+        case 2:
+            return TICurTemperature;
+        case 3:
+            return COLUMNTemperature;
+        case 4:
+            return MicroPIDValue;
+        default:
+            return QVariant();
+        }
+    }
+
+    bool setModelData(int col, const QVariant &value){
+        switch(col){
+        case 0:
+            curTestRunTime = value.toUInt();
+            break;
+        case 1:
+            TDCurTemperature = value.toUInt();
+            break;
+        case 2:
+            TICurTemperature = value.toUInt();
+            break;
+        case 3:
+            COLUMNTemperature = value.toUInt();
+            break;
+        case 4:
+            MicroPIDValue = value.toUInt();
+            break;
+        default:
+            return false;
+        }
+        return true;
     }
 }STestData;
 

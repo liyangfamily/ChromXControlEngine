@@ -73,3 +73,32 @@ CCETestParamSetPackage_WriteTestStatus::CCETestParamSetPackage_WriteTestStatus(q
 {
 
 }
+
+SPressureMode CCETestParamSetPackage_ReadPressureMode::getValue() const
+{
+    SPressureMode pressureMode;
+    QByteArray buffer = getContent();
+    if (buffer.size() < sizeof(SPressureMode)) {
+        return pressureMode;
+    }
+    memcpy(&pressureMode,buffer.data(),sizeof(SPressureMode));
+    pressureMode.bigLittleSwap();
+    return pressureMode;
+}
+
+CCETestParamSetPackage_WritePressureMode::CCETestParamSetPackage_WritePressureMode(const SPressureMode &pressureMode):
+    m_pressureMode(pressureMode)
+{
+    m_pressureMode.bigLittleSwap();
+}
+
+quint8 CCETestParamSetPackage_ReadCounterBlowingTime::getValue() const
+{
+    DO_GETCHARRESULT(getContent());
+}
+
+CCETestParamSetPackage_WriteCounterBlowingTime::CCETestParamSetPackage_WriteCounterBlowingTime(quint8 value):
+    m_value(value)
+{
+
+}
