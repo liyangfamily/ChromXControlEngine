@@ -55,6 +55,8 @@ public:
 
 
         //TD
+        EC_Read_CounterBlowingTime = 0x003A, //TD 反吹时间
+        EC_Write_CounterBlowingTime = EC_Read_CounterBlowingTime,
         EC_Read_BeforeTDStartup_TestPCG = 0x003B, //TD 启动测试Pcg 0 不检测， 1 检测
         EC_Write_BeforeTDStartup_TestPCG = EC_Read_BeforeTDStartup_TestPCG,
         EC_Read_TDStart_CarrierPressure_UpLimit = 0x003C, //TD 启动载气压力上限 （0-65535）
@@ -111,6 +113,9 @@ public:
 
         EC_Read_TestStatus = 0x00F8, //测试运行/停止  0 停止，1 为运行
         EC_Write_TestStatus = EC_Read_TestStatus,
+
+        EC_Read_PressureMode = 0x0100, //压力模式
+        EC_Write_PressureMode = EC_Read_PressureMode,
 
         EC_NLL = 0xFFFF,
     };
@@ -249,6 +254,86 @@ protected:
     }
     quint16 CmdCtrlAddr() const override {
         return quint16(ECommand::EC_Write_TestStatus);
+    }
+    QByteArray CmdContent() const override {
+     return QByteArray((char *)&m_value, 1);
+    }
+private:
+    quint8 m_value = 0;
+};
+
+/*******************************************************压力模式*************************************************************/
+class CCE_COMMUNICATENGINE_EXPORT CCETestParamSetPackage_ReadPressureMode : public CCEAbstractTestParamSetPackage
+{
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCETestParamSetPackage_ReadPressureMode, CCEAbstractTestParamSetPackage)
+public:
+    SPressureMode getValue() const;
+protected:
+    EFrameType CmdFrameType () const override {
+        return EFrameType::EFT_ReadFrame;
+    }
+    quint16 CmdCtrlAddr() const override{
+        return quint16(ECommand::EC_Read_PressureMode);
+    }
+    QByteArray CmdContent() const override{
+     return QByteArray().fill(0,sizeof(SPressureMode));
+    }
+};
+
+class CCE_COMMUNICATENGINE_EXPORT CCETestParamSetPackage_WritePressureMode : public CCEAbstractTestParamSetPackage
+{
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCETestParamSetPackage_WritePressureMode, CCEAbstractTestParamSetPackage)
+public:
+    CCETestParamSetPackage_WritePressureMode(const SPressureMode& pressureMode);
+    quint8 getOperationResult() const{
+        DO_GETOPERATIONRESULT();
+    }
+protected:
+    EFrameType CmdFrameType () const override {
+        return EFrameType::EFT_WriteFrame;
+    }
+    quint16 CmdCtrlAddr() const override {
+        return quint16(ECommand::EC_Write_PressureMode);
+    }
+    QByteArray CmdContent() const override {
+     return QByteArray((char *)&m_pressureMode, sizeof(SPressureMode));
+    }
+private:
+    SPressureMode m_pressureMode;
+};
+
+/*******************************************************测试运行/停止*************************************************************/
+class CCE_COMMUNICATENGINE_EXPORT CCETestParamSetPackage_ReadCounterBlowingTime : public CCEAbstractTestParamSetPackage
+{
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCETestParamSetPackage_ReadCounterBlowingTime, CCEAbstractTestParamSetPackage)
+public:
+    quint8 getValue() const;
+protected:
+    EFrameType CmdFrameType () const override {
+        return EFrameType::EFT_ReadFrame;
+    }
+    quint16 CmdCtrlAddr() const override{
+        return quint16(ECommand::EC_Read_CounterBlowingTime);
+    }
+    QByteArray CmdContent() const override{
+     return QByteArray().fill(0,1);
+    }
+};
+
+class CCE_COMMUNICATENGINE_EXPORT CCETestParamSetPackage_WriteCounterBlowingTime : public CCEAbstractTestParamSetPackage
+{
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCETestParamSetPackage_WriteCounterBlowingTime, CCEAbstractTestParamSetPackage)
+public:
+    CCETestParamSetPackage_WriteCounterBlowingTime(quint8 value);
+    quint8 getOperationResult() const{
+        DO_GETOPERATIONRESULT();
+    }
+protected:
+    EFrameType CmdFrameType () const override {
+        return EFrameType::EFT_WriteFrame;
+    }
+    quint16 CmdCtrlAddr() const override {
+        return quint16(ECommand::EC_Write_CounterBlowingTime);
     }
     QByteArray CmdContent() const override {
      return QByteArray((char *)&m_value, 1);

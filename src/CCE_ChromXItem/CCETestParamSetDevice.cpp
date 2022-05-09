@@ -172,6 +172,52 @@ quint8 CCETestParamSetDevice::getTestStatus()
     return d->m_testParamSet.testStatus;
 }
 
+quint16 CCETestParamSetDevice::writePressureMode(const SPressureMode &data, bool sync, int msec)
+{
+    //内部自动大小端转换
+    CCETestParamSetPackage_WritePressureMode pack(data);
+    pack.build();
+
+    CCE_DECLARE_COMMANDSEND(d_ptr,pack);
+}
+
+quint16 CCETestParamSetDevice::readPressureMode(bool sync, int msec)
+{
+    CCETestParamSetPackage_ReadPressureMode pack;
+    pack.build();
+
+    CCE_DECLARE_COMMANDSEND(d_ptr,pack);
+}
+
+SPressureMode &CCETestParamSetDevice::getPressureMode()
+{
+    Q_D(CCETestParamSetDevice);
+    return d->m_testParamSet.pressureMode;
+}
+
+quint16 CCETestParamSetDevice::writeCounterBlowingTime(quint8 value, bool sync, int msec)
+{
+    //内部自动大小端转换
+    CCETestParamSetPackage_WriteCounterBlowingTime pack(value);
+    pack.build();
+
+    CCE_DECLARE_COMMANDSEND(d_ptr,pack);
+}
+
+quint16 CCETestParamSetDevice::readCounterBlowingTime(bool sync, int msec)
+{
+    CCETestParamSetPackage_ReadCounterBlowingTime pack;
+    pack.build();
+
+    CCE_DECLARE_COMMANDSEND(d_ptr,pack);
+}
+
+quint8 CCETestParamSetDevice::getCounterBlowingTime()
+{
+    Q_D(CCETestParamSetDevice);
+    return d->m_testParamSet.runParamSet.TDCtrl.CounterBlowingTime;
+}
+
 void CCETestParamSetDevice::registerCallBack()
 {
     Q_D(CCETestParamSetDevice);
@@ -182,18 +228,29 @@ void CCETestParamSetDevice::registerCallBack()
 
     d->m_packageMgr.registerPackage(CCETestParamSetPackage_WriteRunParam(),
                                         std::bind(&CCETestParamSetDevice::onParseWriteRunParam,this,std::placeholders::_1));
-    d->m_packageMgr.registerPackage(CCETestParamSetPackage_WriteRunParam(g_singlePackLength,QByteArray()),
-                                        std::bind(&CCETestParamSetDevice::onParseWriteRunParam,this,std::placeholders::_1));
+//    d->m_packageMgr.registerPackage(CCETestParamSetPackage_WriteRunParam(g_singlePackLength,QByteArray()),
+//                                        std::bind(&CCETestParamSetDevice::onParseWriteRunParam,this,std::placeholders::_1));
 
     d->m_packageMgr.registerPackage(CCETestParamSetPackage_ReadRunParam(),
                                         std::bind(&CCETestParamSetDevice::onParseReadRunParam,this,std::placeholders::_1));
-    d->m_packageMgr.registerPackage(CCETestParamSetPackage_ReadRunParam(g_singlePackLength,0),
-                                        std::bind(&CCETestParamSetDevice::onParseReadRunParam,this,std::placeholders::_1));
+//    d->m_packageMgr.registerPackage(CCETestParamSetPackage_ReadRunParam(g_singlePackLength,0),
+//                                        std::bind(&CCETestParamSetDevice::onParseReadRunParam,this,std::placeholders::_1));
 
     d->m_packageMgr.registerPackage(CCETestParamSetPackage_WriteTestStatus(),
                                         std::bind(&CCETestParamSetDevice::onParseWriteTestStatus,this,std::placeholders::_1));
     d->m_packageMgr.registerPackage(CCETestParamSetPackage_ReadTestStatus(),
                                         std::bind(&CCETestParamSetDevice::onParseReadTestStatus,this,std::placeholders::_1));
+
+
+    d->m_packageMgr.registerPackage(CCETestParamSetPackage_WritePressureMode(),
+                                        std::bind(&CCETestParamSetDevice::onParseWritePressureMode,this,std::placeholders::_1));
+    d->m_packageMgr.registerPackage(CCETestParamSetPackage_ReadPressureMode(),
+                                        std::bind(&CCETestParamSetDevice::onParseReadPressureMode,this,std::placeholders::_1));
+
+    d->m_packageMgr.registerPackage(CCETestParamSetPackage_WriteCounterBlowingTime(),
+                                        std::bind(&CCETestParamSetDevice::onParseWriteCounterBlowingTime,this,std::placeholders::_1));
+    d->m_packageMgr.registerPackage(CCETestParamSetPackage_ReadCounterBlowingTime(),
+                                        std::bind(&CCETestParamSetDevice::onParseReadCounterBlowingTime,this,std::placeholders::_1));
 }
 
 quint16 CCETestParamSetDevice::onParseWriteAllPID(const QByteArray &data)
@@ -291,6 +348,46 @@ quint16 CCETestParamSetDevice::onParseReadTestStatus(const QByteArray &data)
     if(ret==CCEAPI::EResult::ER_Success){
         d->m_testParamSet.testStatus = pack.getValue();
         qDebug()<<"Got it! testStatus:"<<d->m_testParamSet.testStatus;
+    }
+    return ret;
+}
+
+quint16 CCETestParamSetDevice::onParseWritePressureMode(const QByteArray &data)
+{
+    CCETestParamSetPackage_WritePressureMode pack(data);
+    DO_RETOPERATIONRESULT(pack);
+}
+
+quint16 CCETestParamSetDevice::onParseReadPressureMode(const QByteArray &data)
+{
+    Q_D(CCETestParamSetDevice);
+    CCETestParamSetPackage_ReadPressureMode pack(data);
+    quint16 ret = pack.isValid();
+    if(ret==CCEAPI::EResult::ER_Success){
+        d->m_testParamSet.pressureMode = pack.getValue();
+        for(int i = 0;i<sizeof(d->m_testParamSet.pressureMode.pressureCtrlArray)/sizeof(d->m_testParamSet.pressureMode.pressureCtrlArray[0]);++i){
+            SPressureCtrl& temp = d->m_testParamSet.pressureMode.pressureCtrlArray[i];
+            qDebug()<<QString("Got %1 Pressure info! Time Value:%2 , Pressure Value: %3 .") \
+                      .arg(i).arg(temp.timeValue).arg(temp.pressureValue);
+        }
+    }
+    return ret;
+}
+
+quint16 CCETestParamSetDevice::onParseWriteCounterBlowingTime(const QByteArray &data)
+{
+    CCETestParamSetPackage_WriteCounterBlowingTime pack(data);
+    DO_RETOPERATIONRESULT(pack);
+}
+
+quint16 CCETestParamSetDevice::onParseReadCounterBlowingTime(const QByteArray &data)
+{
+    Q_D(CCETestParamSetDevice);
+    CCETestParamSetPackage_ReadCounterBlowingTime pack(data);
+    quint16 ret = pack.isValid();
+    if(ret==CCEAPI::EResult::ER_Success){
+        d->m_testParamSet.runParamSet.TDCtrl.CounterBlowingTime = pack.getValue();
+        qDebug()<<"Got it! CounterBlowingTime:"<<d->m_testParamSet.runParamSet.TDCtrl.CounterBlowingTime;
     }
     return ret;
 }
