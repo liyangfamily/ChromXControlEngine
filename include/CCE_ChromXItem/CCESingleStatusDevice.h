@@ -27,6 +27,10 @@ public:
 
     quint16 readEPCPressure(bool sync=true, int msec=CCE_Defalut_SyncTimeout);
     quint16 getEPCPressure();
+
+    quint16 readAllInfo(bool sync=true, int msec=CCE_Defalut_SyncTimeout);
+    SSingleStatus getAllInfo();
+
 protected:
     virtual void registerCallBack() override;
     quint16 onParseReadTDCurTemperature(const QByteArray& data);
@@ -34,6 +38,7 @@ protected:
     quint16 onParseReadCOLUMNTemperature(const QByteArray& data);
     quint16 onParseReadMicroPIDValue(const QByteArray& data);
     quint16 onParseReadEPCPressure(const QByteArray& data);
+    quint16 onParseReadAllInfo(const QByteArray& data);
 };
 
 #endif // CCESINGLESTATUSDEVICE_H

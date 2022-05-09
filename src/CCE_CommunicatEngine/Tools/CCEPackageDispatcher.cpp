@@ -103,7 +103,7 @@ bool CCEPackageDispatcher::dispatcherPackage(const CCEEnginePackage &package)
                 QList<QObject*>& objList = iCbmap.value();
                 foreach(QObject* item, objList)
                 {
-                    CCEPackageEvent *event = new CCEPackageEvent(CCEPackageEvent::s_disPatcherPackage_eventType, unitAddr, cmdNum);
+                    CCEPackageEvent *event = new CCEPackageEvent(CCEPackageEvent::s_disPatcherPackage_eventType,frameType, unitAddr, cmdNum);
                     event->setPackage(package);
                     QCoreApplication::postEvent(item, event);
                 }

@@ -146,4 +146,24 @@ protected:
     }
 };
 
+/*******************************************************报告单控状态所有信息*************************************************************/
+class CCE_COMMUNICATENGINE_EXPORT CCETestDataPackage_ReportAllInfo : public CCEAbstractTestDataPackage
+{
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCETestDataPackage_ReportAllInfo, CCEAbstractTestDataPackage)
+public:
+    CCETestDataPackage_ReportAllInfo(const quint8& ret);
+    STestData getInfo() const;
+protected:
+    EFrameType CmdFrameType () const override {
+        return EFrameType::EFT_ReportFrame;
+    }
+    quint16 CmdCtrlAddr() const override{
+        return quint16(ECommand::EC_Read_TDCurTemperature);
+    }
+    QByteArray CmdContent() const override{
+     return QByteArray((char*)&m_retValue,sizeof(quint8));
+    }
+private:
+    quint8 m_retValue = 0;
+};
 #endif // CCETESTDATAPACKAGE_H

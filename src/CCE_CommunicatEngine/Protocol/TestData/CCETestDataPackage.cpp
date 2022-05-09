@@ -49,3 +49,18 @@ STestData CCETestDataPackage_ReadAllInfo::getInfo() const
     info.bigLittleSwap();
     return info;
 }
+
+CCETestDataPackage_ReportAllInfo::CCETestDataPackage_ReportAllInfo(const quint8 &ret):
+    m_retValue(ret)
+{
+
+}
+
+STestData CCETestDataPackage_ReportAllInfo::getInfo() const
+{
+    STestData info;
+    QByteArray data = getContent();
+    info.setRawData(data);
+    info.bigLittleSwap();
+    return info;
+}

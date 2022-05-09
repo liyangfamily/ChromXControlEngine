@@ -49,3 +49,18 @@ SSingleStatus CCESingleStatusPackage_ReadAllInfo::getInfo() const
     info.bigLittleSwap();
     return info;
 }
+
+CCESingleStatusPackage_ReportAllInfo::CCESingleStatusPackage_ReportAllInfo(const quint8 &ret):
+    m_retValue(ret)
+{
+
+}
+
+SSingleStatus CCESingleStatusPackage_ReportAllInfo::getInfo() const
+{
+    SSingleStatus info;
+    QByteArray data = getContent();
+    info.setRawData(data);
+    info.bigLittleSwap();
+    return info;
+}
