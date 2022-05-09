@@ -82,6 +82,13 @@ public:
     static quint16 bigLittleSwap16(quint16 v);
     static quint32 bigLittleSwap32(quint32 v);
 
+    //RTD电阻和温度转换公式（R是传输值，T温度是界面显示值）
+    static double resistanceToTemper(quint16 resistance);
+    static quint16 temperToResistance(double temper);
+
+    //microPID电压显示值换算
+    static double getMicroPIDUiValue(quint32 transValue);
+
     //int转字节数组
     static QByteArray intToByte(int i); //HiLow
     static QByteArray intToByteRec(int i); //LowHi

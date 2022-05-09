@@ -6,6 +6,7 @@
 #include <QLineF>
 #include <QRectF>
 #include <QPolygonF>
+#include <math.h>
 
 QString CCEUIHelper::appName()
 {
@@ -662,6 +663,22 @@ quint16 CCEUIHelper::bigLittleSwap16(quint16 v)
 quint32 CCEUIHelper::bigLittleSwap32(quint32 v)
 {
     return CCEUIHelper::byteToInt(CCEUIHelper::intToByteRec(v));
+}
+
+double CCEUIHelper::resistanceToTemper(quint16 resistance)
+{
+    double temp = sqrt(17.53006783 - 0.0002612596 * resistance);
+    return (3.862314 - temp) / 0.001306298;
+}
+
+quint16 CCEUIHelper::temperToResistance(double temper)
+{
+    return 10000 + 38.62314 * temper - 0.00653149 * pow(temper, 2);
+}
+
+double CCEUIHelper::getMicroPIDUiValue(quint32 transValue)
+{
+    return (transValue * 5 / 2147483647);
 }
 
 QByteArray CCEUIHelper::intToByte(int i)
