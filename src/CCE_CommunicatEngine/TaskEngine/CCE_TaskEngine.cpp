@@ -82,6 +82,9 @@ int CCE_TaskEngine::idleThreads()
 
 bool CCE_TaskEngine::canExit()
 {
+    if(m_nExistingThreads!=0){
+        removeThreads(-1);
+    }
     return m_nExistingThreads == 0 ? true : false;
 }
 
