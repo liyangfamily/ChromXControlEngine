@@ -94,6 +94,20 @@ quint16 CCESingleStatusDevice::getEPCPressure()
     return d->m_singleStatus.EPCPressure;
 }
 
+quint16 CCESingleStatusDevice::readAllInfo(bool sync, int msec)
+{
+    CCESingleStatusPackage_ReadAllInfo pack;
+    pack.build();
+
+    CCE_DECLARE_COMMANDSEND(d_ptr,pack);
+}
+
+SSingleStatus CCESingleStatusDevice::getAllInfo()
+{
+    Q_D(CCESingleStatusDevice);
+    return d->m_singleStatus;
+}
+
 void CCESingleStatusDevice::registerCallBack()
 {
     Q_D(CCESingleStatusDevice);
@@ -107,6 +121,8 @@ void CCESingleStatusDevice::registerCallBack()
                                         std::bind(&CCESingleStatusDevice::onParseReadMicroPIDValue,this,std::placeholders::_1));
     d->m_packageMgr.registerPackage(CCESingleStatusPackage_ReadEPCPressure(),
                                     std::bind(&CCESingleStatusDevice::onParseReadEPCPressure,this,std::placeholders::_1));
+//    d->m_packageMgr.registerPackage(CCESingleStatusPackage_ReadAllInfo(),
+//                                    std::bind(&CCESingleStatusDevice::onParseReadAllInfo,this,std::placeholders::_1));
 }
 
 quint16 CCESingleStatusDevice::onParseReadTDCurTemperature(const QByteArray &data)
@@ -165,6 +181,23 @@ quint16 CCESingleStatusDevice::onParseReadEPCPressure(const QByteArray &data)
     if(ret==CCEAPI::EResult::ER_Success){
         d->m_singleStatus.EPCPressure = pack.getValue();
         qDebug()<<"Got it! EPCPressure:"<<d->m_singleStatus.EPCPressure;
+    }
+    return ret;
+}
+
+quint16 CCESingleStatusDevice::onParseReadAllInfo(const QByteArray &data)
+{
+    Q_D(CCESingleStatusDevice);
+    CCESingleStatusPackage_ReadAllInfo pack(data);
+    quint16 ret = pack.isValid();
+    if(ret==CCEAPI::EResult::ER_Success){
+        d->m_singleStatus = pack.getInfo();
+        qDebug()<<QString("Got it! TDCurTemper:%1,TICurTemper:%2,COLUMNTemper:%3,MicroPIDValue:%4,EPCPressure:%5.") \
+                  .arg(d->m_singleStatus.TDCurTemperature)\
+                  .arg(d->m_singleStatus.TICurTemperature)\
+                  .arg(d->m_singleStatus.COLUMNTemperature)\
+                  .arg(d->m_singleStatus.MicroPIDValue)\
+                  .arg(d->m_singleStatus.EPCPressure);
     }
     return ret;
 }

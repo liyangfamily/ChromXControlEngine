@@ -95,6 +95,20 @@ quint16 CCETestDataDevice::getMicroPIDValue()
     return d->m_testData.MicroPIDValue;
 }
 
+quint16 CCETestDataDevice::readAllInfo(bool sync, int msec)
+{
+    CCETestDataPackage_ReadAllInfo pack;
+    pack.build();
+
+    CCE_DECLARE_COMMANDSEND(d_ptr,pack);
+}
+
+STestData CCETestDataDevice::getAllInfo()
+{
+    Q_D(CCETestDataDevice);
+    return d->m_testData;
+}
+
 void CCETestDataDevice::registerCallBack()
 {
     Q_D(CCETestDataDevice);
@@ -108,6 +122,10 @@ void CCETestDataDevice::registerCallBack()
                                         std::bind(&CCETestDataDevice::onParseReadCOLUMNTemperature,this,std::placeholders::_1));
     d->m_packageMgr.registerPackage(CCETestDataPackage_ReadMicroPIDValue(),
                                         std::bind(&CCETestDataDevice::onParseReadMicroPIDValue,this,std::placeholders::_1));
+    d->m_packageMgr.registerPackage(CCETestDataPackage_ReadAllInfo(),
+                                        std::bind(&CCETestDataDevice::onParseReadAllInfo,this,std::placeholders::_1));
+    d->m_packageMgr.registerPackage(CCETestDataPackage_ReportAllInfo(),
+                                        std::bind(&CCETestDataDevice::onParseReportAllInfo,this,std::placeholders::_1));
 }
 
 quint16 CCETestDataDevice::onParseReadTDCurTemperature(const QByteArray &data)
@@ -166,6 +184,48 @@ quint16 CCETestDataDevice::onParseReadMicroPIDValue(const QByteArray &data)
     if(ret==CCEAPI::EResult::ER_Success){
         d->m_testData.MicroPIDValue = pack.getValue();
         qDebug()<<"Got it! MicroPIDValue:"<<d->m_testData.MicroPIDValue;
+    }
+    return ret;
+}
+
+quint16 CCETestDataDevice::onParseReadAllInfo(const QByteArray &data)
+{
+    Q_D(CCETestDataDevice);
+    CCETestDataPackage_ReadAllInfo pack(data);
+    quint16 ret = pack.isValid();
+    if(ret==CCEAPI::EResult::ER_Success){
+        d->m_testData = pack.getInfo();
+        qDebug()<<QString("Got it! TDCurTemper:%1,TICurTemper:%2,CurTestRunTime:%3,COLUMNTemper:%4,MicroPIDValue:%5.") \
+                  .arg(d->m_testData.TDCurTemperature)\
+                  .arg(d->m_testData.TICurTemperature)\
+                  .arg(d->m_testData.curTestRunTime)\
+                  .arg(d->m_testData.COLUMNTemperature)\
+                  .arg(d->m_testData.MicroPIDValue);
+    }
+    return ret;
+}
+
+quint16 CCETestDataDevice::onParseReportAllInfo(const QByteArray &data)
+{
+    Q_D(CCETestDataDevice);
+    CCETestDataPackage_ReportAllInfo pack(data);
+    quint16 ret = pack.isValid();
+    if(ret==CCEAPI::EResult::ER_Success){
+        d->m_testData = pack.getInfo();
+        qDebug()<<QString("Got it! TDCurTemper:%1,TICurTemper:%2,CurTestRunTime:%3,COLUMNTemper:%4,MicroPIDValue:%5.") \
+                  .arg(d->m_testData.TDCurTemperature)\
+                  .arg(d->m_testData.TICurTemperature)\
+                  .arg(d->m_testData.curTestRunTime)\
+                  .arg(d->m_testData.COLUMNTemperature)\
+                  .arg(d->m_testData.MicroPIDValue);
+    }
+
+    CCETestDataPackage_ReportAllInfo packSend(ret);
+    packSend.build();
+    CCEEnginePackage enginePack;\
+    if(enginePack.initByDetectInfo(d->m_deviceDetectInfo)){
+        enginePack.setData(packSend.getDataToSend());
+        CCEClusterProxy::asyncSend(enginePack);
     }
     return ret;
 }

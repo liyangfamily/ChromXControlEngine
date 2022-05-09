@@ -15,8 +15,8 @@ public:
     {
     }
 
-    CCEPackageEvent(QEvent::Type type, quint8 unitAddr, quint16 cmdNum) :
-        QEvent(type), m_unitAddr(unitAddr), m_cmdNum(cmdNum)
+    CCEPackageEvent(QEvent::Type type, quint8 frameType, quint8 unitAddr, quint16 cmdNum) :
+        QEvent(type),m_frameType(frameType), m_unitAddr(unitAddr), m_cmdNum(cmdNum)
     {
     }
     ~CCEPackageEvent()
@@ -33,6 +33,10 @@ public:
         return m_package;
     }
 
+    quint8 frameType() {
+        return m_frameType;
+    }
+
     quint8 unitAddr() {
         return m_unitAddr;
     }
@@ -47,6 +51,7 @@ public:
 
 private:
     CCEEnginePackage m_package;
+    quint8 m_frameType = 0;
     quint8 m_unitAddr = 0;
     quint16 m_cmdNum = 0;
 };
