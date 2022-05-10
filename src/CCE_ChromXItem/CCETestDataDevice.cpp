@@ -89,7 +89,7 @@ quint16 CCETestDataDevice::readMicroPIDValue(bool sync, int msec)
     CCE_DECLARE_COMMANDSEND(d_ptr,pack);
 }
 
-quint16 CCETestDataDevice::getMicroPIDValue()
+quint32 CCETestDataDevice::getMicroPIDValue()
 {
     Q_D(CCETestDataDevice);
     return d->m_testData.MicroPIDValue;
@@ -112,8 +112,8 @@ STestData CCETestDataDevice::getAllInfo()
 void CCETestDataDevice::registerCallBack()
 {
     Q_D(CCETestDataDevice);
-    d->m_packageMgr.registerPackage(CCETestDataPackage_ReadTDCurTemperature(),
-                                        std::bind(&CCETestDataDevice::onParseReadTDCurTemperature,this,std::placeholders::_1));
+//    d->m_packageMgr.registerPackage(CCETestDataPackage_ReadTDCurTemperature(),
+//                                        std::bind(&CCETestDataDevice::onParseReadTDCurTemperature,this,std::placeholders::_1));
     d->m_packageMgr.registerPackage(CCETestDataPackage_ReadTICurTemperature(),
                                         std::bind(&CCETestDataDevice::onParseReadTICurTemperature,this,std::placeholders::_1));
     d->m_packageMgr.registerPackage(CCETestDataPackage_ReadCurTestRunTime(),

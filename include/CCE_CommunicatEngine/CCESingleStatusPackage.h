@@ -95,7 +95,7 @@ class CCE_COMMUNICATENGINE_EXPORT CCESingleStatusPackage_ReadMicroPIDValue : pub
 {
     CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleStatusPackage_ReadMicroPIDValue, CCEAbstractSingleStatusPackage)
 public:
-    quint16 getValue() const;
+    quint32 getValue() const;
 protected:
     EFrameType CmdFrameType () const override {
         return EFrameType::EFT_ReadFrame;

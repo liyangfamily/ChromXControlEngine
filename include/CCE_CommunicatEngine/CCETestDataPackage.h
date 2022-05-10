@@ -115,7 +115,7 @@ class CCE_COMMUNICATENGINE_EXPORT CCETestDataPackage_ReadMicroPIDValue : public 
 {
     CCE_DECLARE_PACKAGECONSTRUCTOR(CCETestDataPackage_ReadMicroPIDValue, CCEAbstractTestDataPackage)
 public:
-    quint16 getValue() const;
+    quint32 getValue() const;
 protected:
     EFrameType CmdFrameType () const override {
         return EFrameType::EFT_ReadFrame;
@@ -124,7 +124,7 @@ protected:
         return quint16(ECommand::EC_Read_MicroPIDValue);
     }
     QByteArray CmdContent() const override{
-     return QByteArray().fill(0,2);
+     return QByteArray().fill(0,4);
     }
 };
 
