@@ -678,7 +678,7 @@ quint16 CCEUIHelper::temperToResistance(double temper)
 
 double CCEUIHelper::getMicroPIDUiValue(quint32 transValue)
 {
-    return (transValue * 5 / 2147483647);
+    return ((double)transValue * 5 / 2147483647);
 }
 
 QByteArray CCEUIHelper::intToByte(int i)
