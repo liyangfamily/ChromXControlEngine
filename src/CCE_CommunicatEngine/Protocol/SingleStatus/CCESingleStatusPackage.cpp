@@ -31,9 +31,9 @@ quint16 CCESingleStatusPackage_ReadCOLUMNTemperature::getCurTemperature() const
     DO_GETUSHORTRESULT(getContent());
 }
 
-quint16 CCESingleStatusPackage_ReadMicroPIDValue::getValue() const
+quint32 CCESingleStatusPackage_ReadMicroPIDValue::getValue() const
 {
-    DO_GETUSHORTRESULT(getContent());
+    DO_GETUINTRESULT(getContent());
 }
 
 quint16 CCESingleStatusPackage_ReadEPCPressure::getValue() const

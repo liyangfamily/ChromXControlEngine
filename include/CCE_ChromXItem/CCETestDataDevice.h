@@ -26,7 +26,7 @@ public:
     quint16 getCOLUMNTemperature();
 
     quint16 readMicroPIDValue(bool sync=true, int msec=CCE_Defalut_SyncTimeout);
-    quint16 getMicroPIDValue();
+    quint32 getMicroPIDValue();
 
     quint16 readAllInfo(bool sync=true, int msec=CCE_Defalut_SyncTimeout);
     STestData getAllInfo();

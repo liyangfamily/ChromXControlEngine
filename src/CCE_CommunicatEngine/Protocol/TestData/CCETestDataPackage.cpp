@@ -36,9 +36,9 @@ quint16 CCETestDataPackage_ReadCOLUMNTemperature::getCurTemperature() const
     DO_GETUSHORTRESULT(getContent());
 }
 
-quint16 CCETestDataPackage_ReadMicroPIDValue::getValue() const
+quint32 CCETestDataPackage_ReadMicroPIDValue::getValue() const
 {
-    DO_GETUSHORTRESULT(getContent());
+    DO_GETUINTRESULT(getContent());
 }
 
 STestData CCETestDataPackage_ReadAllInfo::getInfo() const

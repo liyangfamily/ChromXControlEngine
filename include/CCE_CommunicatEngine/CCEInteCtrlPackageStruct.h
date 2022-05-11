@@ -863,11 +863,11 @@ typedef struct tagTestData{
     quint16 TICurTemperature;       //0x0002-0x0003	R/	TI 当前温度数值 	(0-65535)
     quint32 curTestRunTime;         //0x0004-0x0007	R/	当前测试运行的时间 （0.01s）	(32bit)
     quint16 COLUMNTemperature;      //0x0008-0x0009	R/	COLUMN 温度转换数值  	(0-65535)
-    quint16 MicroPIDValue;          //0x000a-0x000d	R/	PID/HDPID 当前的ADC读数 	(32bit)
+    quint32 MicroPIDValue;          //0x000a-0x000d	R/	PID/HDPID 当前的ADC读数 	(32bit)
 
     tagTestData()
     {
-        Q_ASSERT(sizeof(tagTestData) == 12);
+        Q_ASSERT(sizeof(tagTestData) == 14);
         clear();
     }
     void clear()
@@ -894,7 +894,7 @@ typedef struct tagTestData{
         TICurTemperature =  CCEUIHelper::bigLittleSwap16(TICurTemperature);
         curTestRunTime =    CCEUIHelper::bigLittleSwap32(curTestRunTime);
         COLUMNTemperature = CCEUIHelper::bigLittleSwap16(COLUMNTemperature);
-        MicroPIDValue =     CCEUIHelper::bigLittleSwap16(MicroPIDValue);
+        MicroPIDValue =     CCEUIHelper::bigLittleSwap32(MicroPIDValue);
     }
 
     QVariant getModelData(int col) const{
