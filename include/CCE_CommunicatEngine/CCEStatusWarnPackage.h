@@ -70,6 +70,27 @@ protected:
     }
 };
 
+/*******************************************************报告设备状态*************************************************************/
+class CCE_COMMUNICATENGINE_EXPORT CCEStatusWarnPackage_ReportDeviceStatus : public CCEAbstractStatusWarnPackage
+{
+    CCE_DECLARE_PACKAGECONSTRUCTOR(CCEStatusWarnPackage_ReportDeviceStatus, CCEAbstractStatusWarnPackage)
+public:
+    CCEStatusWarnPackage_ReportDeviceStatus(const quint8& ret);
+    quint8 getValue() const;
+protected:
+    EFrameType CmdFrameType () const override {
+        return EFrameType::EFT_ReportFrame;
+    }
+    quint16 CmdCtrlAddr() const override{
+        return quint16(ECommand::EC_Read_DeviceStatus);
+    }
+    QByteArray CmdContent() const override{
+     return QByteArray((char*)&m_retValue,sizeof(quint8));
+    }
+private:
+    quint8 m_retValue = 0;
+};
+
 /*******************************************************主控板自检完成标志：0 自检中，1自检完成*************************************************************/
 class CCE_COMMUNICATENGINE_EXPORT CCEStatusWarnPackage_ReadDeviceSelfTestStatus : public CCEAbstractStatusWarnPackage
 {

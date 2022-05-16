@@ -93,6 +93,8 @@ void CCEStatusWarnDevice::registerCallBack()
                                         std::bind(&CCEStatusWarnDevice::onParseReadExistAbnormal,this,std::placeholders::_1));
     d->m_packageMgr.registerPackage(CCEStatusWarnPackage_ReadDeviceStatus(),
                                         std::bind(&CCEStatusWarnDevice::onParseReadDeviceStatus,this,std::placeholders::_1));
+    d->m_packageMgr.registerPackage(CCEStatusWarnPackage_ReportDeviceStatus(),
+                                        std::bind(&CCEStatusWarnDevice::onParseReportDeviceStatus,this,std::placeholders::_1));
     d->m_packageMgr.registerPackage(CCEStatusWarnPackage_ReadDeviceSelfTestStatus(),
                                         std::bind(&CCEStatusWarnDevice::onParseReadDeviceSelfTestStatus,this,std::placeholders::_1));
     d->m_packageMgr.registerPackage(CCEStatusWarnPackage_ReadDeviceTestComplete(),
@@ -143,6 +145,27 @@ quint16 CCEStatusWarnDevice::onParseReadDeviceTestComplete(const QByteArray &dat
     if(ret==CCEAPI::EResult::ER_Success){
         d->m_statusWarn.deviceTestComplete = pack.getValue();
         qDebug()<<"Got it! deviceTestComplete:"<<d->m_statusWarn.deviceTestComplete;
+    }
+    return ret;
+}
+
+quint16 CCEStatusWarnDevice::onParseReportDeviceStatus(const QByteArray &data)
+{
+    Q_D(CCEStatusWarnDevice);
+    CCEStatusWarnPackage_ReportDeviceStatus pack(data);
+    quint16 ret = pack.isValid();
+    if(ret==CCEAPI::EResult::ER_Success){
+        d->m_statusWarn.deviceStatus = pack.getValue();
+        qDebug()<<"Got it! deviceStatus:"<<d->m_statusWarn.deviceStatus;
+    }
+
+    CCEStatusWarnPackage_ReportDeviceStatus packSend(ret);
+    packSend.build();
+    CCEEnginePackage enginePack;\
+    if(enginePack.initByDetectInfo(d->m_deviceDetectInfo)){
+        enginePack.setData(packSend.getDataToSend());
+        CCEClusterProxy::asyncSend(enginePack);
+        qDebug()<<"Report it! DeviceStatus ret:"<<ret;
     }
     return ret;
 }

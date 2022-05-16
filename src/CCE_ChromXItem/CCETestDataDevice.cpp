@@ -226,6 +226,7 @@ quint16 CCETestDataDevice::onParseReportAllInfo(const QByteArray &data)
     if(enginePack.initByDetectInfo(d->m_deviceDetectInfo)){
         enginePack.setData(packSend.getDataToSend());
         CCEClusterProxy::asyncSend(enginePack);
+        qDebug()<<"Report it! TestData AllInfo ret:"<<ret;
     }
     return ret;
 }

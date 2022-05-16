@@ -41,6 +41,8 @@ protected:
     quint16 onParseReadDeviceStatus(const QByteArray& data);
     quint16 onParseReadDeviceSelfTestStatus(const QByteArray& data);
     quint16 onParseReadDeviceTestComplete(const QByteArray& data);
+
+    quint16 onParseReportDeviceStatus(const QByteArray& data);
 };
 
 #endif // CCESTATUSWARNDEVICE_H

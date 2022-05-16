@@ -155,7 +155,7 @@ public:
     STestData getInfo() const;
 protected:
     EFrameType CmdFrameType () const override {
-        return EFrameType::EFT_ReportFrame;
+        return EFrameType::EFT_ChartFrame;
     }
     quint16 CmdCtrlAddr() const override{
         return quint16(ECommand::EC_Read_TDCurTemperature);
