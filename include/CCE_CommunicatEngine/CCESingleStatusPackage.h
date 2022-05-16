@@ -144,24 +144,4 @@ protected:
     }
 };
 
-/*******************************************************读取单控状态所有信息*************************************************************/
-class CCE_COMMUNICATENGINE_EXPORT CCESingleStatusPackage_ReportAllInfo : public CCEAbstractSingleStatusPackage
-{
-    CCE_DECLARE_PACKAGECONSTRUCTOR(CCESingleStatusPackage_ReportAllInfo, CCEAbstractSingleStatusPackage)
-public:
-    CCESingleStatusPackage_ReportAllInfo(const quint8& ret);
-    SSingleStatus getInfo() const;
-protected:
-    EFrameType CmdFrameType () const override {
-        return EFrameType::EFT_ReportFrame;
-    }
-    quint16 CmdCtrlAddr() const override{
-        return quint16(ECommand::EC_Read_TDCurTemperature);
-    }
-    QByteArray CmdContent() const override{
-     return QByteArray((char*)&m_retValue,sizeof(quint8));
-    }
-private:
-    quint8 m_retValue = 0;
-};
 #endif // CCESINGLESTATUSPACKAGE_H
